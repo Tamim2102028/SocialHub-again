@@ -17,6 +17,7 @@ import {
 
 import type { PostData } from "../../data/postData";
 import { getUserById } from "../../data/userData";
+import { formatPostTime } from "../../utils/dateUtils";
 
 interface HomePostCardProps {
   post: PostData;
@@ -47,18 +48,7 @@ const HomePostCard: React.FC<HomePostCardProps> = ({ post }) => {
     navigate(`/profile/${post.userId}`);
   };
 
-  const formatTime = (timestamp: string) => {
-    const now = new Date();
-    const postTime = new Date(timestamp);
-    const diffInHours = Math.floor(
-      (now.getTime() - postTime.getTime()) / (1000 * 60 * 60)
-    );
 
-    if (diffInHours < 1) return "Just now";
-    if (diffInHours < 24) return `${diffInHours}h ago`;
-    if (diffInHours < 48) return "Yesterday";
-    return postTime.toLocaleDateString();
-  };
 
   return (
     <div className="rounded-lg border border-gray-400 bg-white shadow">
@@ -91,7 +81,7 @@ const HomePostCard: React.FC<HomePostCardProps> = ({ post }) => {
               >
                 {userData?.username || "username"}
               </span>{" "}
-              • {formatTime(post.createdAt)}
+              • {formatPostTime(post.createdAt)}
             </p>
           </div>
         </div>

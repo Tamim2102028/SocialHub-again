@@ -8,6 +8,7 @@ import {
   FaBookmark,
   FaRegBookmark,
 } from "react-icons/fa";
+import { formatPostTime } from "../../utils/dateUtils";
 
 interface Author {
   id: string;
@@ -66,7 +67,7 @@ const ProfilePostCard: React.FC<ProfilePostCardProps> = ({
           <div>
             <h3 className="font-semibold text-gray-900">{post.author.name}</h3>
             <p className="text-sm text-gray-500">
-              @{post.author.username} • {post.timestamp}
+              @{post.author.username} • {formatPostTime(post.timestamp)}
             </p>
           </div>
         </div>

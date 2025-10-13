@@ -11,6 +11,7 @@ import {
   FaUserShield,
   FaThumbtack,
 } from "react-icons/fa";
+import { formatPostTime } from "../../utils/dateUtils";
 
 interface Author {
   id: number;
@@ -112,7 +113,7 @@ const GroupPostCard: React.FC<GroupPostCardProps> = ({
               </h3>
               {getRoleBadge()}
             </div>
-            <p className="text-sm text-gray-500">{post.createdAt}</p>
+            <p className="text-sm text-gray-500">{formatPostTime(post.createdAt)}</p>
           </div>
         </div>
 
