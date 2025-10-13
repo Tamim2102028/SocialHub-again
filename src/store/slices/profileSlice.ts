@@ -6,6 +6,7 @@ interface ProfileState {
   name: string;
   username: string;
   email: string;
+  phone: string;
   avatar: string;
   bio: string;
   role: ("student" | "teacher")[];
@@ -43,6 +44,7 @@ const getCurrentUserData = (): ProfileState => {
       name: userData.name,
       username: userData.username,
       email: userData.email,
+      phone: userData.phone,
       avatar: userData.avatar,
       bio: userData.bio,
       role: userData.role,
@@ -60,6 +62,7 @@ const getCurrentUserData = (): ProfileState => {
       name: "",
       username: "",
       email: "",
+      phone: "",
       avatar: "",
       bio: "",
       role: ["student"],
@@ -99,6 +102,7 @@ const profileSlice = createSlice({
         name: "",
         username: "",
         email: "",
+        phone: "",
         avatar: "",
         bio: "",
         role: ["student"],

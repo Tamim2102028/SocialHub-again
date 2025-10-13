@@ -9,6 +9,7 @@ export interface UserData {
   username: string;
   email: string;
   password: string;
+  phone: string;
   avatar: string;
   bio: string;
   role: ("student" | "teacher")[]; // array to allow multiple roles
@@ -42,6 +43,7 @@ export const usersData: UserData[] = [
     username: "tamim_ikbal",
     email: "tamim.ikbal@buet.ac.bd",
     password: "password123",
+    phone: "+8801712345678",
     avatar:
       "https://ui-avatars.com/api/?name=Tamim+Ikbal&background=3498db&color=fff&size=150&bold=true&rounded=true",
     bio: "Computer Science student at BUET, passionate about web development",
@@ -65,6 +67,7 @@ export const usersData: UserData[] = [
     username: "sarahw",
     email: "sarah.wilson@ruet.ac.bd",
     password: "password123",
+    phone: "+8801823456789",
     avatar:
       "https://ui-avatars.com/api/?name=Sarah+Wilson&background=e74c3c&color=fff&size=150&bold=true&rounded=true",
     bio: "Assistant Professor in Electrical Engineering, research in renewable energy",
@@ -85,6 +88,7 @@ export const usersData: UserData[] = [
     username: "alexc",
     email: "alex.chen@dhakacollege.edu.bd",
     password: "password123",
+    phone: "+8801934567890",
     avatar:
       "https://ui-avatars.com/api/?name=Alex+Chen&background=f39c12&color=fff&size=150&bold=true&rounded=true",
     bio: "HSC 2nd year Science student at Dhaka College, loves physics and mathematics",
@@ -110,6 +114,7 @@ export const usersData: UserData[] = [
     username: "mikej",
     email: "mike.johnson@cuet.ac.bd",
     password: "password123",
+    phone: "+8801745678901",
     avatar:
       "https://ui-avatars.com/api/?name=Mike+Johnson&background=9b59b6&color=fff&size=150&bold=true&rounded=true",
     bio: "Civil Engineering student, interested in structural design",
@@ -133,6 +138,7 @@ export const usersData: UserData[] = [
     username: "emmad",
     email: "emma.davis@rajukcollege.edu.bd",
     password: "password123",
+    phone: "+8801856789012",
     avatar:
       "https://ui-avatars.com/api/?name=Emma+Davis&background=e67e22&color=fff&size=150&bold=true&rounded=true",
     bio: "HSC 1st year Commerce student at Rajuk College, interested in business studies",
@@ -158,6 +164,7 @@ export const usersData: UserData[] = [
     username: "alexj",
     email: "alex.johnson@ruet.ac.bd",
     password: "password123",
+    phone: "+8801967890123",
     avatar:
       "https://ui-avatars.com/api/?name=Alex+Johnson&background=27ae60&color=fff&size=150&bold=true&rounded=true",
     bio: "Professor of Industrial Engineering, expert in operations research",
@@ -178,6 +185,7 @@ export const usersData: UserData[] = [
     username: "emmaw",
     email: "emma.wilson@holycross.edu.bd",
     password: "password123",
+    phone: "+8801778901234",
     avatar:
       "https://ui-avatars.com/api/?name=Emma+Wilson&background=2980b9&color=fff&size=150&bold=true&rounded=true",
     bio: "HSC 2nd year Arts student at Holy Cross College, passionate about literature",
@@ -203,6 +211,7 @@ export const usersData: UserData[] = [
     username: "jamesk",
     email: "james.kim@cuet.ac.bd",
     password: "password123",
+    phone: "+8801889012345",
     avatar:
       "https://ui-avatars.com/api/?name=James+Kim&background=16a085&color=fff&size=150&bold=true&rounded=true",
     bio: "Electronics and Telecommunication student, loves IoT projects",
@@ -226,6 +235,7 @@ export const usersData: UserData[] = [
     username: "sarahk",
     email: "sarah.kim@buet.ac.bd",
     password: "password123",
+    phone: "+8801990123456",
     avatar:
       "https://ui-avatars.com/api/?name=Sarah+Kim&background=8e44ad&color=fff&size=150&bold=true&rounded=true",
     bio: "Lecturer in Mathematics, specializes in applied mathematics",
@@ -246,6 +256,7 @@ export const usersData: UserData[] = [
     username: "rachelk",
     email: "rachel.kim@notredame.edu.bd",
     password: "password123",
+    phone: "+8801601234567",
     avatar:
       "https://ui-avatars.com/api/?name=Rachel+Kim&background=d35400&color=fff&size=150&bold=true&rounded=true",
     bio: "HSC admission candidate preparing for Science group, dreams of studying engineering",
@@ -271,6 +282,7 @@ export const usersData: UserData[] = [
     username: "johns",
     email: "john.smith@kuet.ac.bd",
     password: "password123",
+    phone: "+8801712345679",
     avatar:
       "https://ui-avatars.com/api/?name=John+Smith&background=1abc9c&color=fff&size=150&bold=true&rounded=true",
     bio: "Architecture student, passionate about sustainable building design",
@@ -294,6 +306,7 @@ export const usersData: UserData[] = [
     username: "lindal",
     email: "linda.lee@cuet.ac.bd",
     password: "password123",
+    phone: "+8801823456780",
     avatar:
       "https://ui-avatars.com/api/?name=Linda+Lee&background=2ecc71&color=fff&size=150&bold=true&rounded=true",
     bio: "Associate Professor in Environmental Engineering, climate change researcher",
@@ -314,6 +327,7 @@ export const usersData: UserData[] = [
     username: "davidb",
     email: "david.brown@adamjee.edu.bd",
     password: "password123",
+    phone: "+8801934567891",
     avatar:
       "https://ui-avatars.com/api/?name=David+Brown&background=c0392b&color=fff&size=150&bold=true&rounded=true",
     bio: "HSC 1st year Science student at Adamjee Cantonment College, interested in medical science",
@@ -339,6 +353,7 @@ export const usersData: UserData[] = [
     username: "sophiam",
     email: "sophia.miller@ruet.ac.bd",
     password: "password123",
+    phone: "+8801745678902",
     avatar:
       "https://ui-avatars.com/api/?name=Sophia+Miller&background=8e44ad&color=fff&size=150&bold=true&rounded=true",
     bio: "Food Engineering student, focuses on food safety and nutrition",
@@ -362,6 +377,7 @@ export const usersData: UserData[] = [
     username: "williamg",
     email: "william.garcia@kuet.ac.bd",
     password: "password123",
+    phone: "+8801856789013",
     avatar:
       "https://ui-avatars.com/api/?name=William+Garcia&background=d68910&color=fff&size=150&bold=true&rounded=true",
     bio: "Senior Lecturer in Computer Science, AI and machine learning expert",
@@ -382,6 +398,7 @@ export const usersData: UserData[] = [
     username: "oliviam",
     email: "olivia.martinez@viqarunnisa.edu.bd",
     password: "password123",
+    phone: "+8801967890124",
     avatar:
       "https://ui-avatars.com/api/?name=Olivia+Martinez&background=e91e63&color=fff&size=150&bold=true&rounded=true",
     bio: "HSC 2nd year Commerce student at Viqarunnisa Noon College, interested in accounting",
@@ -407,6 +424,7 @@ export const usersData: UserData[] = [
     username: "benjaminl",
     email: "benjamin.lee@buet.ac.bd",
     password: "password123",
+    phone: "+8801778901235",
     avatar:
       "https://ui-avatars.com/api/?name=Benjamin+Lee&background=34495e&color=fff&size=150&bold=true&rounded=true",
     bio: "Professor of Physics, quantum mechanics and nanotechnology researcher",
@@ -427,6 +445,7 @@ export const usersData: UserData[] = [
     username: "miac",
     email: "mia.clark@ruet.ac.bd",
     password: "password123",
+    phone: "+8801889012346",
     avatar:
       "https://ui-avatars.com/api/?name=Mia+Clark&background=17a2b8&color=fff&size=150&bold=true&rounded=true",
     bio: "Petroleum Engineering student, interested in renewable energy transition",
@@ -450,6 +469,7 @@ export const usersData: UserData[] = [
     username: "elijahw",
     email: "elijah.walker@saintjoseph.edu.bd",
     password: "password123",
+    phone: "+8801990123457",
     avatar:
       "https://ui-avatars.com/api/?name=Elijah+Walker&background=28a745&color=fff&size=150&bold=true&rounded=true",
     bio: "HSC 1st year Arts student at Saint Joseph Higher Secondary School, loves history",
@@ -475,6 +495,7 @@ export const usersData: UserData[] = [
     username: "avah",
     email: "ava.hall@cuet.ac.bd",
     password: "password123",
+    phone: "+8801601234568",
     avatar:
       "https://ui-avatars.com/api/?name=Ava+Hall&background=6f42c1&color=fff&size=150&bold=true&rounded=true",
     bio: "Assistant Professor in Chemistry, organic synthesis specialist",
@@ -496,6 +517,7 @@ export const usersData: UserData[] = [
     username: "fahimr",
     email: "fahim.rahman@du.ac.bd",
     password: "password123",
+    phone: "+8801712345680",
     avatar: "https://ui-avatars.com/api/?name=Fahim+Rahman&background=ff6b6b&color=fff&size=150&bold=true&rounded=true",
     bio: "Economics student at Dhaka University, interested in development economics",
     role: ["student"],
@@ -518,6 +540,7 @@ export const usersData: UserData[] = [
     username: "nusratj",
     email: "nusrat.jahan@ju.ac.bd",
     password: "password123",
+    phone: "+8801823456791",
     avatar: "https://ui-avatars.com/api/?name=Nusrat+Jahan&background=4ecdc4&color=fff&size=150&bold=true&rounded=true",
     bio: "Professor of English Literature at Jahangirnagar University, Shakespeare specialist",
     role: ["teacher"],
@@ -537,6 +560,7 @@ export const usersData: UserData[] = [
     username: "karimu",
     email: "karim.uddin@iu.ac.bd",
     password: "password123",
+    phone: "+8801934567892",
     avatar: "https://ui-avatars.com/api/?name=Karim+Uddin&background=45b7d1&color=fff&size=150&bold=true&rounded=true",
     bio: "Business Administration student at Islamic University, entrepreneurship enthusiast",
     role: ["student"],
@@ -559,6 +583,7 @@ export const usersData: UserData[] = [
     username: "rashidab",
     email: "rashida.begum@sust.edu",
     password: "password123",
+    phone: "+8801745678903",
     avatar: "https://ui-avatars.com/api/?name=Rashida+Begum&background=96ceb4&color=fff&size=150&bold=true&rounded=true",
     bio: "Associate Professor in Statistics, data science researcher",
     role: ["teacher"],
@@ -578,6 +603,7 @@ export const usersData: UserData[] = [
     username: "arifh",
     email: "arif.hossain@cu.ac.bd",
     password: "password123",
+    phone: "+8801856789014",
     avatar: "https://ui-avatars.com/api/?name=Arif+Hossain&background=feca57&color=fff&size=150&bold=true&rounded=true",
     bio: "Pharmacy student at University of Chittagong, pharmaceutical research interest",
     role: ["student"],
@@ -600,6 +626,7 @@ export const usersData: UserData[] = [
     username: "fatemak",
     email: "fatema.khatun@ru.ac.bd",
     password: "password123",
+    phone: "+8801967890125",
     avatar: "https://ui-avatars.com/api/?name=Fatema+Khatun&background=ff9ff3&color=fff&size=150&bold=true&rounded=true",
     bio: "Senior Lecturer in Psychology, cognitive psychology specialist",
     role: ["teacher"],
@@ -619,6 +646,7 @@ export const usersData: UserData[] = [
     username: "sabbira",
     email: "sabbir.ahmed@nstu.edu.bd",
     password: "password123",
+    phone: "+8801778901236",
     avatar: "https://ui-avatars.com/api/?name=Sabbir+Ahmed&background=54a0ff&color=fff&size=150&bold=true&rounded=true",
     bio: "Marine Science student at NSTU, oceanography and marine biology enthusiast",
     role: ["student"],
@@ -641,6 +669,7 @@ export const usersData: UserData[] = [
     username: "salmaa",
     email: "salma.akter@bau.edu.bd",
     password: "password123",
+    phone: "+8801889012347",
     avatar: "https://ui-avatars.com/api/?name=Salma+Akter&background=5f27cd&color=fff&size=150&bold=true&rounded=true",
     bio: "Professor of Agriculture, sustainable farming and crop science expert",
     role: ["teacher"],
@@ -660,6 +689,7 @@ export const usersData: UserData[] = [
     username: "tanviri",
     email: "tanvir.islam@pstu.ac.bd",
     password: "password123",
+    phone: "+8801990123458",
     avatar: "https://ui-avatars.com/api/?name=Tanvir+Islam&background=00d2d3&color=fff&size=150&bold=true&rounded=true",
     bio: "Veterinary Medicine student at PSTU, animal health and welfare advocate",
     role: ["student"],
@@ -682,6 +712,7 @@ export const usersData: UserData[] = [
     username: "rumap",
     email: "ruma.parvin@hstu.ac.bd",
     password: "password123",
+    phone: "+8801601234569",
     avatar: "https://ui-avatars.com/api/?name=Ruma+Parvin&background=ff6348&color=fff&size=150&bold=true&rounded=true",
     bio: "Assistant Professor in Sociology, social research and gender studies specialist",
     role: ["teacher"],
@@ -701,6 +732,7 @@ export const usersData: UserData[] = [
     username: "mariums",
     email: "marium.sultana@gmail.com",
     password: "password123",
+    phone: "+8801712345681",
     avatar: "https://ui-avatars.com/api/?name=Marium+Sultana&background=ff7675&color=fff&size=150&bold=true&rounded=true",
     bio: "HSC Science student at Dhaka College, aspiring to study medicine",
     role: ["student"],
@@ -724,6 +756,7 @@ export const usersData: UserData[] = [
     username: "rafiqs",
     email: "rafiq.hasan@teacher.edu.bd",
     password: "password123",
+    phone: "+8801823456792",
     avatar: "https://ui-avatars.com/api/?name=Rafiq+Hasan&background=74b9ff&color=fff&size=150&bold=true&rounded=true",
     bio: "Physics teacher at Notre Dame College, passionate about experimental physics",
     role: ["teacher"],
@@ -744,6 +777,7 @@ export const usersData: UserData[] = [
     username: "nasreena",
     email: "nasreen.akhter@gmail.com",
     password: "password123",
+    phone: "+8801934567893",
     avatar: "https://ui-avatars.com/api/?name=Nasreen+Akhter&background=a29bfe&color=fff&size=150&bold=true&rounded=true",
     bio: "HSC Business Studies student at Viqarunnisa Noon College, future entrepreneur",
     role: ["student"],
@@ -767,6 +801,7 @@ export const usersData: UserData[] = [
     username: "aminuli",
     email: "aminul.islam@gmail.com",
     password: "password123",
+    phone: "+8801745678904",
     avatar: "https://ui-avatars.com/api/?name=Aminul+Islam&background=6c5ce7&color=fff&size=150&bold=true&rounded=true",
     bio: "HSC Humanities student at Rajshahi College, interested in history and literature",
     role: ["student"],
@@ -790,6 +825,7 @@ export const usersData: UserData[] = [
     username: "shireens",
     email: "shireen.begum@teacher.edu.bd",
     password: "password123",
+    phone: "+8801856789015",
     avatar: "https://ui-avatars.com/api/?name=Shireen+Begum&background=fd79a8&color=fff&size=150&bold=true&rounded=true",
     bio: "Mathematics teacher at Holy Cross College, loves solving complex problems",
     role: ["teacher"],
@@ -810,6 +846,7 @@ export const usersData: UserData[] = [
     username: "habiburs",
     email: "habibur.rahman@gmail.com",
     password: "password123",
+    phone: "+8801967890126",
     avatar: "https://ui-avatars.com/api/?name=Habibur+Rahman&background=00b894&color=fff&size=150&bold=true&rounded=true",
     bio: "HSC Science student at Chittagong College, chemistry enthusiast",
     role: ["student"],
@@ -833,6 +870,7 @@ export const usersData: UserData[] = [
     username: "faridas",
     email: "farida.yasmin@gmail.com",
     password: "password123",
+    phone: "+8801778901237",
     avatar: "https://ui-avatars.com/api/?name=Farida+Yasmin&background=e17055&color=fff&size=150&bold=true&rounded=true",
     bio: "HSC Business Studies student at Eden Mohila College, accounting specialist",
     role: ["student"],
@@ -856,6 +894,7 @@ export const usersData: UserData[] = [
     username: "golams",
     email: "golam.mostafa@teacher.edu.bd",
     password: "password123",
+    phone: "+8801889012348",
     avatar: "https://ui-avatars.com/api/?name=Golam+Mostafa&background=0984e3&color=fff&size=150&bold=true&rounded=true",
     bio: "English teacher at Sylhet Government College, literature and language expert",
     role: ["teacher"],
@@ -876,6 +915,7 @@ export const usersData: UserData[] = [
     username: "rehanas",
     email: "rehana.khatun@gmail.com",
     password: "password123",
+    phone: "+8801990123459",
     avatar: "https://ui-avatars.com/api/?name=Rehana+Khatun&background=fdcb6e&color=fff&size=150&bold=true&rounded=true",
     bio: "HSC Humanities student at Comilla Victoria College, passionate about social work",
     role: ["student"],
@@ -899,6 +939,7 @@ export const usersData: UserData[] = [
     username: "zakirs",
     email: "zakir.hossain@gmail.com",
     password: "password123",
+    phone: "+8801601234570",
     avatar: "https://ui-avatars.com/api/?name=Zakir+Hossain&background=2d3436&color=fff&size=150&bold=true&rounded=true",
     bio: "HSC Science student at Barisal Government College, future engineer",
     role: ["student"],
