@@ -1,15 +1,48 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaCamera, FaUser, FaSave, FaTimes } from "react-icons/fa";
-import { useAppDispatch } from "../store/hooks";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { updateProfile } from "../store/slices/profileSlice";
+
+import PageLoader from "./Fallbacks/PageLoader";
+
+interface FormData {
+  name: string;
+  username: string;
+  bio: string;
+  university: string;
+  avatar: string;
+}
 
 const ProfileEdit: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const [formData, setFormData] = useState({});
+  const profileData = useAppSelector((state) => state.profile);
 
-  const handleInputChange = (field: string, value: string) => {
+  const [formData, setFormData] = useState<FormData>({
+    name: "",
+    username: "",
+    bio: "",
+    university: "",
+    avatar: "",
+  });
+  const [loading, setLoading] = useState(true);
+
+  // Load data from Redux state
+  useEffect(() => {
+    if (profileData.id) {
+      setFormData({
+        name: profileData.name,
+        username: profileData.username,
+        bio: profileData.bio,
+        university: profileData.university,
+        avatar: profileData.avatar,
+      });
+    }
+    setLoading(false);
+  }, [profileData]);
+
+  const handleInputChange = (field: keyof FormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -30,8 +63,13 @@ const ProfileEdit: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Form submission is handled by Save button click
+    dispatch(updateProfile(formData));
+    navigate(-1);
   };
+
+  if (loading) {
+    return <PageLoader />;
+  }
 
   return (
     <form className="space-y-5" onSubmit={handleSubmit}>
@@ -51,11 +89,7 @@ const ProfileEdit: React.FC = () => {
               Cancel
             </button>
             <button
-              type="button"
-              onClick={() => {
-                dispatch(updateProfile(formData));
-                navigate(-1);
-              }}
+              type="submit"
               className="rounded-lg bg-blue-600 px-6 py-2 text-white transition-colors hover:bg-blue-700"
             >
               <FaSave className="mr-2 inline" />
@@ -73,7 +107,7 @@ const ProfileEdit: React.FC = () => {
         <div className="flex items-center gap-6">
           <div className="relative">
             <img
-              src="https://picsum.photos/200/300"
+              src={formData.avatar || "https://picsum.photos/200/300"}
               alt="Profile"
               className="h-32 w-32 rounded-full border-4 border-white object-cover shadow-lg"
             />
@@ -107,6 +141,7 @@ const ProfileEdit: React.FC = () => {
             </label>
             <input
               type="text"
+              value={formData.name}
               onChange={(e) => handleInputChange("name", e.target.value)}
               className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
               placeholder="Enter your full name"
@@ -118,6 +153,7 @@ const ProfileEdit: React.FC = () => {
             </label>
             <input
               type="text"
+              value={formData.username}
               onChange={(e) => handleInputChange("username", e.target.value)}
               className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
               placeholder="Enter your username"
@@ -130,6 +166,7 @@ const ProfileEdit: React.FC = () => {
             Bio
           </label>
           <textarea
+            value={formData.bio}
             onChange={(e) => handleInputChange("bio", e.target.value)}
             rows={4}
             className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
@@ -143,6 +180,7 @@ const ProfileEdit: React.FC = () => {
           </label>
           <input
             type="text"
+            value={formData.university}
             onChange={(e) => handleInputChange("university", e.target.value)}
             className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             placeholder="Enter your university name"

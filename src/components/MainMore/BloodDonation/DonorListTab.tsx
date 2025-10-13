@@ -7,7 +7,7 @@ import {
 } from "../../../store/slices/mainMore/bloodDonationSlice";
 import { bloodGroups } from "../data/bloodDonationData";
 
-const universities = ["All", "BUET", "DU", "KUET", "RUET", "CUET", "HSC"];
+const universities = ["All", "BUET", "RUET", "KUET", "CUET", "HSC"];
 
 const DonorListTab: React.FC = () => {
   const dispatch = useAppDispatch();

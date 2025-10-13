@@ -1,35 +1,6 @@
 export const getCurrentUserId = (): string => {
-  // For demo, treat id '1' as the current user
+  // In real life, we would get current user by authentication
   return "1";
-};
-
-// Generate dynamic avatar URL using RandomUser.me API
-export const generateAvatarUrl = (
-  userId: string,
-  gender: "male" | "female"
-): string => {
-  // Convert userId to number for consistent avatar selection
-  const numericId = parseInt(userId) || 1;
-  // Use modulo to get a number between 1-100 for RandomUser API
-  const avatarNumber = ((numericId - 1) % 100) + 1;
-
-  return `https://randomuser.me/api/portraits/${gender}/${avatarNumber}.jpg`;
-};
-
-// Helper function to assign gender based on name patterns
-export const assignGender = (name: string): "male" | "female" => {
-  const femaleNames = [
-    "Sarah",
-    "Emma",
-    "Linda",
-    "Sophia",
-    "Olivia",
-    "Mia",
-    "Ava",
-    "Rachel",
-  ];
-  const firstName = name.split(" ")[0];
-  return femaleNames.includes(firstName) ? "female" : "male";
 };
 
 export interface UserData {
@@ -42,7 +13,7 @@ export interface UserData {
   gender?: "male" | "female"; // Make gender optional for now
   friends: string[];
   pendingRequests?: string[];
-  saved?: string[]; // Bookmarked post IDs
+  saved?: string[];
 }
 
 export const usersData: UserData[] = [
@@ -50,9 +21,10 @@ export const usersData: UserData[] = [
     id: "1",
     name: "Tamim Ikbal (1/20)",
     username: "tamim_ikbal",
-    avatar: generateAvatarUrl("1", "male"),
+    avatar:
+      "https://ui-avatars.com/api/?name=Tamim+Ikbal&background=3498db&color=fff&size=150&bold=true&rounded=true",
     bio: "User 1 bio",
-    university: "University 1",
+    university: "BUET",
     gender: "male",
     friends: ["2", "3", "5", "6", "12", "14", "15"],
     pendingRequests: ["4", "7", "8", "9"],
@@ -62,9 +34,10 @@ export const usersData: UserData[] = [
     id: "2",
     name: "Sarah Wilson (2/20)",
     username: "sarahw",
-    avatar: generateAvatarUrl("2", "female"),
+    avatar:
+      "https://ui-avatars.com/api/?name=Sarah+Wilson&background=e74c3c&color=fff&size=150&bold=true&rounded=true",
     bio: "User 2 bio",
-    university: "University 2",
+    university: "RUET",
     gender: "female",
     friends: ["1", "3"],
     pendingRequests: ["5"],
@@ -74,217 +47,252 @@ export const usersData: UserData[] = [
     id: "3",
     name: "Alex Chen (3/20)",
     username: "alexc",
-    avatar: generateAvatarUrl("3", "male"),
+    avatar:
+      "https://ui-avatars.com/api/?name=Alex+Chen&background=f39c12&color=fff&size=150&bold=true&rounded=true",
     bio: "User 3 bio",
-    university: "University 3",
+    university: "KUET",
     gender: "male",
-    friends: ["1", "2"],
-    pendingRequests: [],
-    saved: [],
+    friends: ["1", "2", "6", "11"],
+    pendingRequests: ["7", "13"],
+    saved: ["p1", "p4"],
   },
   {
     id: "4",
     name: "Mike Johnson (4/20)",
     username: "mikej",
-    avatar: generateAvatarUrl("4", "male"),
+    avatar:
+      "https://ui-avatars.com/api/?name=Mike+Johnson&background=9b59b6&color=fff&size=150&bold=true&rounded=true",
     bio: "User 4 bio",
-    university: "University 4",
+    university: "CUET",
     gender: "male",
-    friends: ["5"],
-    pendingRequests: [],
-    saved: [],
+    friends: ["5", "8", "12"],
+    pendingRequests: ["10", "16"],
+    saved: ["p2", "p5"],
   },
   {
     id: "5",
     name: "Emma Davis (5/20)",
     username: "emmad",
-    avatar: generateAvatarUrl("5", "female"),
+    avatar:
+      "https://ui-avatars.com/api/?name=Emma+Davis&background=e67e22&color=fff&size=150&bold=true&rounded=true",
     bio: "User 5 bio",
-    university: "University 5",
+    university: "BUET",
     gender: "female",
-    friends: ["4"],
-    pendingRequests: [],
-    saved: [],
+    friends: ["4", "9", "14"],
+    pendingRequests: ["11", "17"],
+    saved: ["p3", "p6"],
   },
   {
     id: "6",
     name: "Alex Johnson (6/20)",
     username: "alexj",
-    avatar: generateAvatarUrl("6", "male"),
+    avatar:
+      "https://ui-avatars.com/api/?name=Alex+Johnson&background=27ae60&color=fff&size=150&bold=true&rounded=true",
     bio: "User 6 bio",
-    university: "University 6",
+    university: "RUET",
     gender: "male",
-    friends: [],
-    pendingRequests: [],
-    saved: [],
+    friends: ["1", "3", "10"],
+    pendingRequests: ["12", "18"],
+    saved: ["p1", "p7"],
   },
   {
     id: "7",
     name: "Emma Wilson (7/20)",
     username: "emmaw",
-    avatar: generateAvatarUrl("7", "female"),
+    avatar:
+      "https://ui-avatars.com/api/?name=Emma+Wilson&background=2980b9&color=fff&size=150&bold=true&rounded=true",
     bio: "User 7 bio",
-    university: "University 7",
+    university: "KUET",
     gender: "female",
-    friends: [],
-    pendingRequests: [],
-    saved: [],
+    friends: ["11", "15", "19"],
+    pendingRequests: ["13", "20"],
+    saved: ["p2", "p8"],
   },
   {
     id: "8",
     name: "James Kim (8/20)",
     username: "jamesk",
-    avatar: generateAvatarUrl("8", "male"),
+    avatar:
+      "https://ui-avatars.com/api/?name=James+Kim&background=16a085&color=fff&size=150&bold=true&rounded=true",
     bio: "User 8 bio",
-    university: "University 8",
+    university: "CUET",
     gender: "male",
-    friends: [],
-    pendingRequests: [],
-    saved: [],
+    friends: ["1", "4", "12", "16"],
+    pendingRequests: ["14"],
+    saved: ["p3", "p9"],
   },
   {
     id: "9",
     name: "Sarah Kim (9/20)",
     username: "sarahk",
-    avatar: generateAvatarUrl("9", "female"),
+    avatar:
+      "https://ui-avatars.com/api/?name=Sarah+Kim&background=8e44ad&color=fff&size=150&bold=true&rounded=true",
     bio: "User 9 bio",
-    university: "University 9",
+    university: "BUET",
     gender: "female",
-    friends: [],
-    pendingRequests: [],
-    saved: [],
+    friends: ["1", "5", "13", "17"],
+    pendingRequests: ["15"],
+    saved: ["p4", "p10"],
   },
   {
     id: "10",
     name: "Rachel Kim (10/20)",
     username: "rachelk",
-    avatar: generateAvatarUrl("10", "female"),
+    avatar:
+      "https://ui-avatars.com/api/?name=Rachel+Kim&background=d35400&color=fff&size=150&bold=true&rounded=true",
     bio: "User 10 bio",
-    university: "University 10",
+    university: "RUET",
     gender: "female",
-    friends: [],
-    pendingRequests: [],
-    saved: [],
+    friends: ["2", "6", "14", "18"],
+    pendingRequests: ["16"],
+    saved: ["p5", "p11"],
   },
   {
     id: "11",
     name: "John Smith (11/20)",
     username: "johns",
     avatar:
-      "https://ui-avatars.com/api/?name=John+Smith&background=1abc9c&color=fff&size=150",
+      "https://ui-avatars.com/api/?name=John+Smith&background=1abc9c&color=fff&size=150&bold=true&rounded=true",
     bio: "User 11 bio",
-    university: "University 11",
-    friends: [],
-    pendingRequests: [],
-    saved: [],
+    university: "KUET",
+    gender: "male",
+    friends: ["1", "3", "7", "15"],
+    pendingRequests: ["19"],
+    saved: ["p6", "p12"],
   },
   {
     id: "12",
     name: "Linda Lee (12/20)",
     username: "lindal",
     avatar:
-      "https://ui-avatars.com/api/?name=Linda+Lee&background=2ecc71&color=fff&size=150",
+      "https://ui-avatars.com/api/?name=Linda+Lee&background=2ecc71&color=fff&size=150&bold=true&rounded=true",
     bio: "User 12 bio",
-    university: "University 12",
-    friends: [],
-    pendingRequests: [],
-    saved: [],
+    university: "CUET",
+    gender: "female",
+    friends: ["1", "4", "8", "16"],
+    pendingRequests: ["20"],
+    saved: ["p7", "p13"],
   },
   {
     id: "13",
     name: "David Brown (13/20)",
     username: "davidb",
     avatar:
-      "https://ui-avatars.com/api/?name=David+Brown&background=3498db&color=fff&size=150",
+      "https://ui-avatars.com/api/?name=David+Brown&background=c0392b&color=fff&size=150&bold=true&rounded=true",
     bio: "User 13 bio",
-    university: "University 13",
-    friends: [],
-    pendingRequests: [],
-    saved: [],
+    university: "BUET",
+    gender: "male",
+    friends: ["1", "9", "17"],
+    pendingRequests: ["3", "7"],
+    saved: ["p8", "p14"],
   },
   {
     id: "14",
     name: "Sophia Miller (14/20)",
     username: "sophiam",
     avatar:
-      "https://ui-avatars.com/api/?name=Sophia+Miller&background=9b59b6&color=fff&size=150",
+      "https://ui-avatars.com/api/?name=Sophia+Miller&background=8e44ad&color=fff&size=150&bold=true&rounded=true",
     bio: "User 14 bio",
-    university: "University 14",
-    friends: [],
-    pendingRequests: [],
-    saved: [],
+    university: "RUET",
+    gender: "female",
+    friends: ["1", "5", "10", "18"],
+    pendingRequests: ["8"],
+    saved: ["p9", "p15"],
   },
   {
     id: "15",
     name: "William Garcia (15/20)",
     username: "williamg",
     avatar:
-      "https://ui-avatars.com/api/?name=William+Garcia&background=e67e22&color=fff&size=150",
+      "https://ui-avatars.com/api/?name=William+Garcia&background=d68910&color=fff&size=150&bold=true&rounded=true",
     bio: "User 15 bio",
-    university: "University 15",
-    friends: [],
-    pendingRequests: [],
-    saved: [],
+    university: "KUET",
+    gender: "male",
+    friends: ["1", "7", "11", "19"],
+    pendingRequests: ["9"],
+    saved: ["p10", "p16"],
   },
   {
     id: "16",
     name: "Olivia Martinez (16/20)",
     username: "oliviam",
     avatar:
-      "https://ui-avatars.com/api/?name=Olivia+Martinez&background=e74c3c&color=fff&size=150",
+      "https://ui-avatars.com/api/?name=Olivia+Martinez&background=e91e63&color=fff&size=150&bold=true&rounded=true",
     bio: "User 16 bio",
-    university: "University 16",
-    friends: [],
-    pendingRequests: [],
-    saved: [],
+    university: "CUET",
+    gender: "female",
+    friends: ["8", "12", "20"],
+    pendingRequests: ["4", "10"],
+    saved: ["p11", "p17"],
   },
   {
     id: "17",
     name: "Benjamin Lee (17/20)",
     username: "benjaminl",
     avatar:
-      "https://ui-avatars.com/api/?name=Benjamin+Lee&background=34495e&color=fff&size=150",
+      "https://ui-avatars.com/api/?name=Benjamin+Lee&background=34495e&color=fff&size=150&bold=true&rounded=true",
     bio: "User 17 bio",
-    university: "University 17",
-    friends: [],
-    pendingRequests: [],
+    university: "BUET",
+    gender: "male",
+    friends: ["9", "13"],
+    pendingRequests: ["5"],
+    saved: ["p12", "p18"],
   },
   {
     id: "18",
     name: "Mia Clark (18/20)",
     username: "miac",
     avatar:
-      "https://ui-avatars.com/api/?name=Mia+Clark&background=16a085&color=fff&size=150",
+      "https://ui-avatars.com/api/?name=Mia+Clark&background=17a2b8&color=fff&size=150&bold=true&rounded=true",
     bio: "User 18 bio",
-    university: "University 18",
-    friends: [],
-    pendingRequests: [],
+    university: "RUET",
+    gender: "female",
+    friends: ["10", "14"],
+    pendingRequests: ["6"],
+    saved: ["p13", "p19"],
   },
   {
     id: "19",
     name: "Elijah Walker (19/20)",
     username: "elijahw",
     avatar:
-      "https://ui-avatars.com/api/?name=Elijah+Walker&background=27ae60&color=fff&size=150",
+      "https://ui-avatars.com/api/?name=Elijah+Walker&background=28a745&color=fff&size=150&bold=true&rounded=true",
     bio: "User 19 bio",
-    university: "University 19",
-    friends: [],
-    pendingRequests: [],
+    university: "KUET",
+    gender: "male",
+    friends: ["7", "15"],
+    pendingRequests: ["11"],
+    saved: ["p14", "p20"],
   },
   {
     id: "20",
     name: "Ava Hall (20/20)",
     username: "avah",
     avatar:
-      "https://ui-avatars.com/api/?name=Ava+Hall&background=2980b9&color=fff&size=150",
+      "https://ui-avatars.com/api/?name=Ava+Hall&background=6f42c1&color=fff&size=150&bold=true&rounded=true",
     bio: "User 20 bio",
-    university: "University 20",
-    friends: [],
-    pendingRequests: [],
+    university: "CUET",
+    gender: "female",
+    friends: ["16"],
+    pendingRequests: ["7", "12"],
+    saved: ["p15", "p1"],
   },
 ];
 
 // Helper function to get user data by ID
 export const getUserById = (userId: string): UserData | null => {
   return usersData.find((user) => user.id === userId) || null;
+};
+
+// Helper function to update user data by ID
+export const updateUserById = (
+  userId: string,
+  updatedData: Partial<UserData>
+): boolean => {
+  const userIndex = usersData.findIndex((user) => user.id === userId);
+  if (userIndex !== -1) {
+    usersData[userIndex] = { ...usersData[userIndex], ...updatedData };
+    return true;
+  }
+  return false;
 };

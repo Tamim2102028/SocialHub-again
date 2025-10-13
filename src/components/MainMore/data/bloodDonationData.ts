@@ -79,7 +79,7 @@ export const mockBloodDonors: BloodDonor[] = [
     id: "3",
     name: "Sabbir Hossain",
     bloodGroup: "B+",
-    university: "DU",
+    university: "BUET",
     department: "ME",
     hall: "Titumir Hall",
     gender: "Male",

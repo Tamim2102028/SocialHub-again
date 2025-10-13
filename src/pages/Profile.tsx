@@ -14,12 +14,14 @@ import { getPublicFoldersByUserId } from "../data/publicFilesData";
 import ProfilePosts from "../components/Profile/ProfilePosts";
 import PublicFiles from "../components/Profile/PublicFiles";
 import PageLoader from "./Fallbacks/PageLoader";
+import { useAppSelector } from "../store/hooks";
 
 const Profile: React.FC = () => {
   const { userId } = useParams<{ userId: string }>();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"posts" | "files">("posts");
   const [isLoading, setIsLoading] = useState(true);
+  const profileData = useAppSelector((state) => state.profile);
 
   // Get current user ID
   const currentUserId = getCurrentUserId();
@@ -30,9 +32,8 @@ const Profile: React.FC = () => {
   // Get actual user ID (default to current user ID)
   const actualUserId = userId || currentUserId;
 
-  // Get dynamic user data based on userId
-  // Always get from userData.ts for consistency and dynamic data
-  const userData = getUserById(actualUserId);
+  // Get user data - use Redux state for own profile, userData for others
+  const userData = isOwnProfile ? profileData : getUserById(actualUserId);
 
   // Get user's posts
   const userPosts = getPostsByUserId(actualUserId);
@@ -41,26 +42,6 @@ const Profile: React.FC = () => {
   const userPublicFolders = getPublicFoldersByUserId(actualUserId);
 
   useEffect(() => {
-    // Debug: Log the data being used
-    console.log("Profile Debug:", {
-      userId,
-      actualUserId,
-      isOwnProfile,
-      userData: userData
-        ? {
-            id: userData.id,
-            name: userData.name,
-            username: userData.username,
-            university: userData.university,
-            avatar: userData.avatar,
-            bio: userData.bio,
-          }
-        : null,
-      currentUserId,
-      userPosts: userPosts.length,
-      userPublicFolders: userPublicFolders.length,
-    });
-
     // Set loading to false after component mounts
     const timer = setTimeout(() => {
       setIsLoading(false);
