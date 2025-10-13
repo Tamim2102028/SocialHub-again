@@ -7,7 +7,14 @@ interface ProfileState {
   username: string;
   avatar: string;
   bio: string;
-  university: string;
+  role: "student" | "teacher";
+  university: {
+    name: string;
+    dept: string;
+    section?: string;
+    subsection?: string;
+    roll?: string;
+  };
   gender?: "male" | "female";
   friends: string[];
   pendingRequests?: string[];
@@ -26,6 +33,7 @@ const getCurrentUserData = (): ProfileState => {
       username: userData.username,
       avatar: userData.avatar,
       bio: userData.bio,
+      role: userData.role,
       university: userData.university,
       gender: userData.gender,
       friends: userData.friends || [],
@@ -39,7 +47,11 @@ const getCurrentUserData = (): ProfileState => {
       username: "",
       avatar: "",
       bio: "",
-      university: "",
+      role: "student",
+      university: {
+        name: "",
+        dept: ""
+      },
       gender: undefined,
       friends: [],
       pendingRequests: [],
@@ -71,7 +83,14 @@ const profileSlice = createSlice({
         username: "",
         avatar: "",
         bio: "",
-        university: "",
+        role: "student" as const,
+        university: {
+          name: "",
+          dept: "",
+          section: "",
+          subsection: "",
+          roll: ""
+        },
         gender: undefined,
         friends: [],
         pendingRequests: [],
