@@ -7,15 +7,27 @@ export interface UserData {
   id: string;
   name: string;
   username: string;
+  email: string;
+  password: string;
   avatar: string;
   bio: string;
-  role: "student" | "teacher";
-  university: {
+  role: ("student" | "teacher")[]; // array to allow multiple roles
+  category: "university" | "hsc"; // university level or HSC level
+  university?: {
     name: string;
     dept: string;
     section?: string;
     subsection?: string;
     roll?: string;
+  };
+  college?: {
+    name: string;
+    dept: "science" | "arts" | "commerce"; // HSC department
+    section?: string; // optional for teachers
+    subsection?: string;
+    roll?: string; // optional for teachers
+    sscBatch: string;
+    level?: "1st year" | "2nd year" | "admission"; // optional for teachers
   };
   gender?: "male" | "female";
   friends: string[];
@@ -28,16 +40,19 @@ export const usersData: UserData[] = [
     id: "1",
     name: "Tamim Ikbal (1/20)",
     username: "tamim_ikbal",
+    email: "tamim.ikbal@buet.ac.bd",
+    password: "password123",
     avatar:
       "https://ui-avatars.com/api/?name=Tamim+Ikbal&background=3498db&color=fff&size=150&bold=true&rounded=true",
     bio: "Computer Science student at BUET, passionate about web development",
-    role: "student",
+    role: ["student"],
+    category: "university",
     university: {
       name: "BUET",
       dept: "Computer Science and Engineering",
       section: "A",
       subsection: "1",
-      roll: "1905001"
+      roll: "1905001",
     },
     gender: "male",
     friends: ["2", "3", "5", "6", "12", "14", "15"],
@@ -48,13 +63,16 @@ export const usersData: UserData[] = [
     id: "2",
     name: "Sarah Wilson (2/20)",
     username: "sarahw",
+    email: "sarah.wilson@ruet.ac.bd",
+    password: "password123",
     avatar:
       "https://ui-avatars.com/api/?name=Sarah+Wilson&background=e74c3c&color=fff&size=150&bold=true&rounded=true",
     bio: "Assistant Professor in Electrical Engineering, research in renewable energy",
-    role: "teacher",
+    role: ["teacher"],
+    category: "university",
     university: {
       name: "RUET",
-      dept: "Electrical and Electronic Engineering"
+      dept: "Electrical and Electronic Engineering",
     },
     gender: "female",
     friends: ["1", "3"],
@@ -65,16 +83,21 @@ export const usersData: UserData[] = [
     id: "3",
     name: "Alex Chen (3/20)",
     username: "alexc",
+    email: "alex.chen@dhakacollege.edu.bd",
+    password: "password123",
     avatar:
       "https://ui-avatars.com/api/?name=Alex+Chen&background=f39c12&color=fff&size=150&bold=true&rounded=true",
-    bio: "Mechanical Engineering student, loves robotics and automation",
-    role: "student",
-    university: {
-      name: "KUET",
-      dept: "Mechanical Engineering",
-      section: "B",
-      subsection: "2",
-      roll: "1803045"
+    bio: "HSC 2nd year Science student at Dhaka College, loves physics and mathematics",
+    role: ["student"],
+    category: "hsc",
+    college: {
+      name: "Dhaka College",
+      dept: "science",
+      section: "A",
+      subsection: "1",
+      roll: "101234",
+      sscBatch: "2022",
+      level: "2nd year",
     },
     gender: "male",
     friends: ["1", "2", "6", "11"],
@@ -85,16 +108,19 @@ export const usersData: UserData[] = [
     id: "4",
     name: "Mike Johnson (4/20)",
     username: "mikej",
+    email: "mike.johnson@cuet.ac.bd",
+    password: "password123",
     avatar:
       "https://ui-avatars.com/api/?name=Mike+Johnson&background=9b59b6&color=fff&size=150&bold=true&rounded=true",
     bio: "Civil Engineering student, interested in structural design",
-    role: "student",
+    role: ["student"],
+    category: "university",
     university: {
       name: "CUET",
       dept: "Civil Engineering",
       section: "A",
       subsection: "1",
-      roll: "1704023"
+      roll: "1704023",
     },
     gender: "male",
     friends: ["5", "8", "12"],
@@ -105,16 +131,21 @@ export const usersData: UserData[] = [
     id: "5",
     name: "Emma Davis (5/20)",
     username: "emmad",
+    email: "emma.davis@rajukcollege.edu.bd",
+    password: "password123",
     avatar:
       "https://ui-avatars.com/api/?name=Emma+Davis&background=e67e22&color=fff&size=150&bold=true&rounded=true",
-    bio: "Software Engineering student, passionate about AI and machine learning",
-    role: "student",
-    university: {
-      name: "BUET",
-      dept: "Computer Science and Engineering",
+    bio: "HSC 1st year Commerce student at Rajuk College, interested in business studies",
+    role: ["student"],
+    category: "hsc",
+    college: {
+      name: "Rajuk College",
+      dept: "commerce",
       section: "B",
-      subsection: "1",
-      roll: "1905067"
+      subsection: "2",
+      roll: "201567",
+      sscBatch: "2023",
+      level: "1st year",
     },
     gender: "female",
     friends: ["4", "9", "14"],
@@ -125,13 +156,16 @@ export const usersData: UserData[] = [
     id: "6",
     name: "Alex Johnson (6/20)",
     username: "alexj",
+    email: "alex.johnson@ruet.ac.bd",
+    password: "password123",
     avatar:
       "https://ui-avatars.com/api/?name=Alex+Johnson&background=27ae60&color=fff&size=150&bold=true&rounded=true",
     bio: "Professor of Industrial Engineering, expert in operations research",
-    role: "teacher",
+    role: ["teacher"],
+    category: "university",
     university: {
       name: "RUET",
-      dept: "Industrial and Production Engineering"
+      dept: "Industrial and Production Engineering",
     },
     gender: "male",
     friends: ["1", "3", "10"],
@@ -142,16 +176,21 @@ export const usersData: UserData[] = [
     id: "7",
     name: "Emma Wilson (7/20)",
     username: "emmaw",
+    email: "emma.wilson@holycross.edu.bd",
+    password: "password123",
     avatar:
       "https://ui-avatars.com/api/?name=Emma+Wilson&background=2980b9&color=fff&size=150&bold=true&rounded=true",
-    bio: "Chemical Engineering student, interested in environmental sustainability",
-    role: "student",
-    university: {
-      name: "KUET",
-      dept: "Chemical Engineering",
+    bio: "HSC 2nd year Arts student at Holy Cross College, passionate about literature",
+    role: ["student"],
+    category: "hsc",
+    college: {
+      name: "Holy Cross College",
+      dept: "arts",
       section: "A",
       subsection: "1",
-      roll: "1802012"
+      roll: "301789",
+      sscBatch: "2022",
+      level: "2nd year",
     },
     gender: "female",
     friends: ["11", "15", "19"],
@@ -162,16 +201,19 @@ export const usersData: UserData[] = [
     id: "8",
     name: "James Kim (8/20)",
     username: "jamesk",
+    email: "james.kim@cuet.ac.bd",
+    password: "password123",
     avatar:
       "https://ui-avatars.com/api/?name=James+Kim&background=16a085&color=fff&size=150&bold=true&rounded=true",
     bio: "Electronics and Telecommunication student, loves IoT projects",
-    role: "student",
+    role: ["student"],
+    category: "university",
     university: {
       name: "CUET",
       dept: "Electronics and Telecommunication Engineering",
       section: "B",
       subsection: "1",
-      roll: "1701089"
+      roll: "1701089",
     },
     gender: "male",
     friends: ["1", "4", "12", "16"],
@@ -182,13 +224,16 @@ export const usersData: UserData[] = [
     id: "9",
     name: "Sarah Kim (9/20)",
     username: "sarahk",
+    email: "sarah.kim@buet.ac.bd",
+    password: "password123",
     avatar:
       "https://ui-avatars.com/api/?name=Sarah+Kim&background=8e44ad&color=fff&size=150&bold=true&rounded=true",
     bio: "Lecturer in Mathematics, specializes in applied mathematics",
-    role: "teacher",
+    role: ["teacher"],
+    category: "university",
     university: {
       name: "BUET",
-      dept: "Mathematics"
+      dept: "Mathematics",
     },
     gender: "female",
     friends: ["1", "5", "13", "17"],
@@ -199,16 +244,21 @@ export const usersData: UserData[] = [
     id: "10",
     name: "Rachel Kim (10/20)",
     username: "rachelk",
+    email: "rachel.kim@notredame.edu.bd",
+    password: "password123",
     avatar:
       "https://ui-avatars.com/api/?name=Rachel+Kim&background=d35400&color=fff&size=150&bold=true&rounded=true",
-    bio: "Textile Engineering student, passionate about sustainable fashion",
-    role: "student",
-    university: {
-      name: "RUET",
-      dept: "Textile Engineering",
-      section: "A",
-      subsection: "2",
-      roll: "1806034"
+    bio: "HSC admission candidate preparing for Science group, dreams of studying engineering",
+    role: ["student"],
+    category: "hsc",
+    college: {
+      name: "Notre Dame College",
+      dept: "science",
+      section: "C",
+      subsection: "1",
+      roll: "102456",
+      sscBatch: "2024",
+      level: "admission",
     },
     gender: "female",
     friends: ["2", "6", "14", "18"],
@@ -219,16 +269,19 @@ export const usersData: UserData[] = [
     id: "11",
     name: "John Smith (11/20)",
     username: "johns",
+    email: "john.smith@kuet.ac.bd",
+    password: "password123",
     avatar:
       "https://ui-avatars.com/api/?name=John+Smith&background=1abc9c&color=fff&size=150&bold=true&rounded=true",
     bio: "Architecture student, passionate about sustainable building design",
-    role: "student",
+    role: ["student"],
+    category: "university",
     university: {
       name: "KUET",
       dept: "Architecture",
       section: "A",
       subsection: "1",
-      roll: "1801025"
+      roll: "1801025",
     },
     gender: "male",
     friends: ["1", "3", "7", "15"],
@@ -239,13 +292,16 @@ export const usersData: UserData[] = [
     id: "12",
     name: "Linda Lee (12/20)",
     username: "lindal",
+    email: "linda.lee@cuet.ac.bd",
+    password: "password123",
     avatar:
       "https://ui-avatars.com/api/?name=Linda+Lee&background=2ecc71&color=fff&size=150&bold=true&rounded=true",
     bio: "Associate Professor in Environmental Engineering, climate change researcher",
-    role: "teacher",
+    role: ["teacher"],
+    category: "university",
     university: {
       name: "CUET",
-      dept: "Civil Engineering"
+      dept: "Civil Engineering",
     },
     gender: "female",
     friends: ["1", "4", "8", "16"],
@@ -256,16 +312,21 @@ export const usersData: UserData[] = [
     id: "13",
     name: "David Brown (13/20)",
     username: "davidb",
+    email: "david.brown@adamjee.edu.bd",
+    password: "password123",
     avatar:
       "https://ui-avatars.com/api/?name=David+Brown&background=c0392b&color=fff&size=150&bold=true&rounded=true",
-    bio: "Biomedical Engineering student, interested in medical device innovation",
-    role: "student",
-    university: {
-      name: "BUET",
-      dept: "Biomedical Engineering",
+    bio: "HSC 1st year Science student at Adamjee Cantonment College, interested in medical science",
+    role: ["student"],
+    category: "hsc",
+    college: {
+      name: "Adamjee Cantonment College",
+      dept: "science",
       section: "A",
-      subsection: "1",
-      roll: "1907015"
+      subsection: "2",
+      roll: "103789",
+      sscBatch: "2023",
+      level: "1st year",
     },
     gender: "male",
     friends: ["1", "9", "17"],
@@ -276,16 +337,19 @@ export const usersData: UserData[] = [
     id: "14",
     name: "Sophia Miller (14/20)",
     username: "sophiam",
+    email: "sophia.miller@ruet.ac.bd",
+    password: "password123",
     avatar:
       "https://ui-avatars.com/api/?name=Sophia+Miller&background=8e44ad&color=fff&size=150&bold=true&rounded=true",
     bio: "Food Engineering student, focuses on food safety and nutrition",
-    role: "student",
+    role: ["student"],
+    category: "university",
     university: {
       name: "RUET",
       dept: "Food Engineering and Tea Technology",
       section: "B",
       subsection: "1",
-      roll: "1805042"
+      roll: "1805042",
     },
     gender: "female",
     friends: ["1", "5", "10", "18"],
@@ -296,13 +360,16 @@ export const usersData: UserData[] = [
     id: "15",
     name: "William Garcia (15/20)",
     username: "williamg",
+    email: "william.garcia@kuet.ac.bd",
+    password: "password123",
     avatar:
       "https://ui-avatars.com/api/?name=William+Garcia&background=d68910&color=fff&size=150&bold=true&rounded=true",
     bio: "Senior Lecturer in Computer Science, AI and machine learning expert",
-    role: "teacher",
+    role: ["teacher"],
+    category: "university",
     university: {
       name: "KUET",
-      dept: "Computer Science and Engineering"
+      dept: "Computer Science and Engineering",
     },
     gender: "male",
     friends: ["1", "7", "11", "19"],
@@ -313,16 +380,21 @@ export const usersData: UserData[] = [
     id: "16",
     name: "Olivia Martinez (16/20)",
     username: "oliviam",
+    email: "olivia.martinez@viqarunnisa.edu.bd",
+    password: "password123",
     avatar:
       "https://ui-avatars.com/api/?name=Olivia+Martinez&background=e91e63&color=fff&size=150&bold=true&rounded=true",
-    bio: "Materials Science student, researching advanced composite materials",
-    role: "student",
-    university: {
-      name: "CUET",
-      dept: "Materials and Metallurgical Engineering",
+    bio: "HSC 2nd year Commerce student at Viqarunnisa Noon College, interested in accounting",
+    role: ["student"],
+    category: "hsc",
+    college: {
+      name: "Viqarunnisa Noon College",
+      dept: "commerce",
       section: "A",
-      subsection: "2",
-      roll: "1703056"
+      subsection: "1",
+      roll: "202345",
+      sscBatch: "2022",
+      level: "2nd year",
     },
     gender: "female",
     friends: ["8", "12", "20"],
@@ -333,13 +405,16 @@ export const usersData: UserData[] = [
     id: "17",
     name: "Benjamin Lee (17/20)",
     username: "benjaminl",
+    email: "benjamin.lee@buet.ac.bd",
+    password: "password123",
     avatar:
       "https://ui-avatars.com/api/?name=Benjamin+Lee&background=34495e&color=fff&size=150&bold=true&rounded=true",
     bio: "Professor of Physics, quantum mechanics and nanotechnology researcher",
-    role: "teacher",
+    role: ["teacher"],
+    category: "university",
     university: {
       name: "BUET",
-      dept: "Physics"
+      dept: "Physics",
     },
     gender: "male",
     friends: ["9", "13"],
@@ -350,16 +425,19 @@ export const usersData: UserData[] = [
     id: "18",
     name: "Mia Clark (18/20)",
     username: "miac",
+    email: "mia.clark@ruet.ac.bd",
+    password: "password123",
     avatar:
       "https://ui-avatars.com/api/?name=Mia+Clark&background=17a2b8&color=fff&size=150&bold=true&rounded=true",
     bio: "Petroleum Engineering student, interested in renewable energy transition",
-    role: "student",
+    role: ["student"],
+    category: "university",
     university: {
       name: "RUET",
       dept: "Petroleum and Mining Engineering",
       section: "A",
       subsection: "1",
-      roll: "1804018"
+      roll: "1804018",
     },
     gender: "female",
     friends: ["10", "14"],
@@ -370,16 +448,21 @@ export const usersData: UserData[] = [
     id: "19",
     name: "Elijah Walker (19/20)",
     username: "elijahw",
+    email: "elijah.walker@saintjoseph.edu.bd",
+    password: "password123",
     avatar:
       "https://ui-avatars.com/api/?name=Elijah+Walker&background=28a745&color=fff&size=150&bold=true&rounded=true",
-    bio: "Urban Planning student, passionate about smart city development",
-    role: "student",
-    university: {
-      name: "KUET",
-      dept: "Urban and Regional Planning",
-      section: "A",
+    bio: "HSC 1st year Arts student at Saint Joseph Higher Secondary School, loves history",
+    role: ["student"],
+    category: "hsc",
+    college: {
+      name: "Saint Joseph Higher Secondary School",
+      dept: "arts",
+      section: "B",
       subsection: "1",
-      roll: "1808007"
+      roll: "302456",
+      sscBatch: "2023",
+      level: "1st year",
     },
     gender: "male",
     friends: ["7", "15"],
@@ -390,27 +473,455 @@ export const usersData: UserData[] = [
     id: "20",
     name: "Ava Hall (20/20)",
     username: "avah",
+    email: "ava.hall@cuet.ac.bd",
+    password: "password123",
     avatar:
       "https://ui-avatars.com/api/?name=Ava+Hall&background=6f42c1&color=fff&size=150&bold=true&rounded=true",
     bio: "Assistant Professor in Chemistry, organic synthesis specialist",
-    role: "teacher",
+    role: ["teacher"],
+    category: "university",
     university: {
       name: "CUET",
-      dept: "Applied Chemistry and Chemical Engineering"
+      dept: "Applied Chemistry and Chemical Engineering",
     },
     gender: "female",
     friends: ["16"],
     pendingRequests: ["7", "12"],
     saved: ["p15", "p1"],
   },
+  // Additional 20 users for better field distribution
+  {
+    id: "21",
+    name: "Fahim Rahman (21/40)",
+    username: "fahimr",
+    email: "fahim.rahman@du.ac.bd",
+    password: "password123",
+    avatar: "https://ui-avatars.com/api/?name=Fahim+Rahman&background=ff6b6b&color=fff&size=150&bold=true&rounded=true",
+    bio: "Economics student at Dhaka University, interested in development economics",
+    role: ["student"],
+    category: "university",
+    university: {
+      name: "University of Dhaka",
+      dept: "Economics",
+      section: "A",
+      subsection: "1",
+      roll: "2001045"
+    },
+    gender: "male",
+    friends: ["1", "3", "22", "25"],
+    pendingRequests: ["23", "26"],
+    saved: ["p1", "p16"],
+  },
+  {
+    id: "22",
+    name: "Nusrat Jahan (22/40)",
+    username: "nusratj",
+    email: "nusrat.jahan@ju.ac.bd",
+    password: "password123",
+    avatar: "https://ui-avatars.com/api/?name=Nusrat+Jahan&background=4ecdc4&color=fff&size=150&bold=true&rounded=true",
+    bio: "Professor of English Literature at Jahangirnagar University, Shakespeare specialist",
+    role: ["teacher"],
+    category: "university",
+    university: {
+      name: "Jahangirnagar University",
+      dept: "English"
+    },
+    gender: "female",
+    friends: ["21", "24", "27"],
+    pendingRequests: ["28"],
+    saved: ["p2", "p17"],
+  },
+  {
+    id: "23",
+    name: "Karim Uddin (23/40)",
+    username: "karimu",
+    email: "karim.uddin@iu.ac.bd",
+    password: "password123",
+    avatar: "https://ui-avatars.com/api/?name=Karim+Uddin&background=45b7d1&color=fff&size=150&bold=true&rounded=true",
+    bio: "Business Administration student at Islamic University, entrepreneurship enthusiast",
+    role: ["student"],
+    category: "university",
+    university: {
+      name: "Islamic University",
+      dept: "Business Administration",
+      section: "B",
+      subsection: "2",
+      roll: "1902078"
+    },
+    gender: "male",
+    friends: ["21", "29", "30"],
+    pendingRequests: ["24"],
+    saved: ["p3", "p18"],
+  },
+  {
+    id: "24",
+    name: "Rashida Begum (24/40)",
+    username: "rashidab",
+    email: "rashida.begum@sust.edu",
+    password: "password123",
+    avatar: "https://ui-avatars.com/api/?name=Rashida+Begum&background=96ceb4&color=fff&size=150&bold=true&rounded=true",
+    bio: "Associate Professor in Statistics, data science researcher",
+    role: ["teacher"],
+    category: "university",
+    university: {
+      name: "Shahjalal University of Science and Technology",
+      dept: "Statistics"
+    },
+    gender: "female",
+    friends: ["22", "31"],
+    pendingRequests: ["23", "32"],
+    saved: ["p4", "p19"],
+  },
+  {
+    id: "25",
+    name: "Arif Hossain (25/40)",
+    username: "arifh",
+    email: "arif.hossain@cu.ac.bd",
+    password: "password123",
+    avatar: "https://ui-avatars.com/api/?name=Arif+Hossain&background=feca57&color=fff&size=150&bold=true&rounded=true",
+    bio: "Pharmacy student at University of Chittagong, pharmaceutical research interest",
+    role: ["student"],
+    category: "university",
+    university: {
+      name: "University of Chittagong",
+      dept: "Pharmacy",
+      section: "A",
+      subsection: "1",
+      roll: "1803056"
+    },
+    gender: "male",
+    friends: ["21", "33", "34"],
+    pendingRequests: ["35"],
+    saved: ["p5", "p20"],
+  },
+  {
+    id: "26",
+    name: "Fatema Khatun (26/40)",
+    username: "fatemak",
+    email: "fatema.khatun@ru.ac.bd",
+    password: "password123",
+    avatar: "https://ui-avatars.com/api/?name=Fatema+Khatun&background=ff9ff3&color=fff&size=150&bold=true&rounded=true",
+    bio: "Senior Lecturer in Psychology, cognitive psychology specialist",
+    role: ["teacher"],
+    category: "university",
+    university: {
+      name: "University of Rajshahi",
+      dept: "Psychology"
+    },
+    gender: "female",
+    friends: ["36", "37"],
+    pendingRequests: ["21", "38"],
+    saved: ["p6", "p1"],
+  },
+  {
+    id: "27",
+    name: "Sabbir Ahmed (27/40)",
+    username: "sabbira",
+    email: "sabbir.ahmed@nstu.edu.bd",
+    password: "password123",
+    avatar: "https://ui-avatars.com/api/?name=Sabbir+Ahmed&background=54a0ff&color=fff&size=150&bold=true&rounded=true",
+    bio: "Marine Science student at NSTU, oceanography and marine biology enthusiast",
+    role: ["student"],
+    category: "university",
+    university: {
+      name: "Noakhali Science and Technology University",
+      dept: "Marine Science",
+      section: "A",
+      subsection: "1",
+      roll: "1701023"
+    },
+    gender: "male",
+    friends: ["22", "39", "40"],
+    pendingRequests: ["26"],
+    saved: ["p7", "p2"],
+  },
+  {
+    id: "28",
+    name: "Salma Akter (28/40)",
+    username: "salmaa",
+    email: "salma.akter@bau.edu.bd",
+    password: "password123",
+    avatar: "https://ui-avatars.com/api/?name=Salma+Akter&background=5f27cd&color=fff&size=150&bold=true&rounded=true",
+    bio: "Professor of Agriculture, sustainable farming and crop science expert",
+    role: ["teacher"],
+    category: "university",
+    university: {
+      name: "Bangladesh Agricultural University",
+      dept: "Agriculture"
+    },
+    gender: "female",
+    friends: ["22", "24"],
+    pendingRequests: ["27", "29"],
+    saved: ["p8", "p3"],
+  },
+  {
+    id: "29",
+    name: "Tanvir Islam (29/40)",
+    username: "tanviri",
+    email: "tanvir.islam@pstu.ac.bd",
+    password: "password123",
+    avatar: "https://ui-avatars.com/api/?name=Tanvir+Islam&background=00d2d3&color=fff&size=150&bold=true&rounded=true",
+    bio: "Veterinary Medicine student at PSTU, animal health and welfare advocate",
+    role: ["student"],
+    category: "university",
+    university: {
+      name: "Patuakhali Science and Technology University",
+      dept: "Veterinary Medicine",
+      section: "B",
+      subsection: "1",
+      roll: "1605089"
+    },
+    gender: "male",
+    friends: ["23", "28", "30"],
+    pendingRequests: ["31"],
+    saved: ["p9", "p4"],
+  },
+  {
+    id: "30",
+    name: "Ruma Parvin (30/40)",
+    username: "rumap",
+    email: "ruma.parvin@hstu.ac.bd",
+    password: "password123",
+    avatar: "https://ui-avatars.com/api/?name=Ruma+Parvin&background=ff6348&color=fff&size=150&bold=true&rounded=true",
+    bio: "Assistant Professor in Sociology, social research and gender studies specialist",
+    role: ["teacher"],
+    category: "university",
+    university: {
+      name: "Hajee Mohammad Danesh Science and Technology University",
+      dept: "Sociology"
+    },
+    gender: "female",
+    friends: ["23", "29"],
+    pendingRequests: ["32", "33"],
+    saved: ["p10", "p5"],
+  },
+  {
+    id: "31",
+    name: "Marium Sultana (31/40)",
+    username: "mariums",
+    email: "marium.sultana@gmail.com",
+    password: "password123",
+    avatar: "https://ui-avatars.com/api/?name=Marium+Sultana&background=ff7675&color=fff&size=150&bold=true&rounded=true",
+    bio: "HSC Science student at Dhaka College, aspiring to study medicine",
+    role: ["student"],
+    category: "hsc",
+    college: {
+      name: "Dhaka College",
+      dept: "science",
+      section: "A",
+      roll: "101234",
+      sscBatch: "2020",
+      level: "1st year"
+    },
+    gender: "female",
+    friends: ["24", "32", "35"],
+    pendingRequests: ["29", "36"],
+    saved: ["p11", "p6"],
+  },
+  {
+    id: "32",
+    name: "Rafiq Hasan (32/40)",
+    username: "rafiqs",
+    email: "rafiq.hasan@teacher.edu.bd",
+    password: "password123",
+    avatar: "https://ui-avatars.com/api/?name=Rafiq+Hasan&background=74b9ff&color=fff&size=150&bold=true&rounded=true",
+    bio: "Physics teacher at Notre Dame College, passionate about experimental physics",
+    role: ["teacher"],
+    category: "hsc",
+    college: {
+      name: "Notre Dame College",
+      dept: "science",
+      sscBatch: "1995"
+    },
+    gender: "male",
+    friends: ["24", "30", "31"],
+    pendingRequests: ["33"],
+    saved: ["p12", "p7"],
+  },
+  {
+    id: "33",
+    name: "Nasreen Akhter (33/40)",
+    username: "nasreena",
+    email: "nasreen.akhter@gmail.com",
+    password: "password123",
+    avatar: "https://ui-avatars.com/api/?name=Nasreen+Akhter&background=a29bfe&color=fff&size=150&bold=true&rounded=true",
+    bio: "HSC Business Studies student at Viqarunnisa Noon College, future entrepreneur",
+    role: ["student"],
+    category: "hsc",
+    college: {
+      name: "Viqarunnisa Noon College",
+      dept: "commerce",
+      section: "B",
+      roll: "205678",
+      sscBatch: "2021",
+      level: "2nd year"
+    },
+    gender: "female",
+    friends: ["25", "30", "34"],
+    pendingRequests: ["32", "37"],
+    saved: ["p13", "p8"],
+  },
+  {
+    id: "34",
+    name: "Aminul Islam (34/40)",
+    username: "aminuli",
+    email: "aminul.islam@gmail.com",
+    password: "password123",
+    avatar: "https://ui-avatars.com/api/?name=Aminul+Islam&background=6c5ce7&color=fff&size=150&bold=true&rounded=true",
+    bio: "HSC Humanities student at Rajshahi College, interested in history and literature",
+    role: ["student"],
+    category: "hsc",
+    college: {
+      name: "Rajshahi College",
+      dept: "arts",
+      section: "C",
+      roll: "301456",
+      sscBatch: "2020",
+      level: "1st year"
+    },
+    gender: "male",
+    friends: ["25", "33", "38"],
+    pendingRequests: ["39"],
+    saved: ["p14", "p9"],
+  },
+  {
+    id: "35",
+    name: "Shireen Begum (35/40)",
+    username: "shireens",
+    email: "shireen.begum@teacher.edu.bd",
+    password: "password123",
+    avatar: "https://ui-avatars.com/api/?name=Shireen+Begum&background=fd79a8&color=fff&size=150&bold=true&rounded=true",
+    bio: "Mathematics teacher at Holy Cross College, loves solving complex problems",
+    role: ["teacher"],
+    category: "hsc",
+    college: {
+      name: "Holy Cross College",
+      dept: "science",
+      sscBatch: "1992"
+    },
+    gender: "female",
+    friends: ["25", "31", "36"],
+    pendingRequests: ["40"],
+    saved: ["p15", "p10"],
+  },
+  {
+    id: "36",
+    name: "Habibur Rahman (36/40)",
+    username: "habiburs",
+    email: "habibur.rahman@gmail.com",
+    password: "password123",
+    avatar: "https://ui-avatars.com/api/?name=Habibur+Rahman&background=00b894&color=fff&size=150&bold=true&rounded=true",
+    bio: "HSC Science student at Chittagong College, chemistry enthusiast",
+    role: ["student"],
+    category: "hsc",
+    college: {
+      name: "Chittagong College",
+      dept: "science",
+      section: "A",
+      roll: "102789",
+      sscBatch: "2021",
+      level: "2nd year"
+    },
+    gender: "male",
+    friends: ["26", "31", "35"],
+    pendingRequests: ["31"],
+    saved: ["p16", "p11"],
+  },
+  {
+    id: "37",
+    name: "Farida Yasmin (37/40)",
+    username: "faridas",
+    email: "farida.yasmin@gmail.com",
+    password: "password123",
+    avatar: "https://ui-avatars.com/api/?name=Farida+Yasmin&background=e17055&color=fff&size=150&bold=true&rounded=true",
+    bio: "HSC Business Studies student at Eden Mohila College, accounting specialist",
+    role: ["student"],
+    category: "hsc",
+    college: {
+      name: "Eden Mohila College",
+      dept: "commerce",
+      section: "A",
+      roll: "203456",
+      sscBatch: "2020",
+      level: "1st year"
+    },
+    gender: "female",
+    friends: ["26", "33", "39"],
+    pendingRequests: ["33"],
+    saved: ["p17", "p12"],
+  },
+  {
+    id: "38",
+    name: "Golam Mostafa (38/40)",
+    username: "golams",
+    email: "golam.mostafa@teacher.edu.bd",
+    password: "password123",
+    avatar: "https://ui-avatars.com/api/?name=Golam+Mostafa&background=0984e3&color=fff&size=150&bold=true&rounded=true",
+    bio: "English teacher at Sylhet Government College, literature and language expert",
+    role: ["teacher"],
+    category: "hsc",
+    college: {
+      name: "Sylhet Government College",
+      dept: "arts",
+      sscBatch: "1988"
+    },
+    gender: "male",
+    friends: ["26", "34", "40"],
+    pendingRequests: ["26"],
+    saved: ["p18", "p13"],
+  },
+  {
+    id: "39",
+    name: "Rehana Khatun (39/40)",
+    username: "rehanas",
+    email: "rehana.khatun@gmail.com",
+    password: "password123",
+    avatar: "https://ui-avatars.com/api/?name=Rehana+Khatun&background=fdcb6e&color=fff&size=150&bold=true&rounded=true",
+    bio: "HSC Humanities student at Comilla Victoria College, passionate about social work",
+    role: ["student"],
+    category: "hsc",
+    college: {
+      name: "Comilla Victoria College",
+      dept: "arts",
+      section: "B",
+      roll: "302567",
+      sscBatch: "2021",
+      level: "2nd year"
+    },
+    gender: "female",
+    friends: ["27", "34", "37"],
+    pendingRequests: ["34"],
+    saved: ["p19", "p14"],
+  },
+  {
+    id: "40",
+    name: "Zakir Hossain (40/40)",
+    username: "zakirs",
+    email: "zakir.hossain@gmail.com",
+    password: "password123",
+    avatar: "https://ui-avatars.com/api/?name=Zakir+Hossain&background=2d3436&color=fff&size=150&bold=true&rounded=true",
+    bio: "HSC Science student at Barisal Government College, future engineer",
+    role: ["student"],
+    category: "hsc",
+    college: {
+      name: "Barisal Government College",
+      dept: "science",
+      section: "C",
+      roll: "103890",
+      sscBatch: "2020",
+      level: "1st year"
+    },
+    gender: "male",
+    friends: ["27", "38"],
+    pendingRequests: ["35"],
+    saved: ["p20", "p15"],
+  },
 ];
 
-// Helper function to get user data by ID
 export const getUserById = (userId: string): UserData | null => {
   return usersData.find((user) => user.id === userId) || null;
 };
 
-// Helper function to update user data by ID
 export const updateUserById = (
   userId: string,
   updatedData: Partial<UserData>

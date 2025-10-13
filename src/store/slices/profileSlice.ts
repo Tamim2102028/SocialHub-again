@@ -5,15 +5,26 @@ interface ProfileState {
   id: string;
   name: string;
   username: string;
+  email: string;
   avatar: string;
   bio: string;
-  role: "student" | "teacher";
-  university: {
+  role: ("student" | "teacher")[];
+  category: "university" | "hsc";
+  university?: {
     name: string;
     dept: string;
     section?: string;
     subsection?: string;
     roll?: string;
+  };
+  college?: {
+    name: string;
+    dept: "science" | "arts" | "commerce";
+    section?: string; // optional for teachers
+    subsection?: string;
+    roll?: string; // optional for teachers
+    sscBatch: string;
+    level?: "1st year" | "2nd year" | "admission"; // optional for teachers
   };
   gender?: "male" | "female";
   friends: string[];
@@ -31,10 +42,13 @@ const getCurrentUserData = (): ProfileState => {
       id: userData.id,
       name: userData.name,
       username: userData.username,
+      email: userData.email,
       avatar: userData.avatar,
       bio: userData.bio,
       role: userData.role,
+      category: userData.category,
       university: userData.university,
+      college: userData.college,
       gender: userData.gender,
       friends: userData.friends || [],
       pendingRequests: userData.pendingRequests || [],
@@ -45,13 +59,16 @@ const getCurrentUserData = (): ProfileState => {
       id: "",
       name: "",
       username: "",
+      email: "",
       avatar: "",
       bio: "",
-      role: "student",
+      role: ["student"],
+      category: "university" as const,
       university: {
         name: "",
         dept: ""
       },
+      college: undefined,
       gender: undefined,
       friends: [],
       pendingRequests: [],
@@ -81,13 +98,16 @@ const profileSlice = createSlice({
         id: "",
         name: "",
         username: "",
+        email: "",
         avatar: "",
         bio: "",
-        role: "student" as const,
+        role: ["student"],
+        category: "university" as const,
         university: {
           name: "",
           dept: ""
         },
+        college: undefined,
         gender: undefined,
         friends: [],
         pendingRequests: [],
