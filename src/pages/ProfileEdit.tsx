@@ -28,16 +28,22 @@ const ProfileEdit: React.FC = () => {
     }
   };
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Form submission is handled by Save button click
+  };
+
   return (
-    <form className="space-y-5">
+    <form className="space-y-5" onSubmit={handleSubmit}>
       {/* Header */}
       <div className="rounded-lg border bg-white p-6 shadow-md">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold text-gray-900">Edit Profile</h1>
           <div className="flex gap-3">
             <button
+              type="button"
               onClick={() => {
-                navigate("/profile");
+                navigate(-1);
               }}
               className="rounded-lg border border-gray-300 px-4 py-2 text-gray-700 transition-colors hover:bg-gray-50"
             >
@@ -48,7 +54,7 @@ const ProfileEdit: React.FC = () => {
               type="button"
               onClick={() => {
                 dispatch(updateProfile(formData));
-                navigate("/profile");
+                navigate(-1);
               }}
               className="rounded-lg bg-blue-600 px-6 py-2 text-white transition-colors hover:bg-blue-700"
             >
