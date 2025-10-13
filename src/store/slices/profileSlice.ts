@@ -86,10 +86,7 @@ const profileSlice = createSlice({
         role: "student" as const,
         university: {
           name: "",
-          dept: "",
-          section: "",
-          subsection: "",
-          roll: ""
+          dept: ""
         },
         gender: undefined,
         friends: [],

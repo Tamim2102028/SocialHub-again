@@ -121,7 +121,15 @@ const Profile: React.FC = () => {
             {/* University */}
             <div className="flex items-center gap-2">
               <FaUniversity className="h-4 w-4 text-blue-600" />
-              <p className="font-medium text-gray-800">{userData.university}</p>
+              <p className="font-medium text-gray-800">
+                {userData.university?.name} - {userData.university?.dept}
+                {userData.role === 'student' && userData.university?.section && (
+                  <span className="text-gray-600">
+                    {' '}(Section: {userData.university.section}
+                    {userData.university.subsection && `-${userData.university.subsection}`})
+                  </span>
+                )}
+              </p>
             </div>
 
             {/* Edit Button (only for own profile) */}
