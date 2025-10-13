@@ -1,14 +1,6 @@
 import React from "react";
 import GroupCard from "./GroupCard";
-
-interface Group {
-  id: number;
-  name: string;
-  members: number;
-  isPrivate: boolean;
-  coverImage: string;
-  category?: string;
-}
+import type { Group } from "../../data/groupsData";
 
 interface SuggestedGroupsProps {
   groups: Group[];
@@ -22,7 +14,7 @@ const SuggestedGroups: React.FC<SuggestedGroupsProps> = ({ groups }) => {
       </h2>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {groups.map((group) => (
-          <GroupCard key={group.id} group={group} showJoinButton={true} />
+          <GroupCard key={group.groupId} group={group} showJoinButton={true} />
         ))}
       </div>
     </div>
