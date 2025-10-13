@@ -57,7 +57,7 @@ export const usersData: UserData[] = [
       roll: "1905001",
     },
     gender: "male",
-    friends: ["2", "3", "5", "6", "12", "14", "15"],
+    friends: ["2", "3", "5", "6", "12", "14", "15", "16"],
     pendingRequests: ["4", "7", "8", "9"],
     saved: ["p1", "p3"],
   },
