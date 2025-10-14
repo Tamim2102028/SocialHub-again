@@ -10,16 +10,16 @@ const SentGroupRequests: React.FC = () => {
 
   if (sent.length === 0) {
     return (
-      <div className="mt-6 mb-8">
-        <h3 className="mb-2 text-lg font-semibold text-gray-900">Sent Requests</h3>
+      <div className="mb-8">
+        <h2 className="mb-2 text-xl font-semibold text-gray-900">Sent Requests</h2>
         <p className="text-sm text-gray-600">You have no pending group requests.</p>
       </div>
     );
   }
 
   return (
-    <div className="mt-6 mb-8">
-      <h3 className="mb-4 text-lg font-semibold text-gray-900">Sent Requests ({sent.length})</h3>
+    <div className="mb-8">
+      <h2 className="mb-4 text-xl font-semibold text-gray-900">Sent Requests ({sent.length})</h2>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {sent.map((groupId) => {
           const group = getGroupById(groupId);

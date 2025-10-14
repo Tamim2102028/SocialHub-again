@@ -17,7 +17,10 @@ type GroupCardProps = {
   showJoinButton?: boolean;
 };
 
-const GroupCard: React.FC<GroupCardProps> = ({ group, showJoinButton = false }) => {
+const GroupCard: React.FC<GroupCardProps> = ({
+  group,
+  showJoinButton = false,
+}) => {
   return (
     <div className="group cursor-pointer overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md">
       <div className="relative overflow-hidden">

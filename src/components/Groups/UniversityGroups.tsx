@@ -47,7 +47,7 @@ const UniversityGroups = () => {
   }));
 
   return (
-    <div className="mt-8">
+    <div className="mb-8">
       <h2 className="mb-4 text-xl font-semibold text-gray-900">
         University Groups
       </h2>
