@@ -6,7 +6,10 @@ interface FriendsHeaderProps {
   onSearchChange: (query: string) => void;
 }
 
-const FriendsHeader: React.FC<FriendsHeaderProps> = ({ searchQuery, onSearchChange }) => {
+const FriendsHeader: React.FC<FriendsHeaderProps> = ({
+  searchQuery,
+  onSearchChange,
+}) => {
   return (
     <div className="flex items-center justify-between">
       <h1 className="text-2xl font-bold text-gray-900">Friends</h1>
