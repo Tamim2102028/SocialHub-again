@@ -91,111 +91,109 @@ const Clubs: React.FC = () => {
   });
 
   return (
-    <div className="min-h-screen">
-      <div className="mx-auto max-w-7xl px-4 py-6">
-        {/* Back Button */}
-        <NavLink
-          to="/university/more"
-          className="mb-6 inline-flex items-center text-blue-600 transition-colors hover:text-blue-800"
-        >
-          <FaArrowLeft className="mr-2 h-4 w-4" />
-          Back to More
-        </NavLink>
+    <div className="space-y-5">
+      {/* Back Button */}
+      <NavLink
+        to="/university/more"
+        className="inline-flex items-center text-blue-600 transition-colors hover:text-blue-800"
+      >
+        <FaArrowLeft className="mr-2 h-4 w-4" />
+        Back to More
+      </NavLink>
 
-        {/* Header */}
-        <div className="mb-8">
-          <div className="mb-6 flex items-center justify-between">
-            <div>
-              <h1 className="text-4xl font-bold text-gray-900">Clubs</h1>
-              <p className="mt-2 text-lg text-gray-600">
-                Discover student organizations and communities.
-              </p>
-            </div>
-            <button className="flex items-center gap-2 rounded-lg bg-green-500 px-6 py-3 font-semibold text-white transition-colors hover:bg-green-600">
-              <FaPlus className="h-4 w-4" />
-              Register a Club
-            </button>
+      {/* Header */}
+      <div>
+        <div className="mb-5 flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-bold text-gray-900">Clubs</h1>
+            <p className="mt-2 text-lg text-gray-600">
+              Discover student organizations and communities.
+            </p>
+          </div>
+          <button className="flex items-center gap-2 rounded-lg bg-green-500 px-6 py-3 font-semibold text-white transition-colors hover:bg-green-600">
+            <FaPlus className="h-4 w-4" />
+            Register a Club
+          </button>
+        </div>
+
+        {/* Search and Filters */}
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          {/* Search Bar */}
+          <div className="relative max-w-md flex-1">
+            <FaSearch className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search for clubs..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full rounded-lg border border-gray-300 bg-white py-3 pr-4 pl-12 text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            />
           </div>
 
-          {/* Search and Filters */}
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            {/* Search Bar */}
-            <div className="relative max-w-md flex-1">
-              <FaSearch className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search for clubs..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 bg-white py-3 pr-4 pl-12 text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          {/* Category Filters */}
+          <div className="flex gap-3 overflow-x-auto">
+            {categories.map((category) => (
+              <button
+                key={category}
+                onClick={() => setSelectedCategory(category)}
+                className={`rounded-lg px-6 py-2 font-medium whitespace-nowrap transition-colors ${
+                  selectedCategory === category
+                    ? "bg-blue-600 text-white"
+                    : "bg-white text-gray-700 hover:bg-gray-100"
+                }`}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Clubs Grid */}
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
+        {filteredClubs.map((club) => (
+          <div
+            key={club.id}
+            className="group flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all hover:shadow-lg"
+          >
+            {/* Cover Image */}
+            <div className="relative h-48 overflow-hidden">
+              <img
+                src={club.coverImage}
+                alt={club.name}
+                className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
               />
             </div>
 
-            {/* Category Filters */}
-            <div className="flex gap-3 overflow-x-auto">
-              {categories.map((category) => (
-                <button
-                  key={category}
-                  onClick={() => setSelectedCategory(category)}
-                  className={`rounded-lg px-6 py-2 font-medium whitespace-nowrap transition-colors ${
-                    selectedCategory === category
-                      ? "bg-blue-600 text-white"
-                      : "bg-white text-gray-700 hover:bg-gray-100"
-                  }`}
-                >
-                  {category}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Clubs Grid */}
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {filteredClubs.map((club) => (
-            <div
-              key={club.id}
-              className="group flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all hover:shadow-lg"
-            >
-              {/* Cover Image */}
-              <div className="relative h-48 overflow-hidden">
-                <img
-                  src={club.coverImage}
-                  alt={club.name}
-                  className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
-                />
-              </div>
-
-              {/* Club Info */}
-              <div className="flex flex-1 flex-col px-6 py-6 text-center">
-                <h3 className="mb-2 line-clamp-2 min-h-[3.5rem] text-xl font-bold text-gray-900">
-                  {club.name}
-                </h3>
-                <p className="mb-4 line-clamp-2 min-h-[3rem] text-gray-600 italic">
-                  "{club.tagline}"
-                </p>
-                <div className="mt-auto flex items-center justify-center gap-2 text-gray-700">
-                  <FaUsers className="h-4 w-4" />
-                  <span className="font-medium">{club.members} members</span>
-                </div>
+            {/* Club Info */}
+            <div className="flex flex-1 flex-col px-6 py-6 text-center">
+              <h3 className="mb-2 line-clamp-2 min-h-[3.5rem] text-xl font-bold text-gray-900">
+                {club.name}
+              </h3>
+              <p className="mb-4 line-clamp-2 min-h-[3rem] text-gray-600 italic">
+                "{club.tagline}"
+              </p>
+              <div className="mt-auto flex items-center justify-center gap-2 text-gray-700">
+                <FaUsers className="h-4 w-4" />
+                <span className="font-medium">{club.members} members</span>
               </div>
             </div>
-          ))}
-        </div>
-
-        {/* No Results */}
-        {filteredClubs.length === 0 && (
-          <div className="py-16 text-center">
-            <FaUsers className="mx-auto mb-4 h-16 w-16 text-gray-400" />
-            <h3 className="mb-2 text-xl font-semibold text-gray-900">
-              No clubs found
-            </h3>
-            <p className="text-gray-600">
-              Try adjusting your search or filter criteria
-            </p>
           </div>
-        )}
+        ))}
       </div>
+
+      {/* No Results */}
+      {filteredClubs.length === 0 && (
+        <div className="py-16 text-center">
+          <FaUsers className="mx-auto mb-4 h-16 w-16 text-gray-400" />
+          <h3 className="mb-2 text-xl font-semibold text-gray-900">
+            No clubs found
+          </h3>
+          <p className="text-gray-600">
+            Try adjusting your search or filter criteria
+          </p>
+        </div>
+      )}
     </div>
   );
 };
