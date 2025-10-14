@@ -1,5 +1,6 @@
 import React from "react";
 import { FaPaperPlane, FaEllipsisV, FaPhone, FaVideo } from "react-icons/fa";
+import { FaRegComments } from "react-icons/fa6";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
   setMessageText,
@@ -16,6 +17,31 @@ const ChatArea: React.FC = () => {
   const selectedConv = mockConversations.find(
     (c) => c.id === selectedConversation
   );
+
+  // If no conversation is selected, show a default message
+  if (!selectedConv) {
+    return (
+      <div className="flex flex-1 items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        <div className="flex flex-col items-center gap-4 rounded-2xl border border-blue-100 bg-white/80 p-8 shadow-lg">
+          <div className="mb-2 flex h-20 w-20 items-center justify-center rounded-full bg-blue-100">
+            <FaRegComments className="h-10 w-10 text-blue-500" />
+          </div>
+          <h2 className="mb-1 text-2xl font-bold text-blue-700">
+            Welcome to Messages
+          </h2>
+          <p className="max-w-xs text-center text-gray-500">
+            Select a conversation from the left to start chatting.
+            <br />
+            Stay connected with your friends, groups, and classmates.
+            <br />
+            <span className="mt-2 inline-block font-semibold text-blue-400">
+              No conversation selected
+            </span>
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   const handleSendMessage = () => {
     if (messageText.trim()) {
