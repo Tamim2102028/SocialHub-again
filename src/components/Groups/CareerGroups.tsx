@@ -17,12 +17,12 @@ const CareerGroups = () => {
     }));
 
   return (
-    <div className="mb-8">
-      <h2 className="mb-4 text-xl font-semibold text-gray-900">
-        Career & Job Groups
+   <div>
+      <h2 className="mb-3 text-xl font-semibold text-gray-900">
+        Career & Job Groups ({groups.length})
       </h2>
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
         {groups.map((group) => (
           <GroupCard key={group.id} group={group} showJoinButton={true} />
         ))}

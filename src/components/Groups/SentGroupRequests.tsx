@@ -1,6 +1,7 @@
 import React from "react";
 import { getCurrentUserId, getUserById } from "../../data/userData";
 import { getGroupById } from "../../data/groupsData";
+import GroupCard from "./GroupCard";
 
 const SentGroupRequests: React.FC = () => {
   const userId = getCurrentUserId();
@@ -11,27 +12,37 @@ const SentGroupRequests: React.FC = () => {
   if (sent.length === 0) {
     return (
       <div className="mb-8">
-        <h2 className="mb-2 text-xl font-semibold text-gray-900">Sent Requests</h2>
-        <p className="text-sm text-gray-600">You have no pending group requests.</p>
+        <h2 className="mb-2 text-xl font-semibold text-gray-900">
+          Sent Requests
+        </h2>
+        <p className="text-sm text-gray-600">
+          You have no pending group requests.
+        </p>
       </div>
     );
   }
 
+  const requestGroups = sent
+    .map((gid) => getGroupById(gid))
+    .filter(Boolean)
+    .map((g) => ({
+      id: g!.id,
+      name: g!.name,
+      description: g!.description,
+      coverImage: g!.coverImage,
+      memberCount: g!.members?.length || 0,
+      privacy: g!.privacy,
+    }));
+
   return (
-    <div className="mb-8">
-      <h2 className="mb-4 text-xl font-semibold text-gray-900">Sent Requests ({sent.length})</h2>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {sent.map((groupId) => {
-          const group = getGroupById(groupId);
-          if (!group) return null;
-          return (
-            <div key={group.id} className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-              <div className="mb-2 text-sm font-semibold text-gray-900">{group.name}</div>
-              <div className="text-xs text-gray-600 mb-3">{group.description}</div>
-              <div className="text-xs text-gray-500">Status: Pending</div>
-            </div>
-          );
-        })}
+    <div>
+      <h2 className="mb-3 text-xl font-semibold text-gray-900">
+        Sent Requests ({requestGroups.length})
+      </h2>
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-2">
+        {requestGroups.map((group) => (
+          <GroupCard key={group.id} group={group} showJoinButton={false} />
+        ))}
       </div>
     </div>
   );
