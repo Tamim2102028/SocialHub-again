@@ -1,52 +1,43 @@
 import React from "react";
-import { useAppSelector } from "../../store/hooks";
-import { usersData, getCurrentUserId } from "../../data/userData";
 import FriendCard from "./FriendCard";
+import { getCurrentUserId, getUserById } from "../../data/userData";
 
 const FriendRequests: React.FC = () => {
-  const searchQuery = useAppSelector((state) => state.ui.friends.searchQuery);
-
-  // TODO: Replace with real friend request logic
-  // Show users who have sent a friend request to the current user
-  const currentUser = usersData.find((u) => u.id === getCurrentUserId());
-  const requests = (currentUser?.pendingRequests || [])
-    .map((id) => usersData.find((u) => u.id === id))
-    .filter((f): f is import("../../data/userData").UserData => Boolean(f));
-  const filteredRequests = requests.filter((user) =>
-    user.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const handleAcceptRequest = (id: string) => {
-    // TODO: Implement accept friend request logic
-    console.log("Accepting friend request:", id);
-  };
-
-  const handleRejectRequest = (id: string) => {
-    // TODO: Implement reject friend request logic
-    console.log("Rejecting friend request:", id);
-  };
-
-  if (filteredRequests.length === 0) {
-    return (
-      <div className="py-8 text-center">
-        <p className="text-gray-500">
-          {searchQuery
-            ? "No friend requests found matching your search."
-            : "No pending friend requests."}
-        </p>
-      </div>
-    );
+  const currentUserId = getCurrentUserId();
+  const currentUser = getUserById(currentUserId);
+  
+  if (!currentUser) {
+    return <div>User not found</div>;
   }
 
+  // Get pending friend requests data from current user's pendingRequests list
+  const friendRequests = (currentUser.pendingRequests || []).map(requestId => {
+    const requester = getUserById(requestId);
+    if (!requester) return null;
+    
+    // Get university/college name based on category
+    const institutionName = requester.category === "university" 
+      ? requester.university?.name 
+      : requester.college?.name;
+    
+    return {
+      id: requester.id,
+      name: requester.name,
+      avatar: requester.avatar,
+      university: institutionName || "Unknown Institution"
+    };
+  }).filter(request => request !== null);
+
   return (
-    <div className="space-y-3">
-      {filteredRequests.map((request) => (
+    <div className="space-y-4">
+      {friendRequests.map((request) => (
         <FriendCard
           key={request.id}
-          friend={request}
+          id={request.id}
+          name={request.name}
+          avatar={request.avatar}
+          university={request.university}
           type="request"
-          onAcceptRequest={handleAcceptRequest}
-          onRejectRequest={handleRejectRequest}
         />
       ))}
     </div>

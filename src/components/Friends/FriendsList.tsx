@@ -1,38 +1,44 @@
 import React from "react";
-import { useAppSelector } from "../../store/hooks";
-import { usersData, getCurrentUserId } from "../../data/userData";
 import FriendCard from "./FriendCard";
+import { getCurrentUserId, getUserById } from "../../data/userData";
 
 const FriendsList: React.FC = () => {
-  const searchQuery = useAppSelector((state) => state.ui.friends.searchQuery);
-
-  // Use getCurrentUserId() for current user.
-  const currentUser = usersData.find((u) => u.id === getCurrentUserId());
-  const friends =
-    currentUser?.friends
-      ?.map((id) => usersData.find((u) => u.id === id))
-      .filter((f): f is import("../../data/userData").UserData => Boolean(f)) ||
-    [];
-  const filteredFriends = friends.filter((friend) =>
-    friend.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  if (filteredFriends.length === 0) {
-    return (
-      <div>
-        <p className="py-8 text-center text-gray-500">
-          {searchQuery
-            ? "No friends found matching your search."
-            : "No friends yet."}
-        </p>
-      </div>
-    );
+  const currentUserId = getCurrentUserId();
+  const currentUser = getUserById(currentUserId);
+  
+  if (!currentUser) {
+    return <div>User not found</div>;
   }
 
+  // Get friends data from current user's friends list
+  const friends = currentUser.friends.map(friendId => {
+    const friend = getUserById(friendId);
+    if (!friend) return null;
+    
+    // Get university/college name based on category
+    const institutionName = friend.category === "university" 
+      ? friend.university?.name 
+      : friend.college?.name;
+    
+    return {
+      id: friend.id,
+      name: friend.name,
+      avatar: friend.avatar,
+      university: institutionName || "Unknown Institution"
+    };
+  }).filter(friend => friend !== null);
+
   return (
-    <div className="space-y-3">
-      {filteredFriends.map((friend) => (
-        <FriendCard key={friend.id} friend={friend} type="friend" />
+    <div className="space-y-4">
+      {friends.map((friend) => (
+        <FriendCard
+          key={friend.id}
+          id={friend.id}
+          name={friend.name}
+          avatar={friend.avatar}
+          university={friend.university}
+          type="friend"
+        />
       ))}
     </div>
   );
