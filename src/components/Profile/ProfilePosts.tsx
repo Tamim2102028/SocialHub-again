@@ -46,7 +46,7 @@ const ProfilePosts: React.FC<ProfilePostsProps> = ({
                 comments: post.comments,
                 shares: post.sharesBy.length,
                 isLiked: post.likedBy.includes("1"), // Current user ID
-                image: post.images?.[0] || "",
+                images: post.images || [],
               }}
               isOwnProfile={isOwnProfile}
             />

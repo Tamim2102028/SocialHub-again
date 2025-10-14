@@ -26,7 +26,7 @@ interface ProfilePost {
   comments: number;
   shares: number;
   isLiked: boolean;
-  image?: string;
+  images?: string[];
 }
 
 interface ProfilePostCardProps {
@@ -132,14 +132,35 @@ const ProfilePostCard: React.FC<ProfilePostCardProps> = ({
         <p className="whitespace-pre-wrap text-gray-900">{post.content}</p>
       </div>
 
-      {/* Post Image */}
-      {post.image && (
+      {/* Post Images */}
+      {post.images && post.images.length > 0 && (
         <div className="px-4 pb-3">
-          <img
-            src={post.image}
-            alt="Post content"
-            className="h-auto max-h-96 w-full rounded-lg object-cover"
-          />
+          {post.images.length === 1 ? (
+            <img
+              src={post.images[0]}
+              alt="Post content"
+              className="h-auto max-h-96 w-full rounded-lg object-cover"
+            />
+          ) : (
+            <div className="grid grid-cols-2 gap-2">
+              {post.images.slice(0, 4).map((image, index) => (
+                <div key={index} className="relative">
+                  <img
+                    src={image}
+                    alt={`Post content ${index + 1}`}
+                    className="h-48 w-full rounded-lg object-cover"
+                  />
+                  {index === 3 && post.images && post.images.length > 4 && (
+                    <div className="bg-opacity-50 absolute inset-0 flex items-center justify-center rounded-lg bg-black">
+                      <span className="text-lg font-semibold text-white">
+                        +{post.images!.length - 4}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
