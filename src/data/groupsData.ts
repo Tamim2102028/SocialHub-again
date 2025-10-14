@@ -31,7 +31,7 @@ export interface Group {
   admins?: string[];
   members?: string[];
 
-  privacy?: "public" | "private" | "hidden";
+  privacy?: "public" | "private" | "closed";
   joinRequestsIds?: string[];
 
   postCount?: number; // helpful for quick queries

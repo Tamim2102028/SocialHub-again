@@ -1,7 +1,23 @@
+import React from "react";
 import { FaUsers, FaLock, FaGlobe } from "react-icons/fa";
 
 // Accepts group with 'id' property instead of 'groupId'.
-const GroupCard = ({ group, showJoinButton = false }) => {
+type SmallGroup = {
+  id: string;
+  name: string;
+  description?: string;
+  coverImage?: string;
+  memberCount?: number;
+  privacy?: string;
+  category?: string;
+};
+
+type GroupCardProps = {
+  group: SmallGroup;
+  showJoinButton?: boolean;
+};
+
+const GroupCard: React.FC<GroupCardProps> = ({ group, showJoinButton = false }) => {
   return (
     <div className="group cursor-pointer overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md">
       <div className="relative overflow-hidden">

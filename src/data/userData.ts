@@ -68,7 +68,7 @@ export const usersData: UserData[] = [
     sentRequests: [], // user 1 কারো কাছে request পাঠায়নি
     saved: ["p1", "p3"],
     joinedGroup: ["g1", "g19"],
-    sentRequestGroup: [],
+    sentRequestGroup: ["g4", "g9", "g12", "g20", "g22"],
   },
   {
     id: "2",
