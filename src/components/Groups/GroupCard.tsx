@@ -1,34 +1,9 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
 import { FaUsers, FaLock, FaGlobe } from "react-icons/fa";
-import type { Group } from "../../data/groupsData";
 
-interface GroupCardProps {
-  group: Group;
-  showJoinButton?: boolean;
-}
-
-const GroupCard: React.FC<GroupCardProps> = ({
-  group,
-  showJoinButton = false,
-}) => {
-  const navigate = useNavigate();
-
-  const handleCardClick = () => {
-    navigate(`/groups/${group.groupId}`);
-  };
-
-  const handleJoinClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent card click when clicking join button
-    // Handle join logic here
-    console.log("Joining group:", group.name);
-  };
-
+// Accepts group with 'id' property instead of 'groupId'.
+const GroupCard = ({ group, showJoinButton = false }) => {
   return (
-    <div
-      onClick={handleCardClick}
-      className="group cursor-pointer overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md"
-    >
+    <div className="group cursor-pointer overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md">
       <div className="relative overflow-hidden">
         <img
           src={group.coverImage || "/images/default-group-cover.jpg"}
@@ -62,13 +37,13 @@ const GroupCard: React.FC<GroupCardProps> = ({
         <div className="mb-3 flex items-center gap-2 text-sm text-gray-600">
           <FaUsers size={14} />
           <span className="font-medium">
-            {group.memberCount.toLocaleString()} members
+            {group.memberCount?.toLocaleString()} members
           </span>
         </div>
 
         {showJoinButton && (
           <button
-            onClick={handleJoinClick}
+            type="button"
             className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
           >
             Join Group

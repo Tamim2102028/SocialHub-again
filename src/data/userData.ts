@@ -36,6 +36,9 @@ export interface UserData {
   pendingRequests?: string[]; // যারা এই user এর কাছে friend request পাঠিয়েছে
   sentRequests?: string[]; // এই user যাদের কাছে friend request পাঠিয়েছে
   saved?: string[];
+
+  joinedGroup?: string[]; // group ids where user is a member
+  sentRequestGroup?: string[]; // group ids where user sent join request
 }
 
 export const usersData: UserData[] = [
@@ -64,6 +67,8 @@ export const usersData: UserData[] = [
     pendingRequests: ["4", "7", "8", "9"], // এরা user 1 এর কাছে request পাঠিয়েছে
     sentRequests: [], // user 1 কারো কাছে request পাঠায়নি
     saved: ["p1", "p3"],
+    joinedGroup: ["g1", "g19"],
+    sentRequestGroup: [],
   },
   {
     id: "2",
@@ -87,6 +92,8 @@ export const usersData: UserData[] = [
     pendingRequests: ["5"], // user 5 এর কাছ থেকে request এসেছে
     sentRequests: [], // user 2 কারো কাছে request পাঠায়নি
     saved: ["p2"],
+    joinedGroup: ["g1", "g20"],
+    sentRequestGroup: [],
   },
   {
     id: "3",
@@ -115,6 +122,8 @@ export const usersData: UserData[] = [
     pendingRequests: ["7", "13"], // user 7, 13 এর কাছ থেকে request এসেছে
     sentRequests: [], // user 3 কারো কাছে request পাঠায়নি
     saved: ["p1", "p4"],
+    joinedGroup: ["g1", "g20"],
+    sentRequestGroup: [],
   },
   {
     id: "4",
@@ -141,6 +150,8 @@ export const usersData: UserData[] = [
     pendingRequests: ["10", "16"], // user 10, 16 এর কাছ থেকে request এসেছে
     sentRequests: ["1"], // user 4 user 1 এর কাছে request পাঠিয়েছে
     saved: ["p2", "p5"],
+    joinedGroup: ["g2", "g21"],
+    sentRequestGroup: [],
   },
   {
     id: "5",
@@ -169,6 +180,8 @@ export const usersData: UserData[] = [
     pendingRequests: ["11", "17"], // user 11, 17 এর কাছ থেকে request এসেছে
     sentRequests: ["2"], // user 5 user 2 এর কাছে request পাঠিয়েছে
     saved: ["p3", "p6"],
+    joinedGroup: ["g2", "g21"],
+    sentRequestGroup: [],
   },
   {
     id: "6",
@@ -192,6 +205,8 @@ export const usersData: UserData[] = [
     pendingRequests: ["12", "18"], // user 12, 18 এর কাছ থেকে request এসেছে
     sentRequests: [], // user 6 কারো কাছে request পাঠায়নি
     saved: ["p1", "p7"],
+    joinedGroup: ["g22"],
+    sentRequestGroup: ["g2"],
   },
   {
     id: "7",
@@ -220,6 +235,8 @@ export const usersData: UserData[] = [
     pendingRequests: ["13", "20"], // user 13, 20 এর কাছ থেকে request এসেছে
     sentRequests: ["1", "3"], // user 7 user 1, 3 এর কাছে request পাঠিয়েছে
     saved: ["p2", "p8"],
+    joinedGroup: ["g3", "g22"],
+    sentRequestGroup: [],
   },
   {
     id: "8",
@@ -246,6 +263,8 @@ export const usersData: UserData[] = [
     pendingRequests: ["14"], // user 14 এর কাছ থেকে request এসেছে
     sentRequests: ["1"], // user 8 user 1 এর কাছে request পাঠিয়েছে
     saved: ["p3", "p9"],
+    joinedGroup: ["g3", "g23"],
+    sentRequestGroup: [],
   },
   {
     id: "9",
@@ -269,6 +288,8 @@ export const usersData: UserData[] = [
     pendingRequests: ["15"], // user 15 এর কাছ থেকে request এসেছে
     sentRequests: ["1"], // user 9 user 1 এর কাছে request পাঠিয়েছে
     saved: ["p4", "p10"],
+    joinedGroup: ["g3", "g23"],
+    sentRequestGroup: [],
   },
   {
     id: "10",
@@ -297,6 +318,8 @@ export const usersData: UserData[] = [
     pendingRequests: ["16"], // user 16 এর কাছ থেকে request এসেছে
     sentRequests: ["4"], // user 10 user 4 এর কাছে request পাঠিয়েছে
     saved: ["p5", "p11"],
+    joinedGroup: ["g4", "g24"],
+    sentRequestGroup: [],
   },
   {
     id: "11",
@@ -323,6 +346,8 @@ export const usersData: UserData[] = [
     pendingRequests: ["19"], // user 19 এর কাছ থেকে request এসেছে
     sentRequests: ["5"], // user 11 user 5 এর কাছে request পাঠিয়েছে
     saved: ["p6", "p12"],
+    joinedGroup: ["g4", "g24"],
+    sentRequestGroup: [],
   },
   {
     id: "12",
@@ -346,6 +371,8 @@ export const usersData: UserData[] = [
     pendingRequests: ["20"], // user 20 এর কাছ থেকে request এসেছে
     sentRequests: ["6"], // user 12 user 6 এর কাছে request পাঠিয়েছে
     saved: ["p7", "p13"],
+    joinedGroup: ["g5", "g25"],
+    sentRequestGroup: [],
   },
   {
     id: "13",
@@ -374,6 +401,8 @@ export const usersData: UserData[] = [
     pendingRequests: [], // কেউ user 13 এর কাছে request পাঠায়নি
     sentRequests: ["3", "7"], // user 13 user 3, 7 এর কাছে request পাঠিয়েছে
     saved: ["p8", "p14"],
+    joinedGroup: ["g5", "g25"],
+    sentRequestGroup: [],
   },
   {
     id: "14",
@@ -400,6 +429,8 @@ export const usersData: UserData[] = [
     pendingRequests: [], // কেউ user 14 এর কাছে request পাঠায়নি
     sentRequests: ["8"], // user 14 user 8 এর কাছে request পাঠিয়েছে
     saved: ["p9", "p15"],
+    joinedGroup: ["g6"],
+    sentRequestGroup: [],
   },
   {
     id: "15",
@@ -423,6 +454,8 @@ export const usersData: UserData[] = [
     pendingRequests: [], // কেউ user 15 এর কাছে request পাঠায়নি
     sentRequests: ["9"], // user 15 user 9 এর কাছে request পাঠিয়েছে
     saved: ["p10", "p16"],
+    joinedGroup: ["g6"],
+    sentRequestGroup: [],
   },
   {
     id: "16",
@@ -451,6 +484,8 @@ export const usersData: UserData[] = [
     pendingRequests: [], // কেউ user 16 এর কাছে request পাঠায়নি
     sentRequests: ["4", "10"], // user 16 user 4, 10 এর কাছে request পাঠিয়েছে
     saved: ["p11", "p17"],
+    joinedGroup: ["g7"],
+    sentRequestGroup: [],
   },
   {
     id: "17",
@@ -474,6 +509,8 @@ export const usersData: UserData[] = [
     pendingRequests: [], // কেউ user 17 এর কাছে request পাঠায়নি
     sentRequests: ["5"], // user 17 user 5 এর কাছে request পাঠিয়েছে
     saved: ["p12", "p18"],
+    joinedGroup: ["g7"],
+    sentRequestGroup: [],
   },
   {
     id: "18",
@@ -500,6 +537,8 @@ export const usersData: UserData[] = [
     pendingRequests: [], // কেউ user 18 এর কাছে request পাঠায়নি
     sentRequests: ["6"], // user 18 user 6 এর কাছে request পাঠিয়েছে
     saved: ["p13", "p19"],
+    joinedGroup: ["g8"],
+    sentRequestGroup: [],
   },
   {
     id: "19",
@@ -528,6 +567,8 @@ export const usersData: UserData[] = [
     pendingRequests: [], // কেউ user 19 এর কাছে request পাঠায়নি
     sentRequests: ["11"], // user 19 user 11 এর কাছে request পাঠিয়েছে
     saved: ["p14", "p20"],
+    joinedGroup: ["g8"],
+    sentRequestGroup: [],
   },
   {
     id: "20",
@@ -551,6 +592,8 @@ export const usersData: UserData[] = [
     pendingRequests: [], // কেউ user 20 এর কাছে request পাঠায়নি
     sentRequests: ["7", "12"], // user 20 user 7, 12 এর কাছে request পাঠিয়েছে
     saved: ["p15", "p1"],
+    joinedGroup: ["g9"],
+    sentRequestGroup: [],
   },
   // Additional 20 users for better field distribution
   {
@@ -578,6 +621,8 @@ export const usersData: UserData[] = [
     pendingRequests: ["23", "26"], // user 23, 26 এর কাছ থেকে request এসেছে
     sentRequests: [], // user 21 কারো কাছে request পাঠায়নি
     saved: ["p1", "p16"],
+    joinedGroup: ["g9"],
+    sentRequestGroup: [],
   },
   {
     id: "22",
@@ -601,6 +646,8 @@ export const usersData: UserData[] = [
     pendingRequests: ["28"], // user 28 এর কাছ থেকে request এসেছে
     sentRequests: [], // user 22 কারো কাছে request পাঠায়নি
     saved: ["p2", "p17"],
+    joinedGroup: ["g10"],
+    sentRequestGroup: [],
   },
   {
     id: "23",
@@ -627,6 +674,8 @@ export const usersData: UserData[] = [
     pendingRequests: ["24"], // user 24 এর কাছ থেকে request এসেছে
     sentRequests: ["21"], // user 23 user 21 এর কাছে request পাঠিয়েছে
     saved: ["p3", "p18"],
+    joinedGroup: ["g10"],
+    sentRequestGroup: [],
   },
   {
     id: "24",
@@ -650,6 +699,8 @@ export const usersData: UserData[] = [
     pendingRequests: ["23", "32"], // user 23, 32 এর কাছ থেকে request এসেছে
     sentRequests: ["23"], // user 24 user 23 এর কাছে request পাঠিয়েছে
     saved: ["p4", "p19"],
+    joinedGroup: ["g11"],
+    sentRequestGroup: [],
   },
   {
     id: "25",
@@ -676,6 +727,8 @@ export const usersData: UserData[] = [
     pendingRequests: ["35"], // user 35 এর কাছ থেকে request এসেছে
     sentRequests: [], // user 25 কারো কাছে request পাঠায়নি
     saved: ["p5", "p20"],
+    joinedGroup: ["g11"],
+    sentRequestGroup: [],
   },
   {
     id: "26",
@@ -699,6 +752,8 @@ export const usersData: UserData[] = [
     pendingRequests: ["21", "38"], // user 21, 38 এর কাছ থেকে request এসেছে
     sentRequests: ["21"], // user 26 user 21 এর কাছে request পাঠিয়েছে
     saved: ["p6", "p1"],
+    joinedGroup: ["g12"],
+    sentRequestGroup: [],
   },
   {
     id: "27",
@@ -725,6 +780,8 @@ export const usersData: UserData[] = [
     pendingRequests: ["26"], // user 26 এর কাছ থেকে request এসেছে
     sentRequests: ["26"], // user 27 user 26 এর কাছে request পাঠিয়েছে
     saved: ["p7", "p2"],
+    joinedGroup: ["g12"],
+    sentRequestGroup: [],
   },
   {
     id: "28",
@@ -748,6 +805,8 @@ export const usersData: UserData[] = [
     pendingRequests: ["27", "29"], // user 27, 29 এর কাছ থেকে request এসেছে
     sentRequests: ["22"], // user 28 user 22 এর কাছে request পাঠিয়েছে
     saved: ["p8", "p3"],
+    joinedGroup: ["g13"],
+    sentRequestGroup: [],
   },
   {
     id: "29",
@@ -774,6 +833,8 @@ export const usersData: UserData[] = [
     pendingRequests: ["31"], // user 31 এর কাছ থেকে request এসেছে
     sentRequests: ["28"], // user 29 user 28 এর কাছে request পাঠিয়েছে
     saved: ["p9", "p4"],
+    joinedGroup: ["g13"],
+    sentRequestGroup: [],
   },
   {
     id: "30",
@@ -797,6 +858,8 @@ export const usersData: UserData[] = [
     pendingRequests: ["32", "33"], // user 32, 33 এর কাছ থেকে request এসেছে
     sentRequests: [], // user 30 কারো কাছে request পাঠায়নি
     saved: ["p10", "p5"],
+    joinedGroup: ["g14"],
+    sentRequestGroup: [],
   },
   {
     id: "31",
@@ -824,6 +887,8 @@ export const usersData: UserData[] = [
     pendingRequests: ["36"], // user 36 এর কাছ থেকে request এসেছে
     sentRequests: ["29"], // user 31 user 29 এর কাছে request পাঠিয়েছে
     saved: ["p11", "p6"],
+    joinedGroup: ["g14"],
+    sentRequestGroup: [],
   },
   {
     id: "32",
@@ -848,6 +913,8 @@ export const usersData: UserData[] = [
     pendingRequests: ["33"], // user 33 এর কাছ থেকে request এসেছে
     sentRequests: ["24", "30"], // user 32 user 24, 30 এর কাছে request পাঠিয়েছে
     saved: ["p12", "p7"],
+    joinedGroup: ["g15"],
+    sentRequestGroup: [],
   },
   {
     id: "33",
@@ -875,6 +942,8 @@ export const usersData: UserData[] = [
     pendingRequests: ["32", "37"], // user 32, 37 এর কাছ থেকে request এসেছে
     sentRequests: ["30", "32"], // user 33 user 30, 32 এর কাছে request পাঠিয়েছে
     saved: ["p13", "p8"],
+    joinedGroup: ["g15"],
+    sentRequestGroup: [],
   },
   {
     id: "34",
@@ -902,6 +971,8 @@ export const usersData: UserData[] = [
     pendingRequests: ["39"], // user 39 এর কাছ থেকে request এসেছে
     sentRequests: [], // user 34 কারো কাছে request পাঠায়নি
     saved: ["p14", "p9"],
+    joinedGroup: ["g16"],
+    sentRequestGroup: [],
   },
   {
     id: "35",
@@ -926,6 +997,8 @@ export const usersData: UserData[] = [
     pendingRequests: ["40"], // user 40 এর কাছ থেকে request এসেছে
     sentRequests: ["25"], // user 35 user 25 এর কাছে request পাঠিয়েছে
     saved: ["p15", "p10"],
+    joinedGroup: ["g16"],
+    sentRequestGroup: [],
   },
   {
     id: "36",
@@ -953,6 +1026,8 @@ export const usersData: UserData[] = [
     pendingRequests: [], // কেউ user 36 এর কাছে request পাঠায়নি
     sentRequests: ["31"], // user 36 user 31 এর কাছে request পাঠিয়েছে
     saved: ["p16", "p11"],
+    joinedGroup: ["g17"],
+    sentRequestGroup: [],
   },
   {
     id: "37",
@@ -980,6 +1055,8 @@ export const usersData: UserData[] = [
     pendingRequests: ["33"], // user 33 এর কাছ থেকে request এসেছে
     sentRequests: [], // user 37 কারো কাছে request পাঠায়নি
     saved: ["p17", "p12"],
+    joinedGroup: ["g17"],
+    sentRequestGroup: [],
   },
   {
     id: "38",
@@ -1004,6 +1081,8 @@ export const usersData: UserData[] = [
     pendingRequests: ["26"], // user 26 এর কাছ থেকে request এসেছে
     sentRequests: [], // user 38 কারো কাছে request পাঠায়নি
     saved: ["p18", "p13"],
+    joinedGroup: ["g18"],
+    sentRequestGroup: [],
   },
   {
     id: "39",
@@ -1031,6 +1110,8 @@ export const usersData: UserData[] = [
     pendingRequests: ["34"], // user 34 এর কাছ থেকে request এসেছে
     sentRequests: [], // user 39 কারো কাছে request পাঠায়নি
     saved: ["p19", "p14"],
+    joinedGroup: ["g18"],
+    sentRequestGroup: [],
   },
   {
     id: "40",
@@ -1058,6 +1139,8 @@ export const usersData: UserData[] = [
     pendingRequests: ["35"], // user 35 এর কাছ থেকে request এসেছে
     sentRequests: [], // user 40 কারো কাছে request পাঠায়নি
     saved: ["p20", "p15"],
+    joinedGroup: ["g19"],
+    sentRequestGroup: [],
   },
 ];
 

@@ -3,7 +3,6 @@ import authSlice from "./slices/authSlice.js";
 import postsSlice from "./slices/postsSlice.js";
 import notificationsSlice from "./slices/notificationsSlice.js";
 import uiSlice from "./slices/uiSlice.js";
-import groupsSlice from "./slices/groupsSlice.js";
 import tuitionSlice from "./slices/tuitionSlice.js";
 import filesSlice from "./slices/filesSlice";
 import communityStudyArchiveSlice from "./slices/communityStudyArchiveSlice";
@@ -19,7 +18,6 @@ export const store = configureStore({
     posts: postsSlice,
     notifications: notificationsSlice,
     ui: uiSlice,
-    groups: groupsSlice,
     tuition: tuitionSlice,
     files: filesSlice,
     communityStudyArchive: communityStudyArchiveSlice,
