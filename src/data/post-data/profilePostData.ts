@@ -23,7 +23,7 @@ export const postData: PostData[] = [
       "Excited to join SocialHub! 🚀 This platform looks amazing and I can't wait to connect with everyone. The interface is so clean and user-friendly!",
     createdAt: "2024-06-01T10:00:00Z",
     updatedAt: "2024-06-01T12:00:00Z",
-    comments: 15,
+    comments: 2,
     sharesBy: ["5", "8", "12", "17"],
     likedBy: ["2", "3", "4", "6", "7", "9", "11", "13", "15", "18", "20"],
     images: [
@@ -41,7 +41,7 @@ export const postData: PostData[] = [
       "Had a great study session today. 📚 Spent 4 hours working on my computer science assignments. The algorithms are getting more complex but I'm loving the challenge!",
     createdAt: "2024-06-02T14:30:00Z",
     updatedAt: "2024-06-02T15:00:00Z",
-    comments: 8,
+    comments: 2,
     sharesBy: ["3", "15"],
     likedBy: ["2", "3", "15", "19", "14"],
     images: ["https://picsum.photos/400/300?random=102"],
@@ -56,7 +56,7 @@ export const postData: PostData[] = [
       "Loving the new features! The dark mode is perfect for late-night coding sessions. Also, the new notification system is so much better than before. Great work, developers! 👨‍💻",
     createdAt: "2024-06-03T09:00:00Z",
     updatedAt: "2024-06-03T09:30:00Z",
-    comments: 12,
+    comments: 2,
     sharesBy: ["4", "7", "11"],
     likedBy: ["2", "4", "6", "8", "10", "12", "16", "18"],
     status: "active",
@@ -71,7 +71,7 @@ export const postData: PostData[] = [
       "Just finished reading 'The Midnight Library' by Matt Haig! 📖 What an incredible journey through parallel lives. It really made me think about the choices we make and the paths not taken. Highly recommend it to anyone looking for a thought-provoking read!",
     createdAt: "2024-06-04T11:00:00Z",
     updatedAt: "2024-06-04T11:30:00Z",
-    comments: 18,
+    comments: 2,
     sharesBy: ["1", "7", "13", "16", "19"],
     likedBy: [
       "1",
@@ -103,7 +103,7 @@ export const postData: PostData[] = [
       "Looking for study partners for my upcoming Data Structures and Algorithms exam! 📊 I'm particularly struggling with graph algorithms and dynamic programming. Anyone interested in forming a study group? We could meet virtually every weekend.",
     createdAt: "2024-06-05T13:00:00Z",
     updatedAt: "2024-06-05T13:10:00Z",
-    comments: 25,
+    comments: 2,
     sharesBy: ["1", "3", "15", "19"],
     likedBy: ["1", "3", "15", "19", "14", "12", "10", "8", "6"],
     status: "active",
@@ -117,7 +117,7 @@ export const postData: PostData[] = [
       "What a sunny day! ☀️ Perfect weather for a morning run in the park. Just completed my 5K personal best - 24 minutes! The fresh air and vitamin D are exactly what I needed after spending the whole week indoors coding.",
     createdAt: "2024-06-06T08:00:00Z",
     updatedAt: "2024-06-06T08:05:00Z",
-    comments: 14,
+    comments: 2,
     sharesBy: ["5", "17", "20"],
     likedBy: ["1", "5", "17", "20", "14", "12", "9", "7", "4"],
     images: ["https://picsum.photos/400/300?random=106"],
@@ -133,7 +133,7 @@ export const postData: PostData[] = [
       "Started a new project today! 🚀 Building a full-stack e-commerce application using React, Node.js, and MongoDB. The goal is to create a seamless shopping experience with real-time inventory updates and AI-powered product recommendations. Excited to share my progress!",
     createdAt: "2024-06-07T10:00:00Z",
     updatedAt: "2024-06-07T10:30:00Z",
-    comments: 22,
+    comments: 2,
     sharesBy: ["1", "2", "15", "19", "11"],
     likedBy: [
       "1",
@@ -167,7 +167,7 @@ export const postData: PostData[] = [
       "Anyone up for a movie night? 🍿 Thinking of watching the new sci-fi thriller that just came out. I have a projector setup in my backyard - perfect for a cozy outdoor cinema experience under the stars! Bring your own snacks and blankets.",
     createdAt: "2024-06-08T19:00:00Z",
     updatedAt: "2024-06-08T19:10:00Z",
-    comments: 16,
+    comments: 2,
     sharesBy: ["2", "7", "12"],
     likedBy: ["2", "7", "12", "5", "9", "13", "17", "4", "6", "8"],
     images: ["https://picsum.photos/400/300?random=109"],
@@ -182,7 +182,7 @@ export const postData: PostData[] = [
       "Learning TypeScript is fun! 💻 Just discovered how powerful type inference can be. The way it catches errors at compile time instead of runtime is amazing. Coming from JavaScript, the learning curve was steep initially, but now I can't imagine coding without it!",
     createdAt: "2024-06-09T15:00:00Z",
     updatedAt: "2024-06-09T15:20:00Z",
-    comments: 19,
+    comments: 2,
     sharesBy: ["1", "15", "19"],
     likedBy: [
       "1",
@@ -210,7 +210,7 @@ export const postData: PostData[] = [
       "Just joined a new group! 🎯 'Web Development Enthusiasts' - a community of 2000+ developers sharing tips, resources, and project collaborations. Already learned about some amazing CSS frameworks I've never heard of. The networking opportunities here are incredible!",
     createdAt: "2024-06-10T10:00:00Z",
     updatedAt: "2024-06-10T10:10:00Z",
-    comments: 13,
+    comments: 2,
     sharesBy: ["1", "3", "15"],
     likedBy: ["1", "3", "15", "2", "6", "8", "10", "12", "14", "16", "18"],
     status: "active",
@@ -224,7 +224,7 @@ export const postData: PostData[] = [
       "Weekend plans? 🌟 Thinking of visiting the new art museum downtown, then maybe catching up on some Netflix series. Also planning to meal prep for the upcoming week - trying to eat healthier! Anyone have good recipe recommendations?",
     createdAt: "2024-06-11T12:00:00Z",
     updatedAt: "2024-06-11T12:05:00Z",
-    comments: 21,
+    comments: 2,
     sharesBy: ["2", "7", "9", "16"],
     likedBy: ["2", "7", "9", "16", "1", "3", "5", "11", "13", "17", "19", "20"],
     status: "active",
@@ -238,7 +238,7 @@ export const postData: PostData[] = [
       "Trying out a new recipe! 🍝 Made homemade pasta with a creamy mushroom sauce from scratch. It took 3 hours but totally worth it! The pasta was perfectly al dente and the sauce had this amazing depth of flavor. Cooking is becoming my new stress reliever.",
     createdAt: "2024-06-12T18:00:00Z",
     updatedAt: "2024-06-12T18:30:00Z",
-    comments: 17,
+    comments: 2,
     sharesBy: ["2", "6", "11", "18"],
     likedBy: ["2", "6", "11", "18", "1", "3", "7", "9", "13", "15", "17", "19"],
     images: [
@@ -257,7 +257,7 @@ export const postData: PostData[] = [
       "Excited for the upcoming tech conference! 🚀 'Future of AI 2024' is happening next week and I managed to get tickets. Looking forward to sessions on machine learning, neural networks, and the latest in AI ethics. Anyone else attending?",
     createdAt: "2024-06-13T09:00:00Z",
     updatedAt: "2024-06-13T09:10:00Z",
-    comments: 28,
+    comments: 2,
     sharesBy: ["1", "3", "15", "19", "11", "14"],
     likedBy: [
       "1",
@@ -294,7 +294,7 @@ export const postData: PostData[] = [
       "Just finished a workout! 💪 45-minute HIIT session followed by 20 minutes of yoga for cool down. My fitness journey started 6 months ago and I can already see significant improvements in my strength and endurance. Consistency is key!",
     createdAt: "2024-06-14T07:00:00Z",
     updatedAt: "2024-06-14T07:30:00Z",
-    comments: 24,
+    comments: 2,
     sharesBy: ["2", "17", "20", "4"],
     likedBy: [
       "2",
@@ -334,7 +334,7 @@ export const postData: PostData[] = [
       "Reading a new novel! 📚 'Klara and the Sun' by Kazuo Ishiguro. The perspective of an artificial friend observing human behavior is fascinating. Ishiguro's writing style is so unique - he makes you question what it means to be human. Halfway through and completely hooked!",
     createdAt: "2024-06-15T20:00:00Z",
     updatedAt: "2024-06-15T20:10:00Z",
-    comments: 15,
+    comments: 2,
     sharesBy: ["2", "13", "16"],
     likedBy: ["2", "13", "16", "1", "3", "7", "9", "11", "19", "4", "6", "8"],
     images: ["https://picsum.photos/400/300?random=112"],
@@ -667,7 +667,7 @@ export const postData: PostData[] = [
       "Enjoying the fresh air! 🌬️ Morning hike to the summit rewarded me with this incredible view. The city looks so small from up here. Nature has a way of putting everything in perspective. Grateful for moments like these.",
     createdAt: "2024-07-09T15:00:00Z",
     updatedAt: "2024-07-09T15:20:00Z",
-    comments: 16,
+    comments: 2,
     sharesBy: ["5", "10", "17"],
     likedBy: [
       "5",
@@ -700,7 +700,7 @@ export const postData: PostData[] = [
       "Just started yoga! 🧘‍♀️ First class was humbling - my flexibility needs serious work! But the instructor was amazing and the community is so welcoming. Looking forward to this journey of mind-body connection and inner peace.",
     createdAt: "2024-07-10T10:00:00Z",
     updatedAt: "2024-07-10T10:30:00Z",
-    comments: 22,
+    comments: 2,
     sharesBy: ["5", "9", "20"],
     likedBy: [
       "5",
@@ -741,7 +741,7 @@ export const postData: PostData[] = [
       "Meditation session complete! 🕯️ 20 minutes of mindfulness this morning. Started with guided meditation apps but now enjoying silent sits. The clarity and calm that follows is incredible. Mental health is just as important as physical health.",
     createdAt: "2024-07-11T08:00:00Z",
     updatedAt: "2024-07-11T08:10:00Z",
-    comments: 19,
+    comments: 2,
     sharesBy: ["9", "12", "16"],
     likedBy: [
       "9",
@@ -780,7 +780,7 @@ export const postData: PostData[] = [
       "Healthy eating journey! 🥬 Meal prepped for the week with quinoa bowls, roasted vegetables, and grilled chicken. Cooking at home saves money and I know exactly what goes into my body. Small changes, big results!",
     createdAt: "2024-07-12T14:00:00Z",
     updatedAt: "2024-07-12T14:20:00Z",
-    comments: 17,
+    comments: 2,
     sharesBy: ["4", "10", "11"],
     likedBy: [
       "4",
@@ -813,7 +813,7 @@ export const postData: PostData[] = [
       "Just finished a coding challenge! 💻 LeetCode hard problem took me 3 hours but finally cracked it! The algorithm optimization was tricky but so satisfying when it clicked. These challenges keep my problem-solving skills sharp.",
     createdAt: "2024-07-13T09:00:00Z",
     updatedAt: "2024-07-13T09:30:00Z",
-    comments: 25,
+    comments: 2,
     sharesBy: ["1", "3", "19", "11"],
     likedBy: [
       "1",
@@ -854,7 +854,7 @@ export const postData: PostData[] = [
       "Debugging is fun! 🐛 Spent 4 hours tracking down a race condition in our microservices architecture. The satisfaction of finding that one line causing chaos is unmatched. Sometimes the smallest bugs have the biggest impact!",
     createdAt: "2024-07-14T11:00:00Z",
     updatedAt: "2024-07-14T11:10:00Z",
-    comments: 18,
+    comments: 2,
     sharesBy: ["1", "3", "11", "19"],
     likedBy: [
       "1",
@@ -892,7 +892,7 @@ export const postData: PostData[] = [
       "Learning new algorithms! 📊 Diving deep into graph theory and shortest path algorithms. Dijkstra's algorithm is elegant in its simplicity. Computer science theory becomes beautiful when you see it solve real-world problems.",
     createdAt: "2024-07-15T15:00:00Z",
     updatedAt: "2024-07-15T15:20:00Z",
-    comments: 21,
+    comments: 2,
     sharesBy: ["1", "2", "3", "19"],
     likedBy: [
       "1",
@@ -932,7 +932,7 @@ export const postData: PostData[] = [
       "Just started painting! 🎨 Acrylic on canvas - attempting a sunset landscape. The color blending is harder than YouTube tutorials make it look! But there's something therapeutic about creating art with your hands. Each mistake teaches something new.",
     createdAt: "2024-07-16T10:00:00Z",
     updatedAt: "2024-07-16T10:30:00Z",
-    comments: 19,
+    comments: 2,
     sharesBy: ["7", "9", "12"],
     likedBy: [
       "7",
@@ -972,7 +972,7 @@ export const postData: PostData[] = [
       "Exploring new recipes! 👨‍🍳 Thai green curry from scratch - grinding my own spice paste. The kitchen smells like a Bangkok street market! Cooking is like chemistry but more delicious. The balance of sweet, sour, salty, and spicy is an art form.",
     createdAt: "2024-07-17T08:00:00Z",
     updatedAt: "2024-07-17T08:10:00Z",
-    comments: 23,
+    comments: 2,
     sharesBy: ["4", "6", "11", "18"],
     likedBy: [
       "4",
@@ -1007,7 +1007,7 @@ export const postData: PostData[] = [
       "Reading a mystery novel! 🕵️‍♀️ 'The Thursday Murder Club' by Richard Osman. These elderly detectives are hilarious and brilliant! The plot twists keep me guessing. There's something satisfying about trying to solve the mystery alongside the characters.",
     createdAt: "2024-07-18T14:00:00Z",
     updatedAt: "2024-07-18T14:20:00Z",
-    comments: 16,
+    comments: 2,
     sharesBy: ["2", "5", "13"],
     likedBy: [
       "2",
@@ -1046,7 +1046,7 @@ export const postData: PostData[] = [
       "Just started running! 🏃‍♂️ Couch to 5K program, week 1 complete. My lungs are burning but my spirit is soaring! Amazing how quickly your body adapts. The hardest part was putting on the running shoes - everything after that was momentum.",
     createdAt: "2024-07-19T09:00:00Z",
     updatedAt: "2024-07-19T09:30:00Z",
-    comments: 24,
+    comments: 2,
     sharesBy: ["2", "5", "12", "20"],
     likedBy: [
       "2",
@@ -1087,7 +1087,7 @@ export const postData: PostData[] = [
       "Morning jog complete! 🌅 5AM run through the empty streets. There's something magical about having the world to yourself. The sunrise painted the sky in shades of pink and gold. Early mornings are hard but the rewards are incredible.",
     createdAt: "2024-07-20T07:00:00Z",
     updatedAt: "2024-07-20T07:10:00Z",
-    comments: 18,
+    comments: 2,
     sharesBy: ["5", "10", "13"],
     likedBy: [
       "5",
@@ -1119,7 +1119,7 @@ export const postData: PostData[] = [
       "Healthy breakfast ideas! 🥣 Overnight oats with berries, nuts, and honey. Prep 5 jars on Sunday for the whole week. Nutrition doesn't have to be complicated - simple, whole foods fuel the body and mind. Starting the day right sets the tone!",
     createdAt: "2024-07-21T08:00:00Z",
     updatedAt: "2024-07-21T08:20:00Z",
-    comments: 20,
+    comments: 2,
     sharesBy: ["4", "10", "14"],
     likedBy: [
       "4",
@@ -1160,7 +1160,7 @@ export const postData: PostData[] = [
       "Just started learning French! 🇫🇷 Bonjour tout le monde! Using Duolingo and watching French films with subtitles. The pronunciation is challenging but the language is so beautiful. Learning a new language opens doors to different cultures and ways of thinking.",
     createdAt: "2024-07-22T10:00:00Z",
     updatedAt: "2024-07-22T10:30:00Z",
-    comments: 22,
+    comments: 2,
     sharesBy: ["1", "6", "11", "16"],
     likedBy: [
       "1",
@@ -1194,7 +1194,7 @@ export const postData: PostData[] = [
       "Practicing piano! 🎹 Working on Chopin's Minute Waltz - definitely taking me more than a minute! The finger independence required is mind-bending. Music theory is like mathematics made beautiful. Each practice session reveals new layers of complexity.",
     createdAt: "2024-07-23T12:00:00Z",
     updatedAt: "2024-07-23T12:10:00Z",
-    comments: 17,
+    comments: 2,
     sharesBy: ["8", "11", "1"],
     likedBy: [
       "8",
@@ -1232,7 +1232,7 @@ export const postData: PostData[] = [
       "Baking a cake! 🎂 Attempting a three-layer chocolate cake with raspberry filling. The kitchen looks like a flour bomb exploded but the smell is heavenly! Baking is science meets art - precision in measurements, creativity in decoration.",
     createdAt: "2024-07-24T15:00:00Z",
     updatedAt: "2024-07-24T15:20:00Z",
-    comments: 19,
+    comments: 2,
     sharesBy: ["4", "7", "16"],
     likedBy: [
       "4",
@@ -1266,7 +1266,7 @@ export const postData: PostData[] = [
       "Just started coding! 💻 First 'Hello World' in Python! The syntax is so clean compared to what I expected. Following a beginner course and building small projects. Every line of code feels like a small victory. The journey of a thousand programs begins with a single print statement!",
     createdAt: "2024-07-25T09:00:00Z",
     updatedAt: "2024-07-25T09:30:00Z",
-    comments: 26,
+    comments: 2,
     sharesBy: ["1", "3", "15", "11"],
     likedBy: [
       "1",
@@ -1300,7 +1300,7 @@ export const postData: PostData[] = [
       "Debugging my first app! 🐛 Calculator program has a mysterious bug - division by zero crashes everything! Learning about error handling and try-catch blocks. Bugs are frustrating but they teach you to think like a detective. Every error is a learning opportunity!",
     createdAt: "2024-07-26T11:00:00Z",
     updatedAt: "2024-07-26T11:10:00Z",
-    comments: 21,
+    comments: 2,
     sharesBy: ["1", "3", "15"],
     likedBy: [
       "1",
@@ -1339,7 +1339,7 @@ export const postData: PostData[] = [
       "Learning about databases! 🗄️ SQL queries are like asking questions in a very specific language. SELECT, WHERE, JOIN - each command unlocks different pieces of information. Data is the new oil, and databases are the refineries that make it useful!",
     createdAt: "2024-07-27T15:00:00Z",
     updatedAt: "2024-07-27T15:20:00Z",
-    comments: 18,
+    comments: 2,
     sharesBy: ["1", "3", "11", "15"],
     likedBy: [
       "1",
@@ -1371,7 +1371,7 @@ export const postData: PostData[] = [
       "Just started swimming! 🏊‍♀️ First lap in years and I'm completely winded! The pool felt like an ocean. But there's something meditative about the rhythm of strokes and breathing. Water has this amazing ability to wash away stress and tension.",
     createdAt: "2024-07-28T10:00:00Z",
     updatedAt: "2024-07-28T10:30:00Z",
-    comments: 20,
+    comments: 2,
     sharesBy: ["5", "10", "17"],
     likedBy: [
       "5",
@@ -1404,7 +1404,7 @@ export const postData: PostData[] = [
       "Practicing yoga! 🧘‍♀️ Warrior pose is testing my balance and patience! The mind-body connection is incredible - when thoughts are calm, the body follows. Yoga isn't about perfect poses, it's about finding peace in the imperfection.",
     createdAt: "2024-07-29T08:00:00Z",
     updatedAt: "2024-07-29T08:10:00Z",
-    comments: 18,
+    comments: 2,
     sharesBy: ["5", "9", "14"],
     likedBy: [
       "5",
@@ -1436,7 +1436,7 @@ export const postData: PostData[] = [
       "Reading a new book! 📖 'Atomic Habits' by James Clear. The concept of 1% daily improvements is revolutionary. Small changes compound over time into remarkable results. This book is changing how I think about personal growth and habit formation.",
     createdAt: "2024-07-30T15:00:00Z",
     updatedAt: "2024-07-30T15:20:00Z",
-    comments: 24,
+    comments: 2,
     sharesBy: ["1", "4", "10", "14"],
     likedBy: [
       "1",
