@@ -31,6 +31,7 @@ export interface UserData {
     level?: "1st year" | "2nd year" | "admission"; // optional for teachers
   };
   gender?: "male" | "female";
+  religion?: "Islam" | "Hindu" | "Christian" | "Other";
   friends: string[];
   pendingRequests?: string[]; // যারা এই user এর কাছে friend request পাঠিয়েছে
   sentRequests?: string[]; // এই user যাদের কাছে friend request পাঠিয়েছে
@@ -58,6 +59,7 @@ export const usersData: UserData[] = [
       roll: "1905001",
     },
     gender: "male",
+    religion: "Islam",
     friends: ["2", "3", "5", "6", "12", "14", "15", "16"],
     pendingRequests: ["4", "7", "8", "9"], // এরা user 1 এর কাছে request পাঠিয়েছে
     sentRequests: [], // user 1 কারো কাছে request পাঠায়নি
@@ -80,6 +82,7 @@ export const usersData: UserData[] = [
       dept: "Electrical and Electronic Engineering",
     },
     gender: "female",
+    religion: "Islam",
     friends: ["1", "3"],
     pendingRequests: ["5"], // user 5 এর কাছ থেকে request এসেছে
     sentRequests: [], // user 2 কারো কাছে request পাঠায়নি
@@ -107,6 +110,7 @@ export const usersData: UserData[] = [
       level: "2nd year",
     },
     gender: "male",
+    religion: "Hindu",
     friends: ["1", "2", "6", "11"],
     pendingRequests: ["7", "13"], // user 7, 13 এর কাছ থেকে request এসেছে
     sentRequests: [], // user 3 কারো কাছে request পাঠায়নি
@@ -132,6 +136,7 @@ export const usersData: UserData[] = [
       roll: "1704023",
     },
     gender: "male",
+    religion: "Christian",
     friends: ["5", "8", "12"],
     pendingRequests: ["10", "16"], // user 10, 16 এর কাছ থেকে request এসেছে
     sentRequests: ["1"], // user 4 user 1 এর কাছে request পাঠিয়েছে
@@ -159,6 +164,7 @@ export const usersData: UserData[] = [
       level: "1st year",
     },
     gender: "female",
+    religion: "Islam",
     friends: ["4", "9", "14"],
     pendingRequests: ["11", "17"], // user 11, 17 এর কাছ থেকে request এসেছে
     sentRequests: ["2"], // user 5 user 2 এর কাছে request পাঠিয়েছে
@@ -181,6 +187,7 @@ export const usersData: UserData[] = [
       dept: "Industrial and Production Engineering",
     },
     gender: "male",
+    religion: "Hindu",
     friends: ["1", "3", "10"],
     pendingRequests: ["12", "18"], // user 12, 18 এর কাছ থেকে request এসেছে
     sentRequests: [], // user 6 কারো কাছে request পাঠায়নি
@@ -208,6 +215,7 @@ export const usersData: UserData[] = [
       level: "2nd year",
     },
     gender: "female",
+    religion: "Christian",
     friends: ["11", "15", "19"],
     pendingRequests: ["13", "20"], // user 13, 20 এর কাছ থেকে request এসেছে
     sentRequests: ["1", "3"], // user 7 user 1, 3 এর কাছে request পাঠিয়েছে
@@ -233,6 +241,7 @@ export const usersData: UserData[] = [
       roll: "1701089",
     },
     gender: "male",
+    religion: "Hindu",
     friends: ["1", "4", "12", "16"],
     pendingRequests: ["14"], // user 14 এর কাছ থেকে request এসেছে
     sentRequests: ["1"], // user 8 user 1 এর কাছে request পাঠিয়েছে
@@ -255,6 +264,7 @@ export const usersData: UserData[] = [
       dept: "Mathematics",
     },
     gender: "female",
+    religion: "Christian",
     friends: ["1", "5", "13", "17"],
     pendingRequests: ["15"], // user 15 এর কাছ থেকে request এসেছে
     sentRequests: ["1"], // user 9 user 1 এর কাছে request পাঠিয়েছে
@@ -282,6 +292,7 @@ export const usersData: UserData[] = [
       level: "admission",
     },
     gender: "female",
+    religion: "Islam",
     friends: ["2", "6", "14", "18"],
     pendingRequests: ["16"], // user 16 এর কাছ থেকে request এসেছে
     sentRequests: ["4"], // user 10 user 4 এর কাছে request পাঠিয়েছে
@@ -307,6 +318,7 @@ export const usersData: UserData[] = [
       roll: "1801025",
     },
     gender: "male",
+    religion: "Islam",
     friends: ["1", "3", "7", "15"],
     pendingRequests: ["19"], // user 19 এর কাছ থেকে request এসেছে
     sentRequests: ["5"], // user 11 user 5 এর কাছে request পাঠিয়েছে
@@ -329,6 +341,7 @@ export const usersData: UserData[] = [
       dept: "Civil Engineering",
     },
     gender: "female",
+    religion: "Islam",
     friends: ["1", "4", "8", "16"],
     pendingRequests: ["20"], // user 20 এর কাছ থেকে request এসেছে
     sentRequests: ["6"], // user 12 user 6 এর কাছে request পাঠিয়েছে
@@ -356,6 +369,7 @@ export const usersData: UserData[] = [
       level: "1st year",
     },
     gender: "male",
+    religion: "Islam",
     friends: ["1", "9", "17"],
     pendingRequests: [], // কেউ user 13 এর কাছে request পাঠায়নি
     sentRequests: ["3", "7"], // user 13 user 3, 7 এর কাছে request পাঠিয়েছে
@@ -381,6 +395,7 @@ export const usersData: UserData[] = [
       roll: "1805042",
     },
     gender: "female",
+    religion: "Hindu",
     friends: ["1", "5", "10", "18"],
     pendingRequests: [], // কেউ user 14 এর কাছে request পাঠায়নি
     sentRequests: ["8"], // user 14 user 8 এর কাছে request পাঠিয়েছে
@@ -403,6 +418,7 @@ export const usersData: UserData[] = [
       dept: "Computer Science and Engineering",
     },
     gender: "male",
+    religion: "Christian",
     friends: ["1", "7", "11", "19"],
     pendingRequests: [], // কেউ user 15 এর কাছে request পাঠায়নি
     sentRequests: ["9"], // user 15 user 9 এর কাছে request পাঠিয়েছে
@@ -430,6 +446,7 @@ export const usersData: UserData[] = [
       level: "2nd year",
     },
     gender: "female",
+    religion: "Hindu",
     friends: ["8", "12", "20"],
     pendingRequests: [], // কেউ user 16 এর কাছে request পাঠায়নি
     sentRequests: ["4", "10"], // user 16 user 4, 10 এর কাছে request পাঠিয়েছে
@@ -452,6 +469,7 @@ export const usersData: UserData[] = [
       dept: "Physics",
     },
     gender: "male",
+    religion: "Christian",
     friends: ["9", "13"],
     pendingRequests: [], // কেউ user 17 এর কাছে request পাঠায়নি
     sentRequests: ["5"], // user 17 user 5 এর কাছে request পাঠিয়েছে
@@ -477,6 +495,7 @@ export const usersData: UserData[] = [
       roll: "1804018",
     },
     gender: "female",
+    religion: "Islam",
     friends: ["10", "14"],
     pendingRequests: [], // কেউ user 18 এর কাছে request পাঠায়নি
     sentRequests: ["6"], // user 18 user 6 এর কাছে request পাঠিয়েছে
@@ -504,6 +523,7 @@ export const usersData: UserData[] = [
       level: "1st year",
     },
     gender: "male",
+    religion: "Christian",
     friends: ["7", "15"],
     pendingRequests: [], // কেউ user 19 এর কাছে request পাঠায়নি
     sentRequests: ["11"], // user 19 user 11 এর কাছে request পাঠিয়েছে
@@ -526,6 +546,7 @@ export const usersData: UserData[] = [
       dept: "Applied Chemistry and Chemical Engineering",
     },
     gender: "female",
+    religion: "Hindu",
     friends: ["16"],
     pendingRequests: [], // কেউ user 20 এর কাছে request পাঠায়নি
     sentRequests: ["7", "12"], // user 20 user 7, 12 এর কাছে request পাঠিয়েছে
@@ -552,6 +573,7 @@ export const usersData: UserData[] = [
       roll: "2001045",
     },
     gender: "male",
+    religion: "Islam",
     friends: ["1", "3", "22", "25"],
     pendingRequests: ["23", "26"], // user 23, 26 এর কাছ থেকে request এসেছে
     sentRequests: [], // user 21 কারো কাছে request পাঠায়নি
@@ -574,6 +596,7 @@ export const usersData: UserData[] = [
       dept: "English",
     },
     gender: "female",
+    religion: "Hindu",
     friends: ["21", "24", "27"],
     pendingRequests: ["28"], // user 28 এর কাছ থেকে request এসেছে
     sentRequests: [], // user 22 কারো কাছে request পাঠায়নি
@@ -599,6 +622,7 @@ export const usersData: UserData[] = [
       roll: "1902078",
     },
     gender: "male",
+    religion: "Islam",
     friends: ["21", "29", "30"],
     pendingRequests: ["24"], // user 24 এর কাছ থেকে request এসেছে
     sentRequests: ["21"], // user 23 user 21 এর কাছে request পাঠিয়েছে
@@ -621,6 +645,7 @@ export const usersData: UserData[] = [
       dept: "Statistics",
     },
     gender: "female",
+    religion: "Islam",
     friends: ["22", "31"],
     pendingRequests: ["23", "32"], // user 23, 32 এর কাছ থেকে request এসেছে
     sentRequests: ["23"], // user 24 user 23 এর কাছে request পাঠিয়েছে
@@ -646,6 +671,7 @@ export const usersData: UserData[] = [
       roll: "1803056",
     },
     gender: "male",
+    religion: "Islam",
     friends: ["21", "33", "34"],
     pendingRequests: ["35"], // user 35 এর কাছ থেকে request এসেছে
     sentRequests: [], // user 25 কারো কাছে request পাঠায়নি
@@ -668,6 +694,7 @@ export const usersData: UserData[] = [
       dept: "Psychology",
     },
     gender: "female",
+    religion: "Islam",
     friends: ["36", "37"],
     pendingRequests: ["21", "38"], // user 21, 38 এর কাছ থেকে request এসেছে
     sentRequests: ["21"], // user 26 user 21 এর কাছে request পাঠিয়েছে
@@ -693,6 +720,7 @@ export const usersData: UserData[] = [
       roll: "1701023",
     },
     gender: "male",
+    religion: "Islam",
     friends: ["22", "39", "40"],
     pendingRequests: ["26"], // user 26 এর কাছ থেকে request এসেছে
     sentRequests: ["26"], // user 27 user 26 এর কাছে request পাঠিয়েছে
@@ -715,6 +743,7 @@ export const usersData: UserData[] = [
       dept: "Agriculture",
     },
     gender: "female",
+    religion: "Islam",
     friends: ["22", "24"],
     pendingRequests: ["27", "29"], // user 27, 29 এর কাছ থেকে request এসেছে
     sentRequests: ["22"], // user 28 user 22 এর কাছে request পাঠিয়েছে
@@ -740,6 +769,7 @@ export const usersData: UserData[] = [
       roll: "1605089",
     },
     gender: "male",
+    religion: "Islam",
     friends: ["23", "28", "30"],
     pendingRequests: ["31"], // user 31 এর কাছ থেকে request এসেছে
     sentRequests: ["28"], // user 29 user 28 এর কাছে request পাঠিয়েছে
@@ -762,6 +792,7 @@ export const usersData: UserData[] = [
       dept: "Sociology",
     },
     gender: "female",
+    religion: "Islam",
     friends: ["23", "29"],
     pendingRequests: ["32", "33"], // user 32, 33 এর কাছ থেকে request এসেছে
     sentRequests: [], // user 30 কারো কাছে request পাঠায়নি
@@ -788,6 +819,7 @@ export const usersData: UserData[] = [
       level: "1st year",
     },
     gender: "female",
+    religion: "Islam",
     friends: ["24", "32", "35"],
     pendingRequests: ["36"], // user 36 এর কাছ থেকে request এসেছে
     sentRequests: ["29"], // user 31 user 29 এর কাছে request পাঠিয়েছে
@@ -811,6 +843,7 @@ export const usersData: UserData[] = [
       sscBatch: "1995",
     },
     gender: "male",
+    religion: "Islam",
     friends: ["24", "30", "31"],
     pendingRequests: ["33"], // user 33 এর কাছ থেকে request এসেছে
     sentRequests: ["24", "30"], // user 32 user 24, 30 এর কাছে request পাঠিয়েছে
@@ -837,6 +870,7 @@ export const usersData: UserData[] = [
       level: "2nd year",
     },
     gender: "female",
+    religion: "Islam",
     friends: ["25", "30", "34"],
     pendingRequests: ["32", "37"], // user 32, 37 এর কাছ থেকে request এসেছে
     sentRequests: ["30", "32"], // user 33 user 30, 32 এর কাছে request পাঠিয়েছে
@@ -863,6 +897,7 @@ export const usersData: UserData[] = [
       level: "1st year",
     },
     gender: "male",
+    religion: "Islam",
     friends: ["25", "33", "38"],
     pendingRequests: ["39"], // user 39 এর কাছ থেকে request এসেছে
     sentRequests: [], // user 34 কারো কাছে request পাঠায়নি
@@ -886,6 +921,7 @@ export const usersData: UserData[] = [
       sscBatch: "1992",
     },
     gender: "female",
+    religion: "Islam",
     friends: ["25", "31", "36"],
     pendingRequests: ["40"], // user 40 এর কাছ থেকে request এসেছে
     sentRequests: ["25"], // user 35 user 25 এর কাছে request পাঠিয়েছে
@@ -912,6 +948,7 @@ export const usersData: UserData[] = [
       level: "2nd year",
     },
     gender: "male",
+    religion: "Hindu",
     friends: ["26", "31", "35"],
     pendingRequests: [], // কেউ user 36 এর কাছে request পাঠায়নি
     sentRequests: ["31"], // user 36 user 31 এর কাছে request পাঠিয়েছে
@@ -938,6 +975,7 @@ export const usersData: UserData[] = [
       level: "1st year",
     },
     gender: "female",
+    religion: "Other",
     friends: ["26", "33", "39"],
     pendingRequests: ["33"], // user 33 এর কাছ থেকে request এসেছে
     sentRequests: [], // user 37 কারো কাছে request পাঠায়নি
@@ -961,6 +999,7 @@ export const usersData: UserData[] = [
       sscBatch: "1988",
     },
     gender: "male",
+    religion: "Islam",
     friends: ["26", "34", "40"],
     pendingRequests: ["26"], // user 26 এর কাছ থেকে request এসেছে
     sentRequests: [], // user 38 কারো কাছে request পাঠায়নি
@@ -987,6 +1026,7 @@ export const usersData: UserData[] = [
       level: "2nd year",
     },
     gender: "female",
+    religion: "Islam",
     friends: ["27", "34", "37"],
     pendingRequests: ["34"], // user 34 এর কাছ থেকে request এসেছে
     sentRequests: [], // user 39 কারো কাছে request পাঠায়নি
@@ -1013,6 +1053,7 @@ export const usersData: UserData[] = [
       level: "1st year",
     },
     gender: "male",
+    religion: "Hindu",
     friends: ["27", "38"],
     pendingRequests: ["35"], // user 35 এর কাছ থেকে request এসেছে
     sentRequests: [], // user 40 কারো কাছে request পাঠায়নি
