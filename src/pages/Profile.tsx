@@ -8,7 +8,7 @@ import {
   FaFileAlt,
   FaBookmark,
 } from "react-icons/fa";
-import { getPostsByUserId } from "../data/post-data/profilePostData";
+import { getPostsByUserId } from "../data/profile-data/profilePostData";
 import { getUserById, getCurrentUserId } from "../data/userData";
 import { getPublicFoldersByUserId } from "../data/publicFilesData";
 import ProfilePosts from "../components/Profile/ProfilePosts";

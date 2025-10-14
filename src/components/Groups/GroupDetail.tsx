@@ -12,15 +12,14 @@ import {
   FaVideo,
   FaSmile,
 } from "react-icons/fa";
-import { allMockGroups } from "./data/groupsData";
-import GroupPostCard from "./GroupPostCard";
+import { groupsData } from "../../data/groupsData";
 
 const GroupDetail: React.FC = () => {
   const { groupId } = useParams<{ groupId: string }>();
   const navigate = useNavigate();
   const [isJoined, setIsJoined] = useState(false);
 
-  const group = allMockGroups.find((g) => g.id === parseInt(groupId || "0"));
+  const group = groupsData.find((g) => g.groupId === groupId);
 
   const handleJoinToggle = () => {
     setIsJoined(!isJoined);
@@ -70,17 +69,17 @@ const GroupDetail: React.FC = () => {
             <h1 className="mb-2 text-4xl font-bold text-white">{group.name}</h1>
             <div className="flex items-center gap-4 text-sm text-white/90">
               <div className="flex items-center gap-1">
-                {group.isPrivate ? (
+                {group.privacy === "private" ? (
                   <FaLock className="text-sm" />
                 ) : (
                   <FaGlobe className="text-sm" />
                 )}
-                <span>{group.isPrivate ? "Private" : "Public"} group</span>
+                <span>{group.privacy === "private" ? "Private" : "Public"} group</span>
               </div>
               <span>•</span>
               <div className="flex items-center gap-1">
                 <FaUsers className="text-sm" />
-                <span>{group.members.toLocaleString()} members</span>
+                <span>{group.memberCount.toLocaleString()} members</span>
               </div>
             </div>
           </div>
@@ -179,21 +178,12 @@ const GroupDetail: React.FC = () => {
 
         {/* Posts Feed */}
         <div className="space-y-3">
-          {group.recentPosts && group.recentPosts.length > 0 ? (
-            group.recentPosts.map((post) => (
-              <GroupPostCard 
-                key={post.id} 
-                post={post} 
-                isGroupMember={isJoined}
-              />
-            ))
-          ) : (
-            <div className="rounded-lg border border-gray-200 bg-white p-8 text-center shadow-sm">
-              <p className="text-gray-500">
-                No posts yet. Be the first to share something!
-              </p>
-            </div>
-          )}
+          {/* No posts yet, since groupsData does not have posts. Placeholder only. */}
+          <div className="rounded-lg border border-gray-200 bg-white p-8 text-center shadow-sm">
+            <p className="text-gray-500">
+              No posts yet. Be the first to share something!
+            </p>
+          </div>
         </div>
       </div>
     </>

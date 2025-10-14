@@ -15,7 +15,7 @@ import {
   FaRegBookmark,
 } from "react-icons/fa";
 
-import type { PostData } from "../../data/post-data/profilePostData";
+import type { PostData } from "../../data/profile-data/profilePostData";
 import { getUserById } from "../../data/userData";
 import { formatPostTime } from "../../utils/dateUtils";
 

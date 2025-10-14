@@ -1,6 +1,6 @@
 import React from "react";
 import ProfilePostCard from "./ProfilePostCard";
-import type { PostData } from "../../data/post-data/profilePostData";
+import type { PostData } from "../../data/profile-data/profilePostData";
 
 interface ProfilePostsProps {
   posts: PostData[];
