@@ -32,14 +32,15 @@ export interface UserData {
   };
   gender?: "male" | "female";
   friends: string[];
-  pendingRequests?: string[];
+  pendingRequests?: string[]; // যারা এই user এর কাছে friend request পাঠিয়েছে
+  sentRequests?: string[]; // এই user যাদের কাছে friend request পাঠিয়েছে
   saved?: string[];
 }
 
 export const usersData: UserData[] = [
   {
     id: "1",
-    name: "Tamim Ikbal (1/20)",
+    name: "Tamim Ikbal (1/40)",
     username: "tamim_ikbal",
     email: "tamim.ikbal@buet.ac.bd",
     password: "password123",
@@ -58,12 +59,13 @@ export const usersData: UserData[] = [
     },
     gender: "male",
     friends: ["2", "3", "5", "6", "12", "14", "15", "16"],
-    pendingRequests: ["4", "7", "8", "9"],
+    pendingRequests: ["4", "7", "8", "9"], // এরা user 1 এর কাছে request পাঠিয়েছে
+    sentRequests: [], // user 1 কারো কাছে request পাঠায়নি
     saved: ["p1", "p3"],
   },
   {
     id: "2",
-    name: "Sarah Wilson (2/20)",
+    name: "Sarah Wilson (2/40)",
     username: "sarahw",
     email: "sarah.wilson@ruet.ac.bd",
     password: "password123",
@@ -79,12 +81,13 @@ export const usersData: UserData[] = [
     },
     gender: "female",
     friends: ["1", "3"],
-    pendingRequests: ["5"],
+    pendingRequests: ["5"], // user 5 এর কাছ থেকে request এসেছে
+    sentRequests: [], // user 2 কারো কাছে request পাঠায়নি
     saved: ["p2"],
   },
   {
     id: "3",
-    name: "Alex Chen (3/20)",
+    name: "Alex Chen (3/40)",
     username: "alexc",
     email: "alex.chen@dhakacollege.edu.bd",
     password: "password123",
@@ -105,12 +108,13 @@ export const usersData: UserData[] = [
     },
     gender: "male",
     friends: ["1", "2", "6", "11"],
-    pendingRequests: ["7", "13"],
+    pendingRequests: ["7", "13"], // user 7, 13 এর কাছ থেকে request এসেছে
+    sentRequests: [], // user 3 কারো কাছে request পাঠায়নি
     saved: ["p1", "p4"],
   },
   {
     id: "4",
-    name: "Mike Johnson (4/20)",
+    name: "Mike Johnson (4/40)",
     username: "mikej",
     email: "mike.johnson@cuet.ac.bd",
     password: "password123",
@@ -129,12 +133,13 @@ export const usersData: UserData[] = [
     },
     gender: "male",
     friends: ["5", "8", "12"],
-    pendingRequests: ["10", "16"],
+    pendingRequests: ["10", "16"], // user 10, 16 এর কাছ থেকে request এসেছে
+    sentRequests: ["1"], // user 4 user 1 এর কাছে request পাঠিয়েছে
     saved: ["p2", "p5"],
   },
   {
     id: "5",
-    name: "Emma Davis (5/20)",
+    name: "Emma Davis (5/40)",
     username: "emmad",
     email: "emma.davis@rajukcollege.edu.bd",
     password: "password123",
@@ -155,12 +160,13 @@ export const usersData: UserData[] = [
     },
     gender: "female",
     friends: ["4", "9", "14"],
-    pendingRequests: ["11", "17"],
+    pendingRequests: ["11", "17"], // user 11, 17 এর কাছ থেকে request এসেছে
+    sentRequests: ["2"], // user 5 user 2 এর কাছে request পাঠিয়েছে
     saved: ["p3", "p6"],
   },
   {
     id: "6",
-    name: "Alex Johnson (6/20)",
+    name: "Alex Johnson (6/40)",
     username: "alexj",
     email: "alex.johnson@ruet.ac.bd",
     password: "password123",
@@ -176,12 +182,13 @@ export const usersData: UserData[] = [
     },
     gender: "male",
     friends: ["1", "3", "10"],
-    pendingRequests: ["12", "18"],
+    pendingRequests: ["12", "18"], // user 12, 18 এর কাছ থেকে request এসেছে
+    sentRequests: [], // user 6 কারো কাছে request পাঠায়নি
     saved: ["p1", "p7"],
   },
   {
     id: "7",
-    name: "Emma Wilson (7/20)",
+    name: "Emma Wilson (7/40)",
     username: "emmaw",
     email: "emma.wilson@holycross.edu.bd",
     password: "password123",
@@ -202,12 +209,13 @@ export const usersData: UserData[] = [
     },
     gender: "female",
     friends: ["11", "15", "19"],
-    pendingRequests: ["13", "20"],
+    pendingRequests: ["13", "20"], // user 13, 20 এর কাছ থেকে request এসেছে
+    sentRequests: ["1", "3"], // user 7 user 1, 3 এর কাছে request পাঠিয়েছে
     saved: ["p2", "p8"],
   },
   {
     id: "8",
-    name: "James Kim (8/20)",
+    name: "James Kim (8/40)",
     username: "jamesk",
     email: "james.kim@cuet.ac.bd",
     password: "password123",
@@ -226,12 +234,13 @@ export const usersData: UserData[] = [
     },
     gender: "male",
     friends: ["1", "4", "12", "16"],
-    pendingRequests: ["14"],
+    pendingRequests: ["14"], // user 14 এর কাছ থেকে request এসেছে
+    sentRequests: ["1"], // user 8 user 1 এর কাছে request পাঠিয়েছে
     saved: ["p3", "p9"],
   },
   {
     id: "9",
-    name: "Sarah Kim (9/20)",
+    name: "Sarah Kim (9/40)",
     username: "sarahk",
     email: "sarah.kim@buet.ac.bd",
     password: "password123",
@@ -247,12 +256,13 @@ export const usersData: UserData[] = [
     },
     gender: "female",
     friends: ["1", "5", "13", "17"],
-    pendingRequests: ["15"],
+    pendingRequests: ["15"], // user 15 এর কাছ থেকে request এসেছে
+    sentRequests: ["1"], // user 9 user 1 এর কাছে request পাঠিয়েছে
     saved: ["p4", "p10"],
   },
   {
     id: "10",
-    name: "Rachel Kim (10/20)",
+    name: "Rachel Kim (10/40)",
     username: "rachelk",
     email: "rachel.kim@notredame.edu.bd",
     password: "password123",
@@ -273,12 +283,13 @@ export const usersData: UserData[] = [
     },
     gender: "female",
     friends: ["2", "6", "14", "18"],
-    pendingRequests: ["16"],
+    pendingRequests: ["16"], // user 16 এর কাছ থেকে request এসেছে
+    sentRequests: ["4"], // user 10 user 4 এর কাছে request পাঠিয়েছে
     saved: ["p5", "p11"],
   },
   {
     id: "11",
-    name: "John Smith (11/20)",
+    name: "John Smith (11/40)",
     username: "johns",
     email: "john.smith@kuet.ac.bd",
     password: "password123",
@@ -297,12 +308,13 @@ export const usersData: UserData[] = [
     },
     gender: "male",
     friends: ["1", "3", "7", "15"],
-    pendingRequests: ["19"],
+    pendingRequests: ["19"], // user 19 এর কাছ থেকে request এসেছে
+    sentRequests: ["5"], // user 11 user 5 এর কাছে request পাঠিয়েছে
     saved: ["p6", "p12"],
   },
   {
     id: "12",
-    name: "Linda Lee (12/20)",
+    name: "Linda Lee (12/40)",
     username: "lindal",
     email: "linda.lee@cuet.ac.bd",
     password: "password123",
@@ -318,12 +330,13 @@ export const usersData: UserData[] = [
     },
     gender: "female",
     friends: ["1", "4", "8", "16"],
-    pendingRequests: ["20"],
+    pendingRequests: ["20"], // user 20 এর কাছ থেকে request এসেছে
+    sentRequests: ["6"], // user 12 user 6 এর কাছে request পাঠিয়েছে
     saved: ["p7", "p13"],
   },
   {
     id: "13",
-    name: "David Brown (13/20)",
+    name: "David Brown (13/40)",
     username: "davidb",
     email: "david.brown@adamjee.edu.bd",
     password: "password123",
@@ -344,12 +357,13 @@ export const usersData: UserData[] = [
     },
     gender: "male",
     friends: ["1", "9", "17"],
-    pendingRequests: ["3", "7"],
+    pendingRequests: [], // কেউ user 13 এর কাছে request পাঠায়নি
+    sentRequests: ["3", "7"], // user 13 user 3, 7 এর কাছে request পাঠিয়েছে
     saved: ["p8", "p14"],
   },
   {
     id: "14",
-    name: "Sophia Miller (14/20)",
+    name: "Sophia Miller (14/40)",
     username: "sophiam",
     email: "sophia.miller@ruet.ac.bd",
     password: "password123",
@@ -368,12 +382,13 @@ export const usersData: UserData[] = [
     },
     gender: "female",
     friends: ["1", "5", "10", "18"],
-    pendingRequests: ["8"],
+    pendingRequests: [], // কেউ user 14 এর কাছে request পাঠায়নি
+    sentRequests: ["8"], // user 14 user 8 এর কাছে request পাঠিয়েছে
     saved: ["p9", "p15"],
   },
   {
     id: "15",
-    name: "William Garcia (15/20)",
+    name: "William Garcia (15/40)",
     username: "williamg",
     email: "william.garcia@kuet.ac.bd",
     password: "password123",
@@ -389,12 +404,13 @@ export const usersData: UserData[] = [
     },
     gender: "male",
     friends: ["1", "7", "11", "19"],
-    pendingRequests: ["9"],
+    pendingRequests: [], // কেউ user 15 এর কাছে request পাঠায়নি
+    sentRequests: ["9"], // user 15 user 9 এর কাছে request পাঠিয়েছে
     saved: ["p10", "p16"],
   },
   {
     id: "16",
-    name: "Olivia Martinez (16/20)",
+    name: "Olivia Martinez (16/40)",
     username: "oliviam",
     email: "olivia.martinez@viqarunnisa.edu.bd",
     password: "password123",
@@ -415,12 +431,13 @@ export const usersData: UserData[] = [
     },
     gender: "female",
     friends: ["8", "12", "20"],
-    pendingRequests: ["4", "10"],
+    pendingRequests: [], // কেউ user 16 এর কাছে request পাঠায়নি
+    sentRequests: ["4", "10"], // user 16 user 4, 10 এর কাছে request পাঠিয়েছে
     saved: ["p11", "p17"],
   },
   {
     id: "17",
-    name: "Benjamin Lee (17/20)",
+    name: "Benjamin Lee (17/40)",
     username: "benjaminl",
     email: "benjamin.lee@buet.ac.bd",
     password: "password123",
@@ -436,12 +453,13 @@ export const usersData: UserData[] = [
     },
     gender: "male",
     friends: ["9", "13"],
-    pendingRequests: ["5"],
+    pendingRequests: [], // কেউ user 17 এর কাছে request পাঠায়নি
+    sentRequests: ["5"], // user 17 user 5 এর কাছে request পাঠিয়েছে
     saved: ["p12", "p18"],
   },
   {
     id: "18",
-    name: "Mia Clark (18/20)",
+    name: "Mia Clark (18/40)",
     username: "miac",
     email: "mia.clark@ruet.ac.bd",
     password: "password123",
@@ -460,12 +478,13 @@ export const usersData: UserData[] = [
     },
     gender: "female",
     friends: ["10", "14"],
-    pendingRequests: ["6"],
+    pendingRequests: [], // কেউ user 18 এর কাছে request পাঠায়নি
+    sentRequests: ["6"], // user 18 user 6 এর কাছে request পাঠিয়েছে
     saved: ["p13", "p19"],
   },
   {
     id: "19",
-    name: "Elijah Walker (19/20)",
+    name: "Elijah Walker (19/40)",
     username: "elijahw",
     email: "elijah.walker@saintjoseph.edu.bd",
     password: "password123",
@@ -486,12 +505,13 @@ export const usersData: UserData[] = [
     },
     gender: "male",
     friends: ["7", "15"],
-    pendingRequests: ["11"],
+    pendingRequests: [], // কেউ user 19 এর কাছে request পাঠায়নি
+    sentRequests: ["11"], // user 19 user 11 এর কাছে request পাঠিয়েছে
     saved: ["p14", "p20"],
   },
   {
     id: "20",
-    name: "Ava Hall (20/20)",
+    name: "Ava Hall (20/40)",
     username: "avah",
     email: "ava.hall@cuet.ac.bd",
     password: "password123",
@@ -507,7 +527,8 @@ export const usersData: UserData[] = [
     },
     gender: "female",
     friends: ["16"],
-    pendingRequests: ["7", "12"],
+    pendingRequests: [], // কেউ user 20 এর কাছে request পাঠায়নি
+    sentRequests: ["7", "12"], // user 20 user 7, 12 এর কাছে request পাঠিয়েছে
     saved: ["p15", "p1"],
   },
   // Additional 20 users for better field distribution
@@ -518,7 +539,8 @@ export const usersData: UserData[] = [
     email: "fahim.rahman@du.ac.bd",
     password: "password123",
     phone: "+8801712345680",
-    avatar: "https://ui-avatars.com/api/?name=Fahim+Rahman&background=ff6b6b&color=fff&size=150&bold=true&rounded=true",
+    avatar:
+      "https://ui-avatars.com/api/?name=Fahim+Rahman&background=ff6b6b&color=fff&size=150&bold=true&rounded=true",
     bio: "Economics student at Dhaka University, interested in development economics",
     role: ["student"],
     category: "university",
@@ -527,11 +549,12 @@ export const usersData: UserData[] = [
       dept: "Economics",
       section: "A",
       subsection: "1",
-      roll: "2001045"
+      roll: "2001045",
     },
     gender: "male",
     friends: ["1", "3", "22", "25"],
-    pendingRequests: ["23", "26"],
+    pendingRequests: ["23", "26"], // user 23, 26 এর কাছ থেকে request এসেছে
+    sentRequests: [], // user 21 কারো কাছে request পাঠায়নি
     saved: ["p1", "p16"],
   },
   {
@@ -541,17 +564,19 @@ export const usersData: UserData[] = [
     email: "nusrat.jahan@ju.ac.bd",
     password: "password123",
     phone: "+8801823456791",
-    avatar: "https://ui-avatars.com/api/?name=Nusrat+Jahan&background=4ecdc4&color=fff&size=150&bold=true&rounded=true",
+    avatar:
+      "https://ui-avatars.com/api/?name=Nusrat+Jahan&background=4ecdc4&color=fff&size=150&bold=true&rounded=true",
     bio: "Professor of English Literature at Jahangirnagar University, Shakespeare specialist",
     role: ["teacher"],
     category: "university",
     university: {
       name: "Jahangirnagar University",
-      dept: "English"
+      dept: "English",
     },
     gender: "female",
     friends: ["21", "24", "27"],
-    pendingRequests: ["28"],
+    pendingRequests: ["28"], // user 28 এর কাছ থেকে request এসেছে
+    sentRequests: [], // user 22 কারো কাছে request পাঠায়নি
     saved: ["p2", "p17"],
   },
   {
@@ -561,7 +586,8 @@ export const usersData: UserData[] = [
     email: "karim.uddin@iu.ac.bd",
     password: "password123",
     phone: "+8801934567892",
-    avatar: "https://ui-avatars.com/api/?name=Karim+Uddin&background=45b7d1&color=fff&size=150&bold=true&rounded=true",
+    avatar:
+      "https://ui-avatars.com/api/?name=Karim+Uddin&background=45b7d1&color=fff&size=150&bold=true&rounded=true",
     bio: "Business Administration student at Islamic University, entrepreneurship enthusiast",
     role: ["student"],
     category: "university",
@@ -570,11 +596,12 @@ export const usersData: UserData[] = [
       dept: "Business Administration",
       section: "B",
       subsection: "2",
-      roll: "1902078"
+      roll: "1902078",
     },
     gender: "male",
     friends: ["21", "29", "30"],
-    pendingRequests: ["24"],
+    pendingRequests: ["24"], // user 24 এর কাছ থেকে request এসেছে
+    sentRequests: ["21"], // user 23 user 21 এর কাছে request পাঠিয়েছে
     saved: ["p3", "p18"],
   },
   {
@@ -584,17 +611,19 @@ export const usersData: UserData[] = [
     email: "rashida.begum@sust.edu",
     password: "password123",
     phone: "+8801745678903",
-    avatar: "https://ui-avatars.com/api/?name=Rashida+Begum&background=96ceb4&color=fff&size=150&bold=true&rounded=true",
+    avatar:
+      "https://ui-avatars.com/api/?name=Rashida+Begum&background=96ceb4&color=fff&size=150&bold=true&rounded=true",
     bio: "Associate Professor in Statistics, data science researcher",
     role: ["teacher"],
     category: "university",
     university: {
       name: "Shahjalal University of Science and Technology",
-      dept: "Statistics"
+      dept: "Statistics",
     },
     gender: "female",
     friends: ["22", "31"],
-    pendingRequests: ["23", "32"],
+    pendingRequests: ["23", "32"], // user 23, 32 এর কাছ থেকে request এসেছে
+    sentRequests: ["23"], // user 24 user 23 এর কাছে request পাঠিয়েছে
     saved: ["p4", "p19"],
   },
   {
@@ -604,7 +633,8 @@ export const usersData: UserData[] = [
     email: "arif.hossain@cu.ac.bd",
     password: "password123",
     phone: "+8801856789014",
-    avatar: "https://ui-avatars.com/api/?name=Arif+Hossain&background=feca57&color=fff&size=150&bold=true&rounded=true",
+    avatar:
+      "https://ui-avatars.com/api/?name=Arif+Hossain&background=feca57&color=fff&size=150&bold=true&rounded=true",
     bio: "Pharmacy student at University of Chittagong, pharmaceutical research interest",
     role: ["student"],
     category: "university",
@@ -613,11 +643,12 @@ export const usersData: UserData[] = [
       dept: "Pharmacy",
       section: "A",
       subsection: "1",
-      roll: "1803056"
+      roll: "1803056",
     },
     gender: "male",
     friends: ["21", "33", "34"],
-    pendingRequests: ["35"],
+    pendingRequests: ["35"], // user 35 এর কাছ থেকে request এসেছে
+    sentRequests: [], // user 25 কারো কাছে request পাঠায়নি
     saved: ["p5", "p20"],
   },
   {
@@ -627,17 +658,19 @@ export const usersData: UserData[] = [
     email: "fatema.khatun@ru.ac.bd",
     password: "password123",
     phone: "+8801967890125",
-    avatar: "https://ui-avatars.com/api/?name=Fatema+Khatun&background=ff9ff3&color=fff&size=150&bold=true&rounded=true",
+    avatar:
+      "https://ui-avatars.com/api/?name=Fatema+Khatun&background=ff9ff3&color=fff&size=150&bold=true&rounded=true",
     bio: "Senior Lecturer in Psychology, cognitive psychology specialist",
     role: ["teacher"],
     category: "university",
     university: {
       name: "University of Rajshahi",
-      dept: "Psychology"
+      dept: "Psychology",
     },
     gender: "female",
     friends: ["36", "37"],
-    pendingRequests: ["21", "38"],
+    pendingRequests: ["21", "38"], // user 21, 38 এর কাছ থেকে request এসেছে
+    sentRequests: ["21"], // user 26 user 21 এর কাছে request পাঠিয়েছে
     saved: ["p6", "p1"],
   },
   {
@@ -647,7 +680,8 @@ export const usersData: UserData[] = [
     email: "sabbir.ahmed@nstu.edu.bd",
     password: "password123",
     phone: "+8801778901236",
-    avatar: "https://ui-avatars.com/api/?name=Sabbir+Ahmed&background=54a0ff&color=fff&size=150&bold=true&rounded=true",
+    avatar:
+      "https://ui-avatars.com/api/?name=Sabbir+Ahmed&background=54a0ff&color=fff&size=150&bold=true&rounded=true",
     bio: "Marine Science student at NSTU, oceanography and marine biology enthusiast",
     role: ["student"],
     category: "university",
@@ -656,11 +690,12 @@ export const usersData: UserData[] = [
       dept: "Marine Science",
       section: "A",
       subsection: "1",
-      roll: "1701023"
+      roll: "1701023",
     },
     gender: "male",
     friends: ["22", "39", "40"],
-    pendingRequests: ["26"],
+    pendingRequests: ["26"], // user 26 এর কাছ থেকে request এসেছে
+    sentRequests: ["26"], // user 27 user 26 এর কাছে request পাঠিয়েছে
     saved: ["p7", "p2"],
   },
   {
@@ -670,17 +705,19 @@ export const usersData: UserData[] = [
     email: "salma.akter@bau.edu.bd",
     password: "password123",
     phone: "+8801889012347",
-    avatar: "https://ui-avatars.com/api/?name=Salma+Akter&background=5f27cd&color=fff&size=150&bold=true&rounded=true",
+    avatar:
+      "https://ui-avatars.com/api/?name=Salma+Akter&background=5f27cd&color=fff&size=150&bold=true&rounded=true",
     bio: "Professor of Agriculture, sustainable farming and crop science expert",
     role: ["teacher"],
     category: "university",
     university: {
       name: "Bangladesh Agricultural University",
-      dept: "Agriculture"
+      dept: "Agriculture",
     },
     gender: "female",
     friends: ["22", "24"],
-    pendingRequests: ["27", "29"],
+    pendingRequests: ["27", "29"], // user 27, 29 এর কাছ থেকে request এসেছে
+    sentRequests: ["22"], // user 28 user 22 এর কাছে request পাঠিয়েছে
     saved: ["p8", "p3"],
   },
   {
@@ -690,7 +727,8 @@ export const usersData: UserData[] = [
     email: "tanvir.islam@pstu.ac.bd",
     password: "password123",
     phone: "+8801990123458",
-    avatar: "https://ui-avatars.com/api/?name=Tanvir+Islam&background=00d2d3&color=fff&size=150&bold=true&rounded=true",
+    avatar:
+      "https://ui-avatars.com/api/?name=Tanvir+Islam&background=00d2d3&color=fff&size=150&bold=true&rounded=true",
     bio: "Veterinary Medicine student at PSTU, animal health and welfare advocate",
     role: ["student"],
     category: "university",
@@ -699,11 +737,12 @@ export const usersData: UserData[] = [
       dept: "Veterinary Medicine",
       section: "B",
       subsection: "1",
-      roll: "1605089"
+      roll: "1605089",
     },
     gender: "male",
     friends: ["23", "28", "30"],
-    pendingRequests: ["31"],
+    pendingRequests: ["31"], // user 31 এর কাছ থেকে request এসেছে
+    sentRequests: ["28"], // user 29 user 28 এর কাছে request পাঠিয়েছে
     saved: ["p9", "p4"],
   },
   {
@@ -713,17 +752,19 @@ export const usersData: UserData[] = [
     email: "ruma.parvin@hstu.ac.bd",
     password: "password123",
     phone: "+8801601234569",
-    avatar: "https://ui-avatars.com/api/?name=Ruma+Parvin&background=ff6348&color=fff&size=150&bold=true&rounded=true",
+    avatar:
+      "https://ui-avatars.com/api/?name=Ruma+Parvin&background=ff6348&color=fff&size=150&bold=true&rounded=true",
     bio: "Assistant Professor in Sociology, social research and gender studies specialist",
     role: ["teacher"],
     category: "university",
     university: {
       name: "Hajee Mohammad Danesh Science and Technology University",
-      dept: "Sociology"
+      dept: "Sociology",
     },
     gender: "female",
     friends: ["23", "29"],
-    pendingRequests: ["32", "33"],
+    pendingRequests: ["32", "33"], // user 32, 33 এর কাছ থেকে request এসেছে
+    sentRequests: [], // user 30 কারো কাছে request পাঠায়নি
     saved: ["p10", "p5"],
   },
   {
@@ -733,7 +774,8 @@ export const usersData: UserData[] = [
     email: "marium.sultana@gmail.com",
     password: "password123",
     phone: "+8801712345681",
-    avatar: "https://ui-avatars.com/api/?name=Marium+Sultana&background=ff7675&color=fff&size=150&bold=true&rounded=true",
+    avatar:
+      "https://ui-avatars.com/api/?name=Marium+Sultana&background=ff7675&color=fff&size=150&bold=true&rounded=true",
     bio: "HSC Science student at Dhaka College, aspiring to study medicine",
     role: ["student"],
     category: "hsc",
@@ -743,11 +785,12 @@ export const usersData: UserData[] = [
       section: "A",
       roll: "101234",
       sscBatch: "2020",
-      level: "1st year"
+      level: "1st year",
     },
     gender: "female",
     friends: ["24", "32", "35"],
-    pendingRequests: ["29", "36"],
+    pendingRequests: ["36"], // user 36 এর কাছ থেকে request এসেছে
+    sentRequests: ["29"], // user 31 user 29 এর কাছে request পাঠিয়েছে
     saved: ["p11", "p6"],
   },
   {
@@ -757,18 +800,20 @@ export const usersData: UserData[] = [
     email: "rafiq.hasan@teacher.edu.bd",
     password: "password123",
     phone: "+8801823456792",
-    avatar: "https://ui-avatars.com/api/?name=Rafiq+Hasan&background=74b9ff&color=fff&size=150&bold=true&rounded=true",
+    avatar:
+      "https://ui-avatars.com/api/?name=Rafiq+Hasan&background=74b9ff&color=fff&size=150&bold=true&rounded=true",
     bio: "Physics teacher at Notre Dame College, passionate about experimental physics",
     role: ["teacher"],
     category: "hsc",
     college: {
       name: "Notre Dame College",
       dept: "science",
-      sscBatch: "1995"
+      sscBatch: "1995",
     },
     gender: "male",
     friends: ["24", "30", "31"],
-    pendingRequests: ["33"],
+    pendingRequests: ["33"], // user 33 এর কাছ থেকে request এসেছে
+    sentRequests: ["24", "30"], // user 32 user 24, 30 এর কাছে request পাঠিয়েছে
     saved: ["p12", "p7"],
   },
   {
@@ -778,7 +823,8 @@ export const usersData: UserData[] = [
     email: "nasreen.akhter@gmail.com",
     password: "password123",
     phone: "+8801934567893",
-    avatar: "https://ui-avatars.com/api/?name=Nasreen+Akhter&background=a29bfe&color=fff&size=150&bold=true&rounded=true",
+    avatar:
+      "https://ui-avatars.com/api/?name=Nasreen+Akhter&background=a29bfe&color=fff&size=150&bold=true&rounded=true",
     bio: "HSC Business Studies student at Viqarunnisa Noon College, future entrepreneur",
     role: ["student"],
     category: "hsc",
@@ -788,11 +834,12 @@ export const usersData: UserData[] = [
       section: "B",
       roll: "205678",
       sscBatch: "2021",
-      level: "2nd year"
+      level: "2nd year",
     },
     gender: "female",
     friends: ["25", "30", "34"],
-    pendingRequests: ["32", "37"],
+    pendingRequests: ["32", "37"], // user 32, 37 এর কাছ থেকে request এসেছে
+    sentRequests: ["30", "32"], // user 33 user 30, 32 এর কাছে request পাঠিয়েছে
     saved: ["p13", "p8"],
   },
   {
@@ -802,7 +849,8 @@ export const usersData: UserData[] = [
     email: "aminul.islam@gmail.com",
     password: "password123",
     phone: "+8801745678904",
-    avatar: "https://ui-avatars.com/api/?name=Aminul+Islam&background=6c5ce7&color=fff&size=150&bold=true&rounded=true",
+    avatar:
+      "https://ui-avatars.com/api/?name=Aminul+Islam&background=6c5ce7&color=fff&size=150&bold=true&rounded=true",
     bio: "HSC Humanities student at Rajshahi College, interested in history and literature",
     role: ["student"],
     category: "hsc",
@@ -812,11 +860,12 @@ export const usersData: UserData[] = [
       section: "C",
       roll: "301456",
       sscBatch: "2020",
-      level: "1st year"
+      level: "1st year",
     },
     gender: "male",
     friends: ["25", "33", "38"],
-    pendingRequests: ["39"],
+    pendingRequests: ["39"], // user 39 এর কাছ থেকে request এসেছে
+    sentRequests: [], // user 34 কারো কাছে request পাঠায়নি
     saved: ["p14", "p9"],
   },
   {
@@ -826,18 +875,20 @@ export const usersData: UserData[] = [
     email: "shireen.begum@teacher.edu.bd",
     password: "password123",
     phone: "+8801856789015",
-    avatar: "https://ui-avatars.com/api/?name=Shireen+Begum&background=fd79a8&color=fff&size=150&bold=true&rounded=true",
+    avatar:
+      "https://ui-avatars.com/api/?name=Shireen+Begum&background=fd79a8&color=fff&size=150&bold=true&rounded=true",
     bio: "Mathematics teacher at Holy Cross College, loves solving complex problems",
     role: ["teacher"],
     category: "hsc",
     college: {
       name: "Holy Cross College",
       dept: "science",
-      sscBatch: "1992"
+      sscBatch: "1992",
     },
     gender: "female",
     friends: ["25", "31", "36"],
-    pendingRequests: ["40"],
+    pendingRequests: ["40"], // user 40 এর কাছ থেকে request এসেছে
+    sentRequests: ["25"], // user 35 user 25 এর কাছে request পাঠিয়েছে
     saved: ["p15", "p10"],
   },
   {
@@ -847,7 +898,8 @@ export const usersData: UserData[] = [
     email: "habibur.rahman@gmail.com",
     password: "password123",
     phone: "+8801967890126",
-    avatar: "https://ui-avatars.com/api/?name=Habibur+Rahman&background=00b894&color=fff&size=150&bold=true&rounded=true",
+    avatar:
+      "https://ui-avatars.com/api/?name=Habibur+Rahman&background=00b894&color=fff&size=150&bold=true&rounded=true",
     bio: "HSC Science student at Chittagong College, chemistry enthusiast",
     role: ["student"],
     category: "hsc",
@@ -857,11 +909,12 @@ export const usersData: UserData[] = [
       section: "A",
       roll: "102789",
       sscBatch: "2021",
-      level: "2nd year"
+      level: "2nd year",
     },
     gender: "male",
     friends: ["26", "31", "35"],
-    pendingRequests: ["31"],
+    pendingRequests: [], // কেউ user 36 এর কাছে request পাঠায়নি
+    sentRequests: ["31"], // user 36 user 31 এর কাছে request পাঠিয়েছে
     saved: ["p16", "p11"],
   },
   {
@@ -871,7 +924,8 @@ export const usersData: UserData[] = [
     email: "farida.yasmin@gmail.com",
     password: "password123",
     phone: "+8801778901237",
-    avatar: "https://ui-avatars.com/api/?name=Farida+Yasmin&background=e17055&color=fff&size=150&bold=true&rounded=true",
+    avatar:
+      "https://ui-avatars.com/api/?name=Farida+Yasmin&background=e17055&color=fff&size=150&bold=true&rounded=true",
     bio: "HSC Business Studies student at Eden Mohila College, accounting specialist",
     role: ["student"],
     category: "hsc",
@@ -881,11 +935,12 @@ export const usersData: UserData[] = [
       section: "A",
       roll: "203456",
       sscBatch: "2020",
-      level: "1st year"
+      level: "1st year",
     },
     gender: "female",
     friends: ["26", "33", "39"],
-    pendingRequests: ["33"],
+    pendingRequests: ["33"], // user 33 এর কাছ থেকে request এসেছে
+    sentRequests: [], // user 37 কারো কাছে request পাঠায়নি
     saved: ["p17", "p12"],
   },
   {
@@ -895,18 +950,20 @@ export const usersData: UserData[] = [
     email: "golam.mostafa@teacher.edu.bd",
     password: "password123",
     phone: "+8801889012348",
-    avatar: "https://ui-avatars.com/api/?name=Golam+Mostafa&background=0984e3&color=fff&size=150&bold=true&rounded=true",
+    avatar:
+      "https://ui-avatars.com/api/?name=Golam+Mostafa&background=0984e3&color=fff&size=150&bold=true&rounded=true",
     bio: "English teacher at Sylhet Government College, literature and language expert",
     role: ["teacher"],
     category: "hsc",
     college: {
       name: "Sylhet Government College",
       dept: "arts",
-      sscBatch: "1988"
+      sscBatch: "1988",
     },
     gender: "male",
     friends: ["26", "34", "40"],
-    pendingRequests: ["26"],
+    pendingRequests: ["26"], // user 26 এর কাছ থেকে request এসেছে
+    sentRequests: [], // user 38 কারো কাছে request পাঠায়নি
     saved: ["p18", "p13"],
   },
   {
@@ -916,7 +973,8 @@ export const usersData: UserData[] = [
     email: "rehana.khatun@gmail.com",
     password: "password123",
     phone: "+8801990123459",
-    avatar: "https://ui-avatars.com/api/?name=Rehana+Khatun&background=fdcb6e&color=fff&size=150&bold=true&rounded=true",
+    avatar:
+      "https://ui-avatars.com/api/?name=Rehana+Khatun&background=fdcb6e&color=fff&size=150&bold=true&rounded=true",
     bio: "HSC Humanities student at Comilla Victoria College, passionate about social work",
     role: ["student"],
     category: "hsc",
@@ -926,11 +984,12 @@ export const usersData: UserData[] = [
       section: "B",
       roll: "302567",
       sscBatch: "2021",
-      level: "2nd year"
+      level: "2nd year",
     },
     gender: "female",
     friends: ["27", "34", "37"],
-    pendingRequests: ["34"],
+    pendingRequests: ["34"], // user 34 এর কাছ থেকে request এসেছে
+    sentRequests: [], // user 39 কারো কাছে request পাঠায়নি
     saved: ["p19", "p14"],
   },
   {
@@ -940,7 +999,8 @@ export const usersData: UserData[] = [
     email: "zakir.hossain@gmail.com",
     password: "password123",
     phone: "+8801601234570",
-    avatar: "https://ui-avatars.com/api/?name=Zakir+Hossain&background=2d3436&color=fff&size=150&bold=true&rounded=true",
+    avatar:
+      "https://ui-avatars.com/api/?name=Zakir+Hossain&background=2d3436&color=fff&size=150&bold=true&rounded=true",
     bio: "HSC Science student at Barisal Government College, future engineer",
     role: ["student"],
     category: "hsc",
@@ -950,11 +1010,12 @@ export const usersData: UserData[] = [
       section: "C",
       roll: "103890",
       sscBatch: "2020",
-      level: "1st year"
+      level: "1st year",
     },
     gender: "male",
     friends: ["27", "38"],
-    pendingRequests: ["35"],
+    pendingRequests: ["35"], // user 35 এর কাছ থেকে request এসেছে
+    sentRequests: [], // user 40 কারো কাছে request পাঠায়নি
     saved: ["p20", "p15"],
   },
 ];
