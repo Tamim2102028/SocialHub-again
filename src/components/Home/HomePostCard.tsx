@@ -15,7 +15,7 @@ import {
   FaRegBookmark,
 } from "react-icons/fa";
 
-import type { PostData } from "../../data/postData";
+import type { PostData } from "../../data/post-data/profilePostData";
 import { getUserById } from "../../data/userData";
 import { formatPostTime } from "../../utils/dateUtils";
 
@@ -47,8 +47,6 @@ const HomePostCard: React.FC<HomePostCardProps> = ({ post }) => {
   const handleProfileClick = () => {
     navigate(`/profile/${post.userId}`);
   };
-
-
 
   return (
     <div className="rounded-lg border border-gray-400 bg-white shadow">

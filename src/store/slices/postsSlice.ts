@@ -1,7 +1,7 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
-import { postData } from "../../data/postData";
-import type { PostData } from "../../data/postData";
+import { postData } from "../../data/post-data/profilePostData";
+import type { PostData } from "../../data/post-data/profilePostData";
 
 interface PostsState {
   posts: PostData[];
