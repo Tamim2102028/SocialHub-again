@@ -1,14 +1,34 @@
-import React from "react";
+import React, { useState } from "react";
 import FriendCard from "./FriendCard";
-import { getCurrentUserId, getUserById } from "../../data/userData";
+import { getCurrentUserId, getUserById, updateUserById } from "../../data/userData";
 
 const FriendsList: React.FC = () => {
+  const [, setRefreshTick] = useState(0);
   const currentUserId = getCurrentUserId();
   const currentUser = getUserById(currentUserId);
   
   if (!currentUser) {
     return <div>User not found</div>;
   }
+
+  const handleUnfriend = (friendId: string) => {
+    const friend = getUserById(friendId);
+    if (!friend) return;
+
+    // Remove from current user's friends list
+    const currentFriends = currentUser.friends.filter(id => id !== friendId);
+    updateUserById(currentUserId, {
+      friends: currentFriends,
+    });
+
+    // Remove current user from friend's friends list
+    const friendFriends = friend.friends.filter(id => id !== currentUserId);
+    updateUserById(friendId, {
+      friends: friendFriends,
+    });
+
+    setRefreshTick((t) => t + 1);
+  };
 
   // Get friends data from current user's friends list
   const friends = currentUser.friends.map(friendId => {
@@ -38,6 +58,7 @@ const FriendsList: React.FC = () => {
           avatar={friend.avatar}
           university={friend.university}
           type="friend"
+          onUnfriend={handleUnfriend}
         />
       ))}
     </div>

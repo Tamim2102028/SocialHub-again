@@ -1,5 +1,11 @@
 import React from "react";
-import { FaUserPlus, FaComment, FaCheck, FaTimes } from "react-icons/fa";
+import {
+  FaUserPlus,
+  FaComment,
+  FaCheck,
+  FaTimes,
+  FaUserMinus,
+} from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 
 interface FriendCardProps {
@@ -13,6 +19,7 @@ interface FriendCardProps {
   onAddFriend?: (id: string) => void;
   isRequestSent?: boolean;
   onCancelRequest?: (id: string) => void;
+  onUnfriend?: (id: string) => void;
 }
 
 const FriendCard: React.FC<FriendCardProps> = ({
@@ -25,13 +32,24 @@ const FriendCard: React.FC<FriendCardProps> = ({
   onDecline,
   onAddFriend,
   onCancelRequest,
+  onUnfriend,
 }) => {
   const renderActions = () => {
     if (type === "friend") {
       return (
-        <div className="flex items-center rounded-lg bg-blue-100 px-4 py-2 text-blue-600">
-          <FaComment className="mr-2" />
-          Message
+        <div className="flex space-x-2">
+          <div className="flex items-center rounded-lg bg-blue-100 px-4 py-2 text-blue-600">
+            <FaComment className="mr-2" />
+            Message
+          </div>
+          <button
+            type="button"
+            onClick={() => onUnfriend?.(id)}
+            className="flex items-center rounded-lg bg-red-100 px-4 py-2 text-red-600 hover:bg-red-200"
+          >
+            <FaUserMinus className="mr-2" />
+            Unfriend
+          </button>
         </div>
       );
     } else if (type === "request") {

@@ -20,10 +20,11 @@ const FriendSuggestions: React.FC = () => {
     const target = getUserById(targetId);
     if (!target) return;
 
-    const currentSent = new Set(currentUser.sentRequests || []);
-    currentSent.add(targetId);
+    const currentSent = [...(currentUser.sentRequests || [])];
+    // Remove if already exists to avoid duplicates, then add at the beginning
+    const filteredSent = currentSent.filter(id => id !== targetId);
     updateUserById(currentUserId, {
-      sentRequests: Array.from(currentSent),
+      sentRequests: [targetId, ...filteredSent],
     });
 
     const targetPending = new Set(target.pendingRequests || []);
