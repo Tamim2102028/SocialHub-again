@@ -16,27 +16,7 @@ const FriendSuggestions: React.FC = () => {
     return <div>User not found</div>;
   }
 
-  const handleAddFriend = (targetId: string) => {
-    const target = getUserById(targetId);
-    if (!target) return;
-
-    const currentSent = [...(currentUser.sentRequests || [])];
-    // Remove if already exists to avoid duplicates, then add at the beginning
-    const filteredSent = currentSent.filter(id => id !== targetId);
-    updateUserById(currentUserId, {
-      sentRequests: [targetId, ...filteredSent],
-    });
-
-    const targetPending = new Set(target.pendingRequests || []);
-    targetPending.add(currentUserId);
-    updateUserById(targetId, {
-      pendingRequests: Array.from(targetPending),
-    });
-
-    setRefreshTick((t) => t + 1);
-  };
-
-  // Get friend suggestions - users who are not current user, not friends, not in pending requests, and not in sent requests
+  // Get friend suggestions - users who are not current user, not friends, and not in pending requests
   const friendSuggestions = usersData
     .filter(
       (user) =>
@@ -45,7 +25,6 @@ const FriendSuggestions: React.FC = () => {
         !(currentUser.pendingRequests || []).includes(user.id) && // Not in pending requests
         !(currentUser.sentRequests || []).includes(user.id) // Not in sent requests
     )
-    .slice(0, 10) // Limit to 10 suggestions
     .map((user) => {
       // Get university/college name based on category
       const institutionName =
@@ -60,6 +39,27 @@ const FriendSuggestions: React.FC = () => {
         university: institutionName || "Unknown Institution",
       };
     });
+
+  // Handler for adding a friend (moved out of inline for clarity)
+  const handleAddFriend = (targetId: string) => {
+    const target = getUserById(targetId);
+    if (!target) return;
+
+    const currentSent = new Set(currentUser.sentRequests || []);
+    currentSent.add(targetId);
+    updateUserById(currentUserId, {
+      sentRequests: Array.from(currentSent),
+    });
+
+    const targetPending = new Set(target.pendingRequests || []);
+    targetPending.add(currentUserId);
+    updateUserById(targetId, {
+      pendingRequests: Array.from(targetPending),
+    });
+
+    // Remove the user from suggestions immediately by triggering a re-render
+    setRefreshTick((t) => t + 1);
+  };
 
   return (
     <div className="space-y-3">
