@@ -7,7 +7,7 @@ interface FriendCardProps {
   name: string;
   avatar: string;
   university: string;
-  type: "friend" | "request" | "suggestion" | "search";
+  type: "friend" | "request" | "suggestion" | "search" | "sent";
   onAccept?: (id: string) => void;
   onDecline?: (id: string) => void;
   onAddFriend?: (id: string) => void;
@@ -24,7 +24,6 @@ const FriendCard: React.FC<FriendCardProps> = ({
   onAccept,
   onDecline,
   onAddFriend,
-  isRequestSent,
   onCancelRequest,
 }) => {
   const renderActions = () => {
@@ -57,16 +56,7 @@ const FriendCard: React.FC<FriendCardProps> = ({
         </div>
       );
     } else if (type === "suggestion") {
-      return isRequestSent ? (
-        <button
-          type="button"
-          onClick={() => onCancelRequest?.(id)}
-          className="flex items-center rounded-lg bg-red-100 px-4 py-2 text-red-600 hover:bg-red-200"
-        >
-          <FaTimes className="mr-2" />
-          Cancel Request
-        </button>
-      ) : (
+      return (
         <button
           type="button"
           onClick={() => onAddFriend?.(id)}
@@ -74,6 +64,17 @@ const FriendCard: React.FC<FriendCardProps> = ({
         >
           <FaUserPlus className="mr-2" />
           Add Friend
+        </button>
+      );
+    } else if (type === "sent") {
+      return (
+        <button
+          type="button"
+          onClick={() => onCancelRequest?.(id)}
+          className="flex items-center rounded-lg bg-red-100 px-4 py-2 text-red-600 hover:bg-red-200"
+        >
+          <FaTimes className="mr-2" />
+          Cancel Request
         </button>
       );
     } else if (type === "search") {

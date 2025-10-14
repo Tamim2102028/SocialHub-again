@@ -29,7 +29,7 @@ const FriendsList: React.FC = () => {
   }).filter(friend => friend !== null);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {friends.map((friend) => (
         <FriendCard
           key={friend.id}

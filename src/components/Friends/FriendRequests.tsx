@@ -89,7 +89,7 @@ const FriendRequests: React.FC = () => {
     .filter((request) => request !== null);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {friendRequests.map((request) => (
         <FriendCard
           key={request.id}

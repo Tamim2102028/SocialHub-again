@@ -4,12 +4,13 @@ import FriendsTabs from "../components/Friends/FriendsTabs";
 import FriendsList from "../components/Friends/FriendsList";
 import FriendRequests from "../components/Friends/FriendRequests";
 import FriendSuggestions from "../components/Friends/FriendSuggestions";
+import SentRequests from "../components/Friends/SentRequests";
 import FriendCard from "../components/Friends/FriendCard";
 import { usersData, getCurrentUserId } from "../data/userData";
 
 const Friends: React.FC = () => {
   const [activeTab, setActiveTab] = useState<
-    "all" | "requests" | "suggestions"
+    "all" | "requests" | "suggestions" | "sent"
   >("all");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -57,6 +58,11 @@ const Friends: React.FC = () => {
             !currentUser.pendingRequests?.includes(user.id)
         );
 
+      case "sent":
+        return filteredUsers.filter((user) =>
+          currentUser.sentRequests?.includes(user.id)
+        );
+
       default:
         return filteredUsers;
     }
@@ -95,7 +101,9 @@ const Friends: React.FC = () => {
                     ? "friend"
                     : activeTab === "requests"
                       ? "request"
-                      : "suggestion"
+                      : activeTab === "sent"
+                        ? "search"
+                        : "suggestion"
                 }
               />
             ))}
@@ -118,6 +126,8 @@ const Friends: React.FC = () => {
         ) : (
           <FriendSuggestions />
         );
+      case "sent":
+        return searchQuery.trim() ? renderSearchResults() : <SentRequests />;
       default:
         return searchQuery.trim() ? renderSearchResults() : <FriendsList />;
     }

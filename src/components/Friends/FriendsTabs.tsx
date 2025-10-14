@@ -1,12 +1,12 @@
 import React from "react";
 
 interface FriendsTabsProps {
-  activeTab: "all" | "requests" | "suggestions";
-  onTabChange: (tab: "all" | "requests" | "suggestions") => void;
+  activeTab: "all" | "requests" | "suggestions" | "sent";
+  onTabChange: (tab: "all" | "requests" | "suggestions" | "sent") => void;
 }
 
 const FriendsTabs: React.FC<FriendsTabsProps> = ({ activeTab, onTabChange }) => {
-  const handleTabClick = (tab: "all" | "requests" | "suggestions") => {
+  const handleTabClick = (tab: "all" | "requests" | "suggestions" | "sent") => {
     onTabChange(tab);
   };
 
@@ -14,6 +14,7 @@ const FriendsTabs: React.FC<FriendsTabsProps> = ({ activeTab, onTabChange }) => 
     { id: "all", label: "All Friends" },
     { id: "requests", label: "Friend Requests" },
     { id: "suggestions", label: "Suggestions" },
+    { id: "sent", label: "Sent Requests" },
   ] as const;
 
   return (
