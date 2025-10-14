@@ -1,34 +1,61 @@
-import React from "react";
+import React, { useState } from "react";
 import FriendCard from "./FriendCard";
-import { getCurrentUserId, getUserById, usersData } from "../../data/userData";
+import {
+  getCurrentUserId,
+  getUserById,
+  usersData,
+  updateUserById,
+} from "../../data/userData";
 
 const FriendSuggestions: React.FC = () => {
+  const [, setRefreshTick] = useState(0);
   const currentUserId = getCurrentUserId();
   const currentUser = getUserById(currentUserId);
-  
+
   if (!currentUser) {
     return <div>User not found</div>;
   }
 
+  const handleAddFriend = (targetId: string) => {
+    const target = getUserById(targetId);
+    if (!target) return;
+
+    const currentSent = new Set(currentUser.sentRequests || []);
+    currentSent.add(targetId);
+    updateUserById(currentUserId, {
+      sentRequests: Array.from(currentSent),
+    });
+
+    const targetPending = new Set(target.pendingRequests || []);
+    targetPending.add(currentUserId);
+    updateUserById(targetId, {
+      pendingRequests: Array.from(targetPending),
+    });
+
+    setRefreshTick((t) => t + 1);
+  };
+
   // Get friend suggestions - users who are not current user, not friends, and not in pending requests
   const friendSuggestions = usersData
-    .filter(user => 
-      user.id !== currentUserId && // Not current user
-      !currentUser.friends.includes(user.id) && // Not already a friend
-      !(currentUser.pendingRequests || []).includes(user.id) // Not in pending requests
+    .filter(
+      (user) =>
+        user.id !== currentUserId && // Not current user
+        !currentUser.friends.includes(user.id) && // Not already a friend
+        !(currentUser.pendingRequests || []).includes(user.id) // Not in pending requests
     )
     .slice(0, 10) // Limit to 10 suggestions
-    .map(user => {
+    .map((user) => {
       // Get university/college name based on category
-      const institutionName = user.category === "university" 
-        ? user.university?.name 
-        : user.college?.name;
-      
+      const institutionName =
+        user.category === "university"
+          ? user.university?.name
+          : user.college?.name;
+
       return {
         id: user.id,
         name: user.name,
         avatar: user.avatar,
-        university: institutionName || "Unknown Institution"
+        university: institutionName || "Unknown Institution",
       };
     });
 
@@ -42,6 +69,7 @@ const FriendSuggestions: React.FC = () => {
           avatar={suggestion.avatar}
           university={suggestion.university}
           type="suggestion"
+          onAddFriend={handleAddFriend}
         />
       ))}
     </div>

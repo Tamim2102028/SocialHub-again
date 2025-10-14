@@ -8,6 +8,9 @@ interface FriendCardProps {
   avatar: string;
   university: string;
   type: "friend" | "request" | "suggestion" | "search";
+  onAccept?: (id: string) => void;
+  onDecline?: (id: string) => void;
+  onAddFriend?: (id: string) => void;
 }
 
 const FriendCard: React.FC<FriendCardProps> = ({
@@ -16,6 +19,9 @@ const FriendCard: React.FC<FriendCardProps> = ({
   avatar,
   university,
   type,
+  onAccept,
+  onDecline,
+  onAddFriend,
 }) => {
   const renderActions = () => {
     if (type === "friend") {
@@ -28,22 +34,34 @@ const FriendCard: React.FC<FriendCardProps> = ({
     } else if (type === "request") {
       return (
         <div className="flex space-x-2">
-          <div className="flex items-center rounded-lg bg-green-100 px-3 py-2 text-green-600">
+          <button
+            type="button"
+            onClick={() => onAccept?.(id)}
+            className="flex items-center rounded-lg bg-green-100 px-3 py-2 text-green-600 hover:bg-green-200"
+          >
             <FaCheck className="mr-1" />
             Accept
-          </div>
-          <div className="flex items-center rounded-lg bg-red-100 px-3 py-2 text-red-600">
+          </button>
+          <button
+            type="button"
+            onClick={() => onDecline?.(id)}
+            className="flex items-center rounded-lg bg-red-100 px-3 py-2 text-red-600 hover:bg-red-200"
+          >
             <FaTimes className="mr-1" />
             Decline
-          </div>
+          </button>
         </div>
       );
     } else if (type === "suggestion") {
       return (
-        <div className="flex items-center rounded-lg bg-blue-100 px-4 py-2 text-blue-600">
+        <button
+          type="button"
+          onClick={() => onAddFriend?.(id)}
+          className="flex items-center rounded-lg bg-blue-100 px-4 py-2 text-blue-600 hover:bg-blue-200"
+        >
           <FaUserPlus className="mr-2" />
           Add Friend
-        </div>
+        </button>
       );
     } else if (type === "search") {
       return null;
@@ -68,9 +86,7 @@ const FriendCard: React.FC<FriendCardProps> = ({
             {name}
           </NavLink>
         </h3>
-        {university && (
-          <p className="text-sm text-gray-500">{university}</p>
-        )}
+        {university && <p className="text-sm text-gray-500">{university}</p>}
       </div>
       {renderActions()}
     </div>
