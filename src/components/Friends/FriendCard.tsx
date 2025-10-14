@@ -11,6 +11,8 @@ interface FriendCardProps {
   onAccept?: (id: string) => void;
   onDecline?: (id: string) => void;
   onAddFriend?: (id: string) => void;
+  isRequestSent?: boolean;
+  onCancelRequest?: (id: string) => void;
 }
 
 const FriendCard: React.FC<FriendCardProps> = ({
@@ -22,6 +24,8 @@ const FriendCard: React.FC<FriendCardProps> = ({
   onAccept,
   onDecline,
   onAddFriend,
+  isRequestSent,
+  onCancelRequest,
 }) => {
   const renderActions = () => {
     if (type === "friend") {
@@ -53,7 +57,16 @@ const FriendCard: React.FC<FriendCardProps> = ({
         </div>
       );
     } else if (type === "suggestion") {
-      return (
+      return isRequestSent ? (
+        <button
+          type="button"
+          onClick={() => onCancelRequest?.(id)}
+          className="flex items-center rounded-lg bg-red-100 px-4 py-2 text-red-600 hover:bg-red-200"
+        >
+          <FaTimes className="mr-2" />
+          Cancel Request
+        </button>
+      ) : (
         <button
           type="button"
           onClick={() => onAddFriend?.(id)}

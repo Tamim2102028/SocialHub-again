@@ -35,6 +35,25 @@ const FriendSuggestions: React.FC = () => {
     setRefreshTick((t) => t + 1);
   };
 
+  const handleCancelRequest = (targetId: string) => {
+    const target = getUserById(targetId);
+    if (!target) return;
+
+    const currentSent = new Set(currentUser.sentRequests || []);
+    currentSent.delete(targetId);
+    updateUserById(currentUserId, {
+      sentRequests: Array.from(currentSent),
+    });
+
+    const targetPending = new Set(target.pendingRequests || []);
+    targetPending.delete(currentUserId);
+    updateUserById(targetId, {
+      pendingRequests: Array.from(targetPending),
+    });
+
+    setRefreshTick((t) => t + 1);
+  };
+
   // Get friend suggestions - users who are not current user, not friends, and not in pending requests
   const friendSuggestions = usersData
     .filter(
@@ -70,6 +89,8 @@ const FriendSuggestions: React.FC = () => {
           university={suggestion.university}
           type="suggestion"
           onAddFriend={handleAddFriend}
+          isRequestSent={(currentUser.sentRequests || []).includes(suggestion.id)}
+          onCancelRequest={handleCancelRequest}
         />
       ))}
     </div>
