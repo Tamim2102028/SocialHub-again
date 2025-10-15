@@ -33,7 +33,7 @@ export const publicFilesData: PublicFileItem[] = [
   {
     fileId: "pf_cu2",
     userId: "1",
-    name: "Study Notes Collection",
+    name: "Study Notes Collectionnn",
     type: "folder",
     createdAt: "2025-09-18T14:30:00Z",
     updatedAt: "2025-09-18T14:30:00Z",
