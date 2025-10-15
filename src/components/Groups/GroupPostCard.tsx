@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   FaHeart,
   FaShare,
@@ -17,6 +18,7 @@ type Props = {
 };
 
 const GroupPostCardSimple: React.FC<Props> = ({ post }) => {
+  const navigate = useNavigate();
   const author = getUserById(post.createdBy);
   const [showCommentBox, setShowCommentBox] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
@@ -42,15 +44,25 @@ const GroupPostCardSimple: React.FC<Props> = ({ post }) => {
           <img
             src={author?.avatar}
             alt={author?.name}
-            className="h-10 w-10 rounded-full bg-gray-300"
+            className="h-10 w-10 cursor-pointer rounded-full bg-gray-300 transition-all hover:ring-2 hover:ring-blue-300"
+            onClick={() => navigate(`/profile/${post.createdBy}`)}
           />
           <div>
-            <h3 className="font-semibold text-gray-900">
+            <h3
+              className="cursor-pointer font-semibold text-gray-900 transition-colors hover:text-blue-600 hover:underline"
+              onClick={() => navigate(`/profile/${post.createdBy}`)}
+            >
               {author?.name || post.createdBy}
             </h3>
             <p className="text-sm text-gray-500">
-              @{author?.username || post.createdBy} •{" "}
-              {formatPostTime(post.createdAt)}
+              @
+              <span
+                className="cursor-pointer transition-colors hover:text-blue-600 hover:underline"
+                onClick={() => navigate(`/profile/${post.createdBy}`)}
+              >
+                {author?.username || post.createdBy}
+              </span>{" "}
+              • {formatPostTime(post.createdAt)}
             </p>
           </div>
         </div>
