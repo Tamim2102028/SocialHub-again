@@ -8,6 +8,7 @@ const SuggestedGroups = () => {
   const groups = suggestedIds
     .map((id) => getGroupById(id))
     .filter(Boolean)
+    .filter((g) => g!.privacy !== "closed")
     .map((g) => ({
       id: g!.id,
       name: g!.name,

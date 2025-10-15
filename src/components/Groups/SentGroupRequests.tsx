@@ -39,7 +39,7 @@ const SentGroupRequests: React.FC = () => {
       <h2 className="mb-3 text-xl font-semibold text-gray-900">
         Sent Requests ({requestGroups.length})
       </h2>
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
         {requestGroups.map((group) => (
           <GroupCard key={group.id} group={group} showJoinButton={false} />
         ))}

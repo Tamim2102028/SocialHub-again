@@ -1,5 +1,6 @@
 import React from "react";
-import { FaUsers, FaLock, FaGlobe } from "react-icons/fa";
+import { NavLink } from "react-router-dom";
+import { FaUsers, FaLock, FaGlobe, FaBan } from "react-icons/fa";
 
 // Accepts group with 'id' property instead of 'groupId'.
 type SmallGroup = {
@@ -22,7 +23,10 @@ const GroupCard: React.FC<GroupCardProps> = ({
   showJoinButton = false,
 }) => {
   return (
-    <div className="group cursor-pointer overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md">
+    <NavLink
+      to={`/groups/${group.id}`}
+      className="cursor-pointer overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md"
+    >
       <div className="relative overflow-hidden">
         <img
           src={group.coverImage || "/images/default-group-cover.jpg"}
@@ -30,16 +34,17 @@ const GroupCard: React.FC<GroupCardProps> = ({
           className="h-40 w-full object-cover transition-transform duration-300 group-hover:scale-110"
         />
 
-        {/* Privacy/Category Badge */}
+        {/* Privacy Badge (closed / private / public) */}
         <div className="absolute top-3 right-3">
-          {group.privacy === "private" ? (
+          {group.privacy === "closed" ? (
+            <div className="flex items-center gap-1.5 rounded-full bg-red-600 px-3 py-1.5 text-xs font-semibold text-white">
+              <FaBan size={10} />
+              Closed
+            </div>
+          ) : group.privacy === "private" ? (
             <div className="flex items-center gap-1.5 rounded-full bg-gray-900 px-3 py-1.5 text-xs font-semibold text-white">
               <FaLock size={10} />
               Private
-            </div>
-          ) : group.category ? (
-            <div className="rounded-full bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white">
-              {group.category}
             </div>
           ) : (
             <div className="flex items-center gap-1.5 rounded-full bg-green-600 px-3 py-1.5 text-xs font-semibold text-white">
@@ -69,7 +74,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
           </button>
         )}
       </div>
-    </div>
+    </NavLink>
   );
 };
 

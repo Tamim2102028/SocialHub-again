@@ -247,7 +247,7 @@ const Login: React.FC = () => {
           </button>
         </form>
 
-        {/* Register Link */}
+        {/* Register NavLink */}
         <div className="text-center">
           <p className="text-sm text-gray-600">
             Don't have an account?{" "}

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useAppDispatch } from "../../store/hooks";
 import { login } from "../../store/slices/authSlice";
@@ -351,16 +351,19 @@ const Register: React.FC = () => {
                 className="ml-2 block text-sm text-gray-700"
               >
                 I agree to the{" "}
-                <Link to="/terms" className="text-blue-600 hover:text-blue-500">
+                <NavLink
+                  to="/terms"
+                  className="text-blue-600 hover:text-blue-500"
+                >
                   Terms of Service
-                </Link>{" "}
+                </NavLink>{" "}
                 and{" "}
-                <Link
+                <NavLink
                   to="/privacy"
                   className="text-blue-600 hover:text-blue-500"
                 >
                   Privacy Policy
-                </Link>
+                </NavLink>
               </label>
             </div>
             {errors.agreeToTerms && (
@@ -385,16 +388,16 @@ const Register: React.FC = () => {
           </button>
         </form>
 
-        {/* Login Link */}
+        {/* Login NavLink */}
         <div className="text-center">
           <p className="text-sm text-gray-600">
             Already have an account?{" "}
-            <Link
+            <NavLink
               to="/login"
               className="font-medium text-blue-600 hover:text-blue-500"
             >
               Sign in here
-            </Link>
+            </NavLink>
           </p>
         </div>
       </div>

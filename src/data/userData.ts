@@ -11,9 +11,10 @@ export interface UserData {
   password: string;
   phone: string;
   avatar: string;
-  bio: string;
-  role: ("student" | "teacher")[]; // array to allow multiple roles
+  bio?: string;
+
   category: "university" | "hsc"; // university level or HSC level
+  role: ("student" | "teacher" | "system")[]; // array to allow multiple roles; added 'system' for system accounts
   university?: {
     name: string;
     dept: string;
@@ -42,6 +43,7 @@ export interface UserData {
 }
 
 export const usersData: UserData[] = [
+  // (system role allowed; seeded system user removed as requested)
   {
     id: "1",
     name: "Tamim Ikbal (1/40)",
@@ -67,7 +69,7 @@ export const usersData: UserData[] = [
     pendingRequests: ["4", "7", "8", "9"], // এরা user 1 এর কাছে request পাঠিয়েছে
     sentRequests: [], // user 1 কারো কাছে request পাঠায়নি
     saved: ["p1", "p3"],
-    joinedGroup: ["g1", "g19"],
+    joinedGroup: ["g1", "g8", "g15", "g19"],
     sentRequestGroup: ["g4", "g9", "g12", "g20", "g22"],
   },
   {

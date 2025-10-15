@@ -92,7 +92,7 @@ const FilesList: React.FC<FilesListProps> = ({
       } else {
         // Fallback to clipboard
         await navigator.clipboard.writeText(shareLink);
-        alert("Link copied to clipboard!");
+        alert("NavLink copied to clipboard!");
       }
     } catch (error) {
       console.error("Error sharing:", error);

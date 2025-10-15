@@ -7,6 +7,7 @@ const CareerGroups = () => {
   const groups = pick
     .map((id) => getGroupById(id))
     .filter(Boolean)
+    .filter((g) => g!.privacy !== "closed")
     .map((g) => ({
       id: g!.id,
       name: g!.name,
