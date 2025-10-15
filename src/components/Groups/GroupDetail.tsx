@@ -5,8 +5,12 @@ import { getGroupById } from "../../data/group-data/groupsData";
 import {
   getCurrentUserId,
   getUserById,
-  updateUserById,
 } from "../../data/profile-data/userData";
+import { useAppDispatch } from "../../store/hooks";
+import {
+  requestJoinGroup,
+  cancelJoinRequest,
+} from "../../store/slices/groupSlice";
 import GroupPostList from "./GroupPostList";
 
 const GroupDetail: React.FC = () => {
@@ -20,6 +24,7 @@ const GroupDetail: React.FC = () => {
   const [refreshTick, setRefreshTick] = useState<number>(0);
   const currentUserId = getCurrentUserId();
   const currentUser = getUserById(currentUserId);
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   void refreshTick;
@@ -30,30 +35,15 @@ const GroupDetail: React.FC = () => {
 
   const handleJoin = () => {
     if (!group) return;
-    const current = getUserById(currentUserId);
-    if (!current) return;
-    const alreadyRequested = (current.sentRequestGroup || []).includes(
-      group.id
-    );
-    const alreadyMember = (current.joinedGroup || []).includes(group.id);
-    if (alreadyRequested || alreadyMember) {
-      // already in desired state
-      return;
-    }
-
-    const updated = [...(current.sentRequestGroup || []), group.id];
-    updateUserById(currentUserId, { sentRequestGroup: updated });
+    // Dispatch thunk to perform the join request side-effect and reload profile
+    dispatch(requestJoinGroup(group.id));
+    // bump local tick so computed flags are re-evaluated after profile reload
     setRefreshTick((t) => t + 1);
   };
 
   const handleCancel = () => {
     if (!group) return;
-    const current = getUserById(currentUserId);
-    if (!current) return;
-    const updated = (current.sentRequestGroup || []).filter(
-      (g) => g !== group.id
-    );
-    updateUserById(currentUserId, { sentRequestGroup: updated });
+    dispatch(cancelJoinRequest(group.id));
     setRefreshTick((t) => t + 1);
   };
 

@@ -1,25 +1,22 @@
-import React, { useState } from "react";
+import React from "react";
 import GroupCard from "../utils/GroupCard";
 import { getGroupById } from "../../../data/group-data/groupsData";
-import {
-  getCurrentUserId,
-  getUserById,
-} from "../../../data/profile-data/userData";
+import { useAppSelector } from "../../../store/hooks";
 
 const pick = ["g21", "g22", "g23"];
 
 const CareerGroups: React.FC = () => {
-  const [, setRefreshTick] = useState(0);
+  const joined = useAppSelector((s) => s.profile.joinedGroup || []);
+  const sent = useAppSelector((s) => s.profile.sentRequestGroup || []);
 
   const groups = pick
     .map((id) => getGroupById(id))
     .filter(Boolean)
     .filter((g) => g!.privacy !== "closed")
     .filter((g) => {
-      const user = getUserById(getCurrentUserId());
-      const joined = new Set(user?.joinedGroup || []);
-      const sent = new Set(user?.sentRequestGroup || []);
-      return !joined.has(g!.id) && !sent.has(g!.id);
+      const joinedSet = new Set(joined || []);
+      const sentSet = new Set(sent || []);
+      return !joinedSet.has(g!.id) && !sentSet.has(g!.id);
     })
     .map((g) => ({
       id: g!.id,
@@ -38,12 +35,7 @@ const CareerGroups: React.FC = () => {
 
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
         {groups.map((group) => (
-          <GroupCard
-            key={group.id}
-            group={group}
-            showJoinButton={true}
-            onRequestChange={() => setRefreshTick((t) => t + 1)}
-          />
+          <GroupCard key={group.id} group={group} showJoinButton={true} />
         ))}
       </div>
     </div>

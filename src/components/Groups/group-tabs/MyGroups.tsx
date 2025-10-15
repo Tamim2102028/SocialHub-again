@@ -1,14 +1,9 @@
 import GroupCard from "../utils/GroupCard";
-import {
-  getCurrentUserId,
-  getUserById,
-} from "../../../data/profile-data/userData";
+import { useAppSelector } from "../../../store/hooks";
 import { getGroupById } from "../../../data/group-data/groupsData";
 
 const MyGroups = () => {
-  const userId = getCurrentUserId();
-  const user = getUserById(userId);
-  const joined = user?.joinedGroup || [];
+  const joined = useAppSelector((s) => s.profile.joinedGroup || []);
 
   const groups = joined
     .map((gid) => getGroupById(gid))

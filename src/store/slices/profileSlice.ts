@@ -11,8 +11,8 @@ interface ProfileState {
   email: string;
   phone: string;
   avatar: string;
-  bio: string;
-  role: ("student" | "teacher")[];
+  bio?: string;
+  role: ("student" | "teacher" | "system")[];
   category: "university" | "hsc";
   university?: {
     name: string;
@@ -34,6 +34,10 @@ interface ProfileState {
   friends: string[];
   pendingRequests?: string[];
   saved?: string[];
+  // groups the user has joined (ids)
+  joinedGroup?: string[];
+  // groups the user has sent join requests to (ids)
+  sentRequestGroup?: string[];
 }
 
 // Load current user data as initial state
@@ -58,6 +62,8 @@ const getCurrentUserData = (): ProfileState => {
       friends: userData.friends || [],
       pendingRequests: userData.pendingRequests || [],
       saved: userData.saved || [],
+      joinedGroup: userData.joinedGroup || [],
+      sentRequestGroup: userData.sentRequestGroup || [],
     };
   } else {
     return {
@@ -79,6 +85,8 @@ const getCurrentUserData = (): ProfileState => {
       friends: [],
       pendingRequests: [],
       saved: [],
+      joinedGroup: [],
+      sentRequestGroup: [],
     };
   }
 };

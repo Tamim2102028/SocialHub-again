@@ -1,18 +1,10 @@
 import React from "react";
-import {
-  getCurrentUserId,
-  getUserById,
-} from "../../../data/profile-data/userData";
+import { useAppSelector } from "../../../store/hooks";
 import { getGroupById } from "../../../data/group-data/groupsData";
 import GroupCard from "../utils/GroupCard";
 
 const SentGroupRequests: React.FC = () => {
-  const userId = getCurrentUserId();
-  const user = getUserById(userId);
-
-  const sent = user?.sentRequestGroup || [];
-
-  const [, setRefreshTick] = React.useState(0);
+  const sent = useAppSelector((s) => s.profile.sentRequestGroup || []);
 
   if (sent.length === 0) {
     return (
@@ -58,7 +50,6 @@ const SentGroupRequests: React.FC = () => {
             group={group}
             showJoinButton={false}
             showCancelButton={true}
-            onRequestChange={() => setRefreshTick((t) => t + 1)}
           />
         ))}
       </div>

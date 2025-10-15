@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { NavLink } from "react-router-dom";
 import { FaUsers, FaLock, FaGlobe, FaBan } from "react-icons/fa";
+import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import {
-  getCurrentUserId,
-  getUserById,
-  updateUserById,
-} from "../../../data/profile-data/userData";
+  requestJoinGroup,
+  cancelJoinRequest,
+} from "../../../store/slices/groupSlice";
 
 // Accepts group with 'id' property instead of 'groupId'.
 type SmallGroup = {
@@ -22,49 +22,31 @@ type GroupCardProps = {
   group: SmallGroup;
   showJoinButton?: boolean;
   showCancelButton?: boolean;
-  onRequestChange?: (groupId: string, requested: boolean) => void;
 };
 
 const GroupCard: React.FC<GroupCardProps> = ({
   group,
   showJoinButton = false,
   showCancelButton = false,
-  onRequestChange,
 }) => {
-  const currentUserId = getCurrentUserId();
-  const [isRequested, setIsRequested] = useState(false);
-
-  useEffect(() => {
-    const user = getUserById(currentUserId);
-    setIsRequested(!!user?.sentRequestGroup?.includes(group.id));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [group.id]);
+  const dispatch = useAppDispatch();
+  const isRequested = useAppSelector(
+    (s) => !!s.profile?.sentRequestGroup?.includes(group.id)
+  );
+  const isMember = useAppSelector(
+    (s) => !!s.profile?.joinedGroup?.includes(group.id)
+  );
 
   const handleJoin = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    const user = getUserById(currentUserId);
-    if (!user) return;
-    const sent = new Set(user.sentRequestGroup || []);
-    if (!sent.has(group.id)) {
-      const updated = [...(user.sentRequestGroup || []), group.id];
-      updateUserById(currentUserId, { sentRequestGroup: updated });
-      setIsRequested(true);
-      if (onRequestChange) onRequestChange(group.id, true);
-    }
+    dispatch(requestJoinGroup(group.id));
   };
 
   const handleCancel = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    const user = getUserById(currentUserId);
-    if (!user) return;
-    const updated = (user.sentRequestGroup || []).filter(
-      (id) => id !== group.id
-    );
-    updateUserById(currentUserId, { sentRequestGroup: updated });
-    setIsRequested(false);
-    if (onRequestChange) onRequestChange(group.id, false);
+    dispatch(cancelJoinRequest(group.id));
   };
   return (
     <NavLink
@@ -109,7 +91,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
           </span>
         </div>
 
-        {showJoinButton && !isRequested && (
+        {showJoinButton && !isRequested && !isMember && (
           <button
             type="button"
             onClick={handleJoin}
@@ -128,7 +110,6 @@ const GroupCard: React.FC<GroupCardProps> = ({
             Cancel Request
           </button>
         )}
-
         {isRequested && !showCancelButton && (
           <button
             type="button"

@@ -1,17 +1,10 @@
 import GroupCard from "../utils/GroupCard";
-import {
-  getGroupById,
-  groups as allGroups,
-} from "../../../data/group-data/groupsData";
+import { getGroupById, groups as allGroups } from "../../../data/group-data/groupsData";
 import type { Group } from "../../../data/group-data/groupsData";
-import {
-  getCurrentUserId,
-  getUserById,
-} from "../../../data/profile-data/userData";
+import { useAppSelector } from "../../../store/hooks";
 
 const UniversityGroups = () => {
-  const userId = getCurrentUserId();
-  const user = getUserById(userId);
+  const user = useAppSelector((s) => s.profile);
 
   // Use the user's joined groups and filter them by category/institution.
   const joinedIds = user?.joinedGroup || [];
