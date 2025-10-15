@@ -1,35 +1,19 @@
-import React, { useState } from "react";
+import React from "react";
 import FriendCard from "./FriendCard";
-import { getCurrentUserId, getUserById, updateUserById } from "../../data/profile-data/userData";
-import { useAppSelector } from "../../store/hooks";
-import { selectUserById } from "../../store/slices/profileSlice";
+import { getUserById } from "../../data/profile-data/userData";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { selectUserById, unfriend } from "../../store/slices/profileSlice";
 
 const FriendsList: React.FC = () => {
-  const [, setRefreshTick] = useState(0);
-  const currentUserId = getCurrentUserId();
-  const currentUser = useAppSelector((s) => selectUserById(s, currentUserId));
+  const dispatch = useAppDispatch();
+  const currentUser = useAppSelector((s) => selectUserById(s, s.profile.id));
 
   if (!currentUser) {
     return <div>User not found</div>;
   }
 
   const handleUnfriend = (friendId: string) => {
-    const friend = getUserById(friendId);
-    if (!friend) return;
-
-    // Remove from current user's friends list
-    const currentFriends = currentUser.friends.filter((id) => id !== friendId);
-    updateUserById(currentUserId, {
-      friends: currentFriends,
-    });
-
-    // Remove current user from friend's friends list
-    const friendFriends = friend.friends.filter((id) => id !== currentUserId);
-    updateUserById(friendId, {
-      friends: friendFriends,
-    });
-
-    setRefreshTick((t) => t + 1);
+    dispatch(unfriend(friendId));
   };
 
   // Get friends data from current user's friends list
