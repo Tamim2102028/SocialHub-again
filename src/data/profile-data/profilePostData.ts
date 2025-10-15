@@ -20,7 +20,7 @@ export const postData: PostData[] = [
     postId: "p1",
     userId: "1",
     content:
-      "Excited to join SocialHub! 🚀 This platform looks amazing and I can't wait to connect with everyone. The interface is so clean and user-friendly!",
+      "Excited to join SocialHubs! 🚀 This platform looks amazing and I can't wait to connect with everyone. The interface is so clean and user-friendly!",
     createdAt: "2024-06-01T10:00:00Z",
     updatedAt: "2024-06-01T12:00:00Z",
     comments: 2,
