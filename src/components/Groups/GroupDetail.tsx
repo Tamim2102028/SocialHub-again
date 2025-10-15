@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { FaArrowLeft } from "react-icons/fa";
+import { FaArrowLeft, FaUsers } from "react-icons/fa";
 import { getGroupById } from "../../data/group-data/groupsData";
 import {
   getCurrentUserId,
@@ -72,16 +72,20 @@ const GroupDetail: React.FC = () => {
         <div className="flex items-center justify-between gap-3">
           {/* Group Name and Description */}
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">{group.name}</h1>
-            <p className="mt-1 text-sm text-gray-600">{group.description}</p>
-
-            <div className="mt-3 flex items-center gap-4 text-sm text-gray-700">
-              <span className="font-medium">
-                {group.members?.length || 0} members
-              </span>
-              <span className="text-gray-500">•</span>
-              <span className="capitalize">{group.privacy}</span>
+            <div className="flex items-center gap-3">
+              <h1 className="flex items-center justify-center gap-3 text-2xl font-semibold text-gray-900">
+                <span>{group.name}</span>
+                <span
+                  aria-label={`${group.members?.length || 0} members`}
+                  className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-sm font-medium text-gray-800"
+                >
+                  <FaUsers className="mr-1" />
+                  <span>{group.members?.length || 0}</span>
+                </span>
+              </h1>
             </div>
+
+            <p className="mt-1 text-sm text-gray-600">{group.description}</p>
           </div>
 
           {/* Action Buttons */}
