@@ -1,9 +1,7 @@
 import React, { useMemo } from "react";
 import type { GroupPost } from "../../data/group-data/groupPostsData";
-import {
-  getGroupPostsByGroupId,
-  getPinnedGroupPosts,
-} from "../../data/group-data/groupPostsData";
+import { useAppSelector } from "../../store/hooks";
+import { selectGroupPosts } from "../../store/slices/groupSlice";
 import GroupPostCardSimple from "./GroupPostCard";
 
 type Mode = "posts" | "pinned";
@@ -14,11 +12,11 @@ type Props = {
 };
 
 const GroupPostList: React.FC<Props> = ({ groupId, mode = "posts" }) => {
-  const posts: GroupPost[] = useMemo(
-    () => getGroupPostsByGroupId(groupId),
-    [groupId]
+  const posts: GroupPost[] = useAppSelector((s) => selectGroupPosts(s, groupId));
+  const pinned: GroupPost[] = useMemo(
+    () => posts.filter((p) => p.isPinned),
+    [posts]
   );
-  const pinned = useMemo(() => getPinnedGroupPosts(groupId), [groupId]);
 
   if (mode === "pinned") {
     if (!pinned || pinned.length === 0) {

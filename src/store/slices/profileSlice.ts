@@ -3,6 +3,7 @@ import {
   getCurrentUserId,
   getUserById,
 } from "../../data/profile-data/userData";
+import type { RootState } from "../store";
 
 interface ProfileState {
   id: string;
@@ -135,3 +136,11 @@ const profileSlice = createSlice({
 export const { updateProfile, loadProfile, reloadProfile, clearProfile } =
   profileSlice.actions;
 export default profileSlice.reducer;
+
+/**
+ * Selector helper to resolve any user by id. This wraps the in-repo helper so
+ * components can call `useAppSelector((s) => selectUserById(s, id))` and keep
+ * data access consistent across the app. It intentionally uses the module
+ * fixture `getUserById` for now (preview-only behavior).
+ */
+export const selectUserById = (_state: RootState, id: string) => getUserById(id);

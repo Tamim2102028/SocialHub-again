@@ -10,7 +10,8 @@ import {
   FaRegBookmark,
 } from "react-icons/fa";
 import type { GroupPost } from "../../data/group-data/groupPostsData";
-import { getUserById } from "../../data/profile-data/userData";
+import { useAppSelector } from "../../store/hooks";
+import { selectUserById } from "../../store/slices/profileSlice";
 import { formatPostTime } from "../../utils/dateUtils";
 
 type Props = {
@@ -19,7 +20,7 @@ type Props = {
 
 const GroupPostCardSimple: React.FC<Props> = ({ post }) => {
   const navigate = useNavigate();
-  const author = getUserById(post.createdBy);
+  const author = useAppSelector((s) => selectUserById(s, post.createdBy));
   const [showCommentBox, setShowCommentBox] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(post.likedBy?.length || 0);

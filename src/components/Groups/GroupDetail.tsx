@@ -1,50 +1,43 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { FaArrowLeft, FaUsers } from "react-icons/fa";
-import { getGroupById } from "../../data/group-data/groupsData";
-import {
-  getCurrentUserId,
-  getUserById,
-} from "../../data/profile-data/userData";
-import { useAppDispatch } from "../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
   requestJoinGroup,
   cancelJoinRequest,
+  selectGroupById,
+  selectIsMember,
+  selectHasRequested,
 } from "../../store/slices/groupSlice";
 import GroupPostList from "./GroupPostList";
 
 const GroupDetail: React.FC = () => {
   const { groupId } = useParams<{ groupId: string }>();
-  const group = useMemo(
-    () => (groupId ? getGroupById(groupId) : undefined),
-    [groupId]
-  );
-  const [activeTab, setActiveTab] = useState<"posts" | "pinned">("posts");
-  // simple tick to force re-syncs when in-memory data is updated elsewhere
-  const [refreshTick, setRefreshTick] = useState<number>(0);
-  const currentUserId = getCurrentUserId();
-  const currentUser = getUserById(currentUserId);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  void refreshTick;
-  const isRequested = !!currentUser?.sentRequestGroup?.includes(
-    group?.id || ""
+  const group = useAppSelector((s) =>
+    groupId ? selectGroupById(s, groupId) : undefined
   );
-  const isMember = !!currentUser?.joinedGroup?.includes(group?.id || "");
+
+  const isRequested = useAppSelector((s) =>
+    groupId ? selectHasRequested(s, groupId) : false
+  );
+
+  const isMember = useAppSelector((s) =>
+    groupId ? selectIsMember(s, groupId) : false
+  );
+
+  const [activeTab, setActiveTab] = useState<"posts" | "pinned">("posts");
 
   const handleJoin = () => {
-    if (!group) return;
-    // Dispatch thunk to perform the join request side-effect and reload profile
-    dispatch(requestJoinGroup(group.id));
-    // bump local tick so computed flags are re-evaluated after profile reload
-    setRefreshTick((t) => t + 1);
+    if (!groupId) return;
+    dispatch(requestJoinGroup(groupId));
   };
 
   const handleCancel = () => {
-    if (!group) return;
-    dispatch(cancelJoinRequest(group.id));
-    setRefreshTick((t) => t + 1);
+    if (!groupId) return;
+    dispatch(cancelJoinRequest(groupId));
   };
 
   // If the group wasn't found, show a small placeholder and back button.
