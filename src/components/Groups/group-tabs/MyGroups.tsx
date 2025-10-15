@@ -1,12 +1,13 @@
 import GroupCard from "../utils/GroupCard";
 import { useAppSelector } from "../../../store/hooks";
-import { getGroupById } from "../../../data/group-data/groupsData";
 
 const MyGroups = () => {
   const joined = useAppSelector((s) => s.profile.joinedGroup || []);
 
+  const allGroups = useAppSelector((s) => s.groups.groups || []);
+
   const groups = joined
-    .map((gid) => getGroupById(gid))
+    .map((gid) => allGroups.find((g) => g.id === gid))
     .filter(Boolean)
     .map((g) => ({
       id: g!.id,

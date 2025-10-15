@@ -16,7 +16,7 @@ import {
 } from "react-icons/fa";
 
 import type { PostData } from "../../data/profile-data/profilePostData";
-import { getUserById } from "../../data/profile-data/userData";
+import { selectUserById } from "../../store/slices/profileSlice";
 import { formatPostTime } from "../../utils/dateUtils";
 
 interface HomePostCardProps {
@@ -32,8 +32,8 @@ const HomePostCard: React.FC<HomePostCardProps> = ({ post }) => {
     (state) => state.ui.menus.postMenus[post.postId] || false
   );
 
-  // Get user data for the post author
-  const userData = getUserById(post.userId);
+  // Get user data for the post author via selector
+  const userData = useAppSelector((s) => selectUserById(s, post.userId));
   const isLiked = post.likedBy.includes("1"); // Current user ID
 
   const handleLike = () => {

@@ -1,10 +1,6 @@
 import React, { useState } from "react";
 import FriendCard from "./FriendCard";
-import {
-  getCurrentUserId,
-  getUserById,
-  updateUserById,
-} from "../../data/profile-data/userData";
+import { getCurrentUserId, getUserById, updateUserById } from "../../data/profile-data/userData";
 
 const SentRequests: React.FC = () => {
   const [, setRefreshTick] = useState(0);

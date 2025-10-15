@@ -1,5 +1,4 @@
 import GroupCard from "../utils/GroupCard";
-import { getGroupById, groups as allGroups } from "../../../data/group-data/groupsData";
 import type { Group } from "../../../data/group-data/groupsData";
 import { useAppSelector } from "../../../store/hooks";
 
@@ -8,8 +7,9 @@ const UniversityGroups = () => {
 
   // Use the user's joined groups and filter them by category/institution.
   const joinedIds = user?.joinedGroup || [];
+  const allGroups = useAppSelector((s) => s.groups.groups || []);
   const joinedGroups = joinedIds
-    .map((gid) => getGroupById(gid))
+    .map((gid) => allGroups.find((g) => g.id === gid))
     .filter((g): g is Group => Boolean(g));
 
   // closed pre-created groups that should be visible only in University tab

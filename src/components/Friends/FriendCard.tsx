@@ -13,6 +13,8 @@ interface FriendCardProps {
   onAddFriend?: (id: string) => void;
   // called when a previously-sent friend request should be cancelled
   onCancelRequest?: (id: string) => void;
+  // called when removing an existing friend
+  onUnfriend?: (id: string) => void;
 }
 
 const FriendCard: React.FC<FriendCardProps> = ({
@@ -25,13 +27,24 @@ const FriendCard: React.FC<FriendCardProps> = ({
   onDecline,
   onAddFriend,
   onCancelRequest,
+  onUnfriend,
 }) => {
   const renderActions = () => {
     if (type === "friend") {
       return (
-        <div className="flex items-center rounded-lg bg-blue-100 px-4 py-2 text-blue-600">
-          <FaComment className="mr-2" />
-          Message
+        <div className="flex items-center space-x-2">
+          <div className="flex items-center rounded-lg bg-blue-100 px-4 py-2 text-blue-600">
+            <FaComment className="mr-2" />
+            Message
+          </div>
+          <button
+            type="button"
+            onClick={() => onUnfriend && onUnfriend(id)}
+            className="flex items-center rounded-lg bg-red-100 px-3 py-2 text-red-600 hover:bg-red-200"
+          >
+            <FaTimes className="mr-1" />
+            Unfriend
+          </button>
         </div>
       );
     } else if (type === "request") {

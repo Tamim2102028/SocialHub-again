@@ -1,6 +1,5 @@
 import React from "react";
 import GroupCard from "../utils/GroupCard";
-import { getGroupById } from "../../../data/group-data/groupsData";
 // profile data is read from Redux via useAppSelector
 import { useAppSelector } from "../../../store/hooks";
 
@@ -11,8 +10,10 @@ const SuggestedGroups: React.FC = () => {
   const joined = useAppSelector((s) => s.profile.joinedGroup || []);
   const sent = useAppSelector((s) => s.profile.sentRequestGroup || []);
 
+  const allGroups = useAppSelector((s) => s.groups.groups || []);
+
   const groups = suggestedIds
-    .map((id) => getGroupById(id))
+    .map((id) => allGroups.find((g) => g.id === id))
     .filter(Boolean)
     .filter((g) => g!.privacy !== "closed")
     .filter((g) => {

@@ -1,10 +1,10 @@
 import React from "react";
 import { useAppSelector } from "../../../store/hooks";
-import { getGroupById } from "../../../data/group-data/groupsData";
 import GroupCard from "../utils/GroupCard";
 
 const SentGroupRequests: React.FC = () => {
   const sent = useAppSelector((s) => s.profile.sentRequestGroup || []);
+  const allGroups = useAppSelector((s) => s.groups.groups || []);
 
   if (sent.length === 0) {
     return (
@@ -20,7 +20,7 @@ const SentGroupRequests: React.FC = () => {
   }
 
   const requestGroups = sent
-    .map((gid) => getGroupById(gid))
+    .map((gid) => allGroups.find((g) => g.id === gid))
     .filter(Boolean)
     // exclude groups that are closed — sent requests to closed groups shouldn't appear here
     .filter((g) => g && g.privacy !== "closed")

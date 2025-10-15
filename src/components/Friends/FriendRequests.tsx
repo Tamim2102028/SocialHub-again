@@ -1,15 +1,13 @@
 import React, { useState } from "react";
 import FriendCard from "./FriendCard";
-import {
-  getCurrentUserId,
-  getUserById,
-  updateUserById,
-} from "../../data/profile-data/userData";
+import { getCurrentUserId, getUserById, updateUserById } from "../../data/profile-data/userData";
+import { useAppSelector } from "../../store/hooks";
+import { selectUserById } from "../../store/slices/profileSlice";
 
 const FriendRequests: React.FC = () => {
   const [, setRefreshTick] = useState(0);
   const currentUserId = getCurrentUserId();
-  const currentUser = getUserById(currentUserId);
+  const currentUser = useAppSelector((s) => selectUserById(s, currentUserId));
 
   if (!currentUser) {
     return <div>User not found</div>;
