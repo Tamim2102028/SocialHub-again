@@ -1,7 +1,13 @@
 import GroupCard from "./GroupCard";
-import { getGroupById, groups as allGroups } from "../../data/groupsData";
-import type { Group } from "../../data/groupsData";
-import { getCurrentUserId, getUserById } from "../../data/userData";
+import {
+  getGroupById,
+  groups as allGroups,
+} from "../../data/group-data/groupsData";
+import type { Group } from "../../data/group-data/groupsData";
+import {
+  getCurrentUserId,
+  getUserById,
+} from "../../data/profile-data/userData";
 
 const UniversityGroups = () => {
   const userId = getCurrentUserId();

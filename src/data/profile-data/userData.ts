@@ -68,6 +68,7 @@ export const usersData: UserData[] = [
     friends: ["2", "3", "5", "6", "12", "14", "15", "16"],
     pendingRequests: ["4", "7", "8", "9"], // এরা user 1 এর কাছে request পাঠিয়েছে
     sentRequests: [], // user 1 কারো কাছে request পাঠায়নি
+
     saved: ["p1", "p3"],
     joinedGroup: ["g1", "g8", "g15", "g19"],
     sentRequestGroup: ["g4", "g9", "g12", "g20", "g22"],

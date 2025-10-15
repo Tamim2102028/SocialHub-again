@@ -1,6 +1,11 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { FaUsers, FaLock, FaGlobe, FaBan } from "react-icons/fa";
+import {
+  getCurrentUserId,
+  getUserById,
+  updateUserById,
+} from "../../data/profile-data/userData";
 
 // Accepts group with 'id' property instead of 'groupId'.
 type SmallGroup = {
@@ -16,12 +21,49 @@ type SmallGroup = {
 type GroupCardProps = {
   group: SmallGroup;
   showJoinButton?: boolean;
+  showCancelButton?: boolean;
+  onRequestChange?: (groupId: string, requested: boolean) => void;
 };
 
 const GroupCard: React.FC<GroupCardProps> = ({
   group,
   showJoinButton = false,
+  showCancelButton = false,
+  onRequestChange,
 }) => {
+  const currentUserId = getCurrentUserId();
+  const [isRequested, setIsRequested] = useState(false);
+
+  useEffect(() => {
+    const user = getUserById(currentUserId);
+    setIsRequested(!!user?.sentRequestGroup?.includes(group.id));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [group.id]);
+
+  const handleJoin = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const user = getUserById(currentUserId);
+    if (!user) return;
+    const sent = new Set(user.sentRequestGroup || []);
+    if (!sent.has(group.id)) {
+      const updated = [...(user.sentRequestGroup || []), group.id];
+      updateUserById(currentUserId, { sentRequestGroup: updated });
+      setIsRequested(true);
+      if (onRequestChange) onRequestChange(group.id, true);
+    }
+  };
+
+  const handleCancel = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const user = getUserById(currentUserId);
+    if (!user) return;
+    const updated = (user.sentRequestGroup || []).filter((id) => id !== group.id);
+    updateUserById(currentUserId, { sentRequestGroup: updated });
+    setIsRequested(false);
+    if (onRequestChange) onRequestChange(group.id, false);
+  };
   return (
     <NavLink
       to={`/groups/${group.id}`}
@@ -65,12 +107,37 @@ const GroupCard: React.FC<GroupCardProps> = ({
           </span>
         </div>
 
-        {showJoinButton && (
+        {showJoinButton && !isRequested && (
           <button
             type="button"
+            onClick={handleJoin}
             className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
           >
             Join Group
+          </button>
+        )}
+
+        {isRequested && showCancelButton && (
+          <button
+            type="button"
+            onClick={handleCancel}
+            className="w-full rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700"
+          >
+            Cancel Request
+          </button>
+        )}
+
+        {isRequested && !showCancelButton && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
+            className="w-full rounded-lg bg-gray-300 px-4 py-2 text-sm font-semibold text-gray-700"
+            disabled
+          >
+            Requested
           </button>
         )}
       </div>

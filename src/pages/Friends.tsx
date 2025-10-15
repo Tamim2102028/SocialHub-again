@@ -6,7 +6,7 @@ import FriendRequests from "../components/Friends/FriendRequests";
 import FriendSuggestions from "../components/Friends/FriendSuggestions";
 import SentRequests from "../components/Friends/SentRequests";
 import FriendCard from "../components/Friends/FriendCard";
-import { usersData, getCurrentUserId } from "../data/userData";
+import { usersData, getCurrentUserId } from "../data/profile-data/userData";
 
 const Friends: React.FC = () => {
   const [activeTab, setActiveTab] = useState<

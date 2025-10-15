@@ -5,7 +5,7 @@ import {
   getUserById,
   usersData,
   updateUserById,
-} from "../../data/userData";
+} from "../../data/profile-data/userData";
 
 const FriendSuggestions: React.FC = () => {
   const [, setRefreshTick] = useState(0);

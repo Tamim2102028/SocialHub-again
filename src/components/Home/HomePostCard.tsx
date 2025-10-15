@@ -16,7 +16,7 @@ import {
 } from "react-icons/fa";
 
 import type { PostData } from "../../data/profile-data/profilePostData";
-import { getUserById } from "../../data/userData";
+import { getUserById } from "../../data/profile-data/userData";
 import { formatPostTime } from "../../utils/dateUtils";
 
 interface HomePostCardProps {

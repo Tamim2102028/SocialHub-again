@@ -1,12 +1,16 @@
 import React, { useState } from "react";
 import FriendCard from "./FriendCard";
-import { getCurrentUserId, getUserById, updateUserById } from "../../data/userData";
+import {
+  getCurrentUserId,
+  getUserById,
+  updateUserById,
+} from "../../data/profile-data/userData";
 
 const SentRequests: React.FC = () => {
   const [, setRefreshTick] = useState(0);
   const currentUserId = getCurrentUserId();
   const currentUser = getUserById(currentUserId);
-  
+
   if (!currentUser) {
     return <div>User not found</div>;
   }
@@ -31,22 +35,25 @@ const SentRequests: React.FC = () => {
   };
 
   // Get sent requests data from current user's sentRequests list
-  const sentRequests = (currentUser.sentRequests || []).map(requestId => {
-    const requestedUser = getUserById(requestId);
-    if (!requestedUser) return null;
-    
-    // Get university/college name based on category
-    const institutionName = requestedUser.category === "university" 
-      ? requestedUser.university?.name 
-      : requestedUser.college?.name;
-    
-    return {
-      id: requestedUser.id,
-      name: requestedUser.name,
-      avatar: requestedUser.avatar,
-      university: institutionName || "Unknown Institution"
-    };
-  }).filter(request => request !== null);
+  const sentRequests = (currentUser.sentRequests || [])
+    .map((requestId) => {
+      const requestedUser = getUserById(requestId);
+      if (!requestedUser) return null;
+
+      // Get university/college name based on category
+      const institutionName =
+        requestedUser.category === "university"
+          ? requestedUser.university?.name
+          : requestedUser.college?.name;
+
+      return {
+        id: requestedUser.id,
+        name: requestedUser.name,
+        avatar: requestedUser.avatar,
+        university: institutionName || "Unknown Institution",
+      };
+    })
+    .filter((request) => request !== null);
 
   return (
     <div className="space-y-4">

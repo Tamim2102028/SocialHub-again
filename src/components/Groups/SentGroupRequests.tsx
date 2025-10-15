@@ -1,6 +1,9 @@
 import React from "react";
-import { getCurrentUserId, getUserById } from "../../data/userData";
-import { getGroupById } from "../../data/groupsData";
+import {
+  getCurrentUserId,
+  getUserById,
+} from "../../data/profile-data/userData";
+import { getGroupById } from "../../data/group-data/groupsData";
 import GroupCard from "./GroupCard";
 
 const SentGroupRequests: React.FC = () => {
@@ -8,6 +11,8 @@ const SentGroupRequests: React.FC = () => {
   const user = getUserById(userId);
 
   const sent = user?.sentRequestGroup || [];
+
+  const [, setRefreshTick] = React.useState(0);
 
   if (sent.length === 0) {
     return (
@@ -25,6 +30,8 @@ const SentGroupRequests: React.FC = () => {
   const requestGroups = sent
     .map((gid) => getGroupById(gid))
     .filter(Boolean)
+    // exclude groups that are closed — sent requests to closed groups shouldn't appear here
+    .filter((g) => g && g.privacy !== "closed")
     .map((g) => ({
       id: g!.id,
       name: g!.name,
@@ -39,9 +46,20 @@ const SentGroupRequests: React.FC = () => {
       <h2 className="mb-3 text-xl font-semibold text-gray-900">
         Sent Requests ({requestGroups.length})
       </h2>
+      {requestGroups.length === 0 && (
+        <p className="mb-4 text-sm text-gray-600">
+          You have no pending group requests (closed groups are not listed).
+        </p>
+      )}
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
         {requestGroups.map((group) => (
-          <GroupCard key={group.id} group={group} showJoinButton={false} />
+          <GroupCard
+            key={group.id}
+            group={group}
+            showJoinButton={false}
+            showCancelButton={true}
+            onRequestChange={() => setRefreshTick((t) => t + 1)}
+          />
         ))}
       </div>
     </div>

@@ -1,5 +1,8 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { getCurrentUserId, getUserById } from "../../data/userData";
+import {
+  getCurrentUserId,
+  getUserById,
+} from "../../data/profile-data/userData";
 
 interface ProfileState {
   id: string;
@@ -69,7 +72,7 @@ const getCurrentUserData = (): ProfileState => {
       category: "university" as const,
       university: {
         name: "",
-        dept: ""
+        dept: "",
       },
       college: undefined,
       gender: undefined,
@@ -109,7 +112,7 @@ const profileSlice = createSlice({
         category: "university" as const,
         university: {
           name: "",
-          dept: ""
+          dept: "",
         },
         college: undefined,
         gender: undefined,
