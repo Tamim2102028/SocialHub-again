@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   FaHeart,
   FaShare,
@@ -8,43 +7,20 @@ import {
   FaRegComment,
   FaBookmark,
   FaRegBookmark,
-  FaUserShield,
-  FaThumbtack,
 } from "react-icons/fa";
+import type { GroupPost } from "../../data/group-data/groupPostsData";
+import { getUserById } from "../../data/profile-data/userData";
 import { formatPostTime } from "../../utils/dateUtils";
 
-interface Author {
-  id: number;
-  name: string;
-  avatar: string;
-  role?: "admin" | "moderator" | "member";
-}
-
-interface GroupPost {
-  id: number;
-  content: string;
-  author: Author;
-  createdAt: string;
-  likes: number;
-  comments: number;
-  isLiked?: boolean;
-  images?: string[];
-  isPinned?: boolean;
-}
-
-interface GroupPostCardProps {
+type Props = {
   post: GroupPost;
-  isGroupMember: boolean;
-}
+};
 
-const GroupPostCard: React.FC<GroupPostCardProps> = ({
-  post,
-  isGroupMember,
-}) => {
-  const navigate = useNavigate();
+const GroupPostCardSimple: React.FC<Props> = ({ post }) => {
+  const author = getUserById(post.createdBy);
   const [showCommentBox, setShowCommentBox] = useState(false);
-  const [isLiked, setIsLiked] = useState(post.isLiked || false);
-  const [likesCount, setLikesCount] = useState(post.likes);
+  const [isLiked, setIsLiked] = useState(false);
+  const [likesCount, setLikesCount] = useState(post.likedBy?.length || 0);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
 
@@ -58,62 +34,24 @@ const GroupPostCard: React.FC<GroupPostCardProps> = ({
     setShowMenu(false);
   };
 
-  const handleProfileClick = () => {
-    navigate(`/profile/${post.author.id}`);
-  };
-
-  const getRoleBadge = () => {
-    if (post.author.role === "admin") {
-      return (
-        <span className="ml-2 inline-flex items-center gap-1 rounded bg-red-100 px-2 py-0.5 text-xs font-medium text-red-800">
-          <FaUserShield size={10} />
-          Admin
-        </span>
-      );
-    }
-    if (post.author.role === "moderator") {
-      return (
-        <span className="ml-2 inline-flex items-center gap-1 rounded bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800">
-          <FaUserShield size={10} />
-          Mod
-        </span>
-      );
-    }
-    return null;
-  };
-
   return (
     <div className="rounded-lg border border-gray-400 bg-white shadow">
-      {/* Pinned Post Badge */}
-      {post.isPinned && (
-        <div className="border-b border-gray-200 bg-blue-50 px-4 py-2">
-          <div className="flex items-center gap-2 text-sm text-blue-700">
-            <FaThumbtack size={12} />
-            <span className="font-medium">Pinned Post</span>
-          </div>
-        </div>
-      )}
-
       {/* Post Header */}
       <div className="flex items-center justify-between p-4">
         <div className="flex items-center space-x-3">
           <img
-            src={post.author.avatar}
-            alt={post.author.name}
-            className="h-10 w-10 cursor-pointer rounded-full bg-gray-300 transition-all hover:ring-2 hover:ring-blue-300"
-            onClick={handleProfileClick}
+            src={author?.avatar}
+            alt={author?.name}
+            className="h-10 w-10 rounded-full bg-gray-300"
           />
           <div>
-            <div className="flex items-center">
-              <h3
-                className="cursor-pointer font-semibold text-gray-900 transition-colors hover:text-blue-600 hover:underline"
-                onClick={handleProfileClick}
-              >
-                {post.author.name}
-              </h3>
-              {getRoleBadge()}
-            </div>
-            <p className="text-sm text-gray-500">{formatPostTime(post.createdAt)}</p>
+            <h3 className="font-semibold text-gray-900">
+              {author?.name || post.createdBy}
+            </h3>
+            <p className="text-sm text-gray-500">
+              @{author?.username || post.createdBy} •{" "}
+              {formatPostTime(post.createdAt)}
+            </p>
           </div>
         </div>
 
@@ -144,16 +82,11 @@ const GroupPostCard: React.FC<GroupPostCardProps> = ({
                     </>
                   )}
                 </button>
-                {isGroupMember && (
-                  <button className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100">
-                    Turn on notifications for this post
-                  </button>
-                )}
                 <button className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100">
                   Copy link
                 </button>
                 <button className="block w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-100">
-                  Report to group admins
+                  Report post
                 </button>
               </div>
             </div>
@@ -187,7 +120,7 @@ const GroupPostCard: React.FC<GroupPostCardProps> = ({
                   {index === 3 && post.images && post.images.length > 4 && (
                     <div className="bg-opacity-50 absolute inset-0 flex items-center justify-center rounded-lg bg-black">
                       <span className="text-lg font-semibold text-white">
-                        +{post.images.length - 4}
+                        +{post.images!.length - 4}
                       </span>
                     </div>
                   )}
@@ -203,7 +136,8 @@ const GroupPostCard: React.FC<GroupPostCardProps> = ({
         <div className="flex items-center justify-between text-sm text-gray-500">
           <div className="flex items-center space-x-4">
             <span>{likesCount} likes</span>
-            <span>{post.comments} comments</span>
+            <span>{0} comments</span>
+            <span>{post.sharesBy?.length || 0} shares</span>
           </div>
         </div>
       </div>
@@ -247,7 +181,7 @@ const GroupPostCard: React.FC<GroupPostCardProps> = ({
         <div className="border-t border-gray-100 px-4 pb-4">
           <div className="mt-3 flex items-center space-x-3">
             <img
-              src="https://ui-avatars.com/api/?name=You&background=3b82f6&color=fff"
+              src={author?.avatar}
               alt="Your avatar"
               className="h-8 w-8 rounded-full bg-gray-300"
             />
@@ -263,4 +197,4 @@ const GroupPostCard: React.FC<GroupPostCardProps> = ({
   );
 };
 
-export default GroupPostCard;
+export default GroupPostCardSimple;

@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  FaUserPlus,
-  FaComment,
-  FaCheck,
-  FaTimes,
-  FaUserMinus,
-} from "react-icons/fa";
+import { FaUserPlus, FaComment, FaCheck, FaTimes } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 
 interface FriendCardProps {
@@ -13,13 +7,10 @@ interface FriendCardProps {
   name: string;
   avatar: string;
   university: string;
-  type: "friend" | "request" | "suggestion" | "search" | "sent";
+  type: "friend" | "request" | "suggestion" | "search";
   onAccept?: (id: string) => void;
   onDecline?: (id: string) => void;
   onAddFriend?: (id: string) => void;
-  isRequestSent?: boolean;
-  onCancelRequest?: (id: string) => void;
-  onUnfriend?: (id: string) => void;
 }
 
 const FriendCard: React.FC<FriendCardProps> = ({
@@ -31,25 +22,13 @@ const FriendCard: React.FC<FriendCardProps> = ({
   onAccept,
   onDecline,
   onAddFriend,
-  onCancelRequest,
-  onUnfriend,
 }) => {
   const renderActions = () => {
     if (type === "friend") {
       return (
-        <div className="flex space-x-2">
-          <div className="flex items-center rounded-lg bg-blue-100 px-4 py-2 text-blue-600">
-            <FaComment className="mr-2" />
-            Message
-          </div>
-          <button
-            type="button"
-            onClick={() => onUnfriend?.(id)}
-            className="flex items-center rounded-lg bg-red-100 px-4 py-2 text-red-600 hover:bg-red-200"
-          >
-            <FaUserMinus className="mr-2" />
-            Unfriend
-          </button>
+        <div className="flex items-center rounded-lg bg-blue-100 px-4 py-2 text-blue-600">
+          <FaComment className="mr-2" />
+          Message
         </div>
       );
     } else if (type === "request") {
@@ -57,7 +36,7 @@ const FriendCard: React.FC<FriendCardProps> = ({
         <div className="flex space-x-2">
           <button
             type="button"
-            onClick={() => onAccept?.(id)}
+            onClick={() => onAccept && onAccept(id)}
             className="flex items-center rounded-lg bg-green-100 px-3 py-2 text-green-600 hover:bg-green-200"
           >
             <FaCheck className="mr-1" />
@@ -65,7 +44,7 @@ const FriendCard: React.FC<FriendCardProps> = ({
           </button>
           <button
             type="button"
-            onClick={() => onDecline?.(id)}
+            onClick={() => onDecline && onDecline(id)}
             className="flex items-center rounded-lg bg-red-100 px-3 py-2 text-red-600 hover:bg-red-200"
           >
             <FaTimes className="mr-1" />
@@ -77,22 +56,11 @@ const FriendCard: React.FC<FriendCardProps> = ({
       return (
         <button
           type="button"
-          onClick={() => onAddFriend?.(id)}
+          onClick={() => onAddFriend && onAddFriend(id)}
           className="flex items-center rounded-lg bg-blue-100 px-4 py-2 text-blue-600 hover:bg-blue-200"
         >
           <FaUserPlus className="mr-2" />
           Add Friend
-        </button>
-      );
-    } else if (type === "sent") {
-      return (
-        <button
-          type="button"
-          onClick={() => onCancelRequest?.(id)}
-          className="flex items-center rounded-lg bg-red-100 px-4 py-2 text-red-600 hover:bg-red-200"
-        >
-          <FaTimes className="mr-2" />
-          Cancel Request
         </button>
       );
     } else if (type === "search") {
@@ -118,7 +86,9 @@ const FriendCard: React.FC<FriendCardProps> = ({
             {name}
           </NavLink>
         </h3>
-        {university && <p className="text-sm text-gray-500">{university}</p>}
+        {university && (
+          <p className="text-sm text-gray-500">{university}</p>
+        )}
       </div>
       {renderActions()}
     </div>
