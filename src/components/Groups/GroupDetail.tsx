@@ -16,38 +16,68 @@ const GroupDetail: React.FC = () => {
     [groupId]
   );
   const [activeTab, setActiveTab] = useState<"posts" | "pinned">("posts");
+  // simple tick to force re-syncs when in-memory data is updated elsewhere
+  const [refreshTick, setRefreshTick] = useState<number>(0);
   const currentUserId = getCurrentUserId();
-  const user = getUserById(currentUserId);
+  const currentUser = getUserById(currentUserId);
   const navigate = useNavigate();
 
-  if (!group) {
-    return (
-      <div className="p-6">
-        <h2 className="text-2xl font-semibold">Group not found</h2>
-      </div>
-    );
-  }
-
-  const isMember = !!user?.joinedGroup?.includes(group.id);
-  const isRequested = !!user?.sentRequestGroup?.includes(group.id);
+  void refreshTick;
+  const isRequested = !!currentUser?.sentRequestGroup?.includes(
+    group?.id || ""
+  );
+  const isMember = !!currentUser?.joinedGroup?.includes(group?.id || "");
 
   const handleJoin = () => {
-    if (isMember || isRequested) return;
-    const updated = [...(user?.sentRequestGroup || []), group.id];
+    if (!group) return;
+    const current = getUserById(currentUserId);
+    if (!current) return;
+    const alreadyRequested = (current.sentRequestGroup || []).includes(
+      group.id
+    );
+    const alreadyMember = (current.joinedGroup || []).includes(group.id);
+    if (alreadyRequested || alreadyMember) {
+      // already in desired state
+      return;
+    }
+
+    const updated = [...(current.sentRequestGroup || []), group.id];
     updateUserById(currentUserId, { sentRequestGroup: updated });
-    // local UI: set requested
-    // (other lists update via parent callbacks elsewhere)
+    setRefreshTick((t) => t + 1);
   };
 
   const handleCancel = () => {
-    if (!isRequested) return;
-    const updated = (user?.sentRequestGroup || []).filter(
+    if (!group) return;
+    const current = getUserById(currentUserId);
+    if (!current) return;
+    const updated = (current.sentRequestGroup || []).filter(
       (g) => g !== group.id
     );
     updateUserById(currentUserId, { sentRequestGroup: updated });
+    setRefreshTick((t) => t + 1);
   };
 
-  // Posts are read-only preview content coming from groupPostsData.ts
+  // If the group wasn't found, show a small placeholder and back button.
+  if (!group) {
+    return (
+      <div className="space-y-4 rounded-lg bg-white p-4">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => navigate(-1)}
+            aria-label="Back"
+            title="Back"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white text-lg text-gray-700 shadow-md transition-colors hover:bg-gray-50 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+          >
+            <FaArrowLeft />
+          </button>
+          <h2 className="text-lg font-medium text-gray-900">Group not found</h2>
+        </div>
+        <p className="text-sm text-gray-600">
+          The group you requested does not exist.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-5 overflow-hidden rounded-lg">
