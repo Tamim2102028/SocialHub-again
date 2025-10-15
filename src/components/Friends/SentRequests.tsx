@@ -1,33 +1,22 @@
-import React, { useState } from "react";
+import React from "react";
 import FriendCard from "./FriendCard";
-import { getCurrentUserId, getUserById, updateUserById } from "../../data/profile-data/userData";
+import { getUserById } from "../../data/profile-data/userData";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { selectUserById, cancelFriendRequest } from "../../store/slices/profileSlice";
 
 const SentRequests: React.FC = () => {
-  const [, setRefreshTick] = useState(0);
-  const currentUserId = getCurrentUserId();
-  const currentUser = getUserById(currentUserId);
+  const dispatch = useAppDispatch();
+  const currentUser = useAppSelector((s) => selectUserById(s, s.profile.id));
 
   if (!currentUser) {
     return <div>User not found</div>;
   }
 
+
+
+
   const handleCancelRequest = (targetId: string) => {
-    const target = getUserById(targetId);
-    if (!target) return;
-
-    const currentSent = new Set(currentUser.sentRequests || []);
-    currentSent.delete(targetId);
-    updateUserById(currentUserId, {
-      sentRequests: Array.from(currentSent),
-    });
-
-    const targetPending = new Set(target.pendingRequests || []);
-    targetPending.delete(currentUserId);
-    updateUserById(targetId, {
-      pendingRequests: Array.from(targetPending),
-    });
-
-    setRefreshTick((t) => t + 1);
+    dispatch(cancelFriendRequest(targetId));
   };
 
   // Get sent requests data from current user's sentRequests list
@@ -36,7 +25,6 @@ const SentRequests: React.FC = () => {
       const requestedUser = getUserById(requestId);
       if (!requestedUser) return null;
 
-      // Get university/college name based on category
       const institutionName =
         requestedUser.category === "university"
           ? requestedUser.university?.name
@@ -49,7 +37,12 @@ const SentRequests: React.FC = () => {
         university: institutionName || "Unknown Institution",
       };
     })
-    .filter((request) => request !== null);
+    .filter((request) => request !== null) as Array<{
+    id: string;
+    name: string;
+    avatar: string;
+    university: string;
+  }>;
 
   return (
     <div className="space-y-3">

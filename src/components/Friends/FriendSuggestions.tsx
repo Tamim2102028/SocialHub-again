@@ -1,13 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import FriendCard from "./FriendCard";
-import { getCurrentUserId, getUserById, usersData, updateUserById } from "../../data/profile-data/userData";
-import { useAppSelector } from "../../store/hooks";
-import { selectUserById } from "../../store/slices/profileSlice";
+import { usersData } from "../../data/profile-data/userData";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { selectUserById, sendFriendRequest } from "../../store/slices/profileSlice";
 
 const FriendSuggestions: React.FC = () => {
-  const [, setRefreshTick] = useState(0);
-  const currentUserId = getCurrentUserId();
-  const currentUser = useAppSelector((s) => selectUserById(s, currentUserId));
+  const dispatch = useAppDispatch();
+  const currentUser = useAppSelector((s) => selectUserById(s, s.profile.id));
 
   if (!currentUser) {
     return <div>User not found</div>;
@@ -17,7 +16,7 @@ const FriendSuggestions: React.FC = () => {
   const friendSuggestions = usersData
     .filter(
       (user) =>
-        user.id !== currentUserId && // Not current user
+        user.id !== currentUser.id && // Not current user
         !currentUser.friends.includes(user.id) && // Not already a friend
         !(currentUser.pendingRequests || []).includes(user.id) && // Not in pending requests
         !(currentUser.sentRequests || []).includes(user.id) // Not in sent requests
@@ -39,23 +38,7 @@ const FriendSuggestions: React.FC = () => {
 
   // Handler for adding a friend (moved out of inline for clarity)
   const handleAddFriend = (targetId: string) => {
-    const target = getUserById(targetId);
-    if (!target) return;
-
-    const currentSent = new Set(currentUser.sentRequests || []);
-    currentSent.add(targetId);
-    updateUserById(currentUserId, {
-      sentRequests: Array.from(currentSent),
-    });
-
-    const targetPending = new Set(target.pendingRequests || []);
-    targetPending.add(currentUserId);
-    updateUserById(targetId, {
-      pendingRequests: Array.from(targetPending),
-    });
-
-    // Remove the user from suggestions immediately by triggering a re-render
-    setRefreshTick((t) => t + 1);
+    dispatch(sendFriendRequest(targetId));
   };
 
   return (

@@ -1,7 +1,8 @@
-import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, type PayloadAction } from "@reduxjs/toolkit";
 import {
   getCurrentUserId,
   getUserById,
+  updateUserById,
 } from "../../data/profile-data/userData";
 import type { RootState } from "../store";
 
@@ -144,3 +145,111 @@ export default profileSlice.reducer;
  * fixture `getUserById` for now (preview-only behavior).
  */
 export const selectUserById = (_state: RootState, id: string) => getUserById(id);
+
+/**
+ * Friend-related thunks
+ * These wrap the in-repo fixture mutations so components simply dispatch actions
+ * and the profile slice reloads the latest user data via `reloadProfile()`.
+ */
+export const sendFriendRequest = createAsyncThunk(
+  "profile/sendFriendRequest",
+  async (targetId: string, { dispatch }) => {
+    const currentUserId = getCurrentUserId();
+    const current = getUserById(currentUserId);
+    const target = getUserById(targetId);
+    if (!current || !target) return { success: false };
+
+    // avoid duplicates
+    const currentSent = new Set(current.sentRequests || []);
+    currentSent.add(targetId);
+    updateUserById(currentUserId, { sentRequests: Array.from(currentSent) });
+
+    const targetPending = new Set(target.pendingRequests || []);
+    targetPending.add(currentUserId);
+    updateUserById(targetId, { pendingRequests: Array.from(targetPending) });
+
+    dispatch(reloadProfile());
+    return { success: true, targetId, userId: currentUserId };
+  }
+);
+
+export const cancelFriendRequest = createAsyncThunk(
+  "profile/cancelFriendRequest",
+  async (targetId: string, { dispatch }) => {
+    const currentUserId = getCurrentUserId();
+    const current = getUserById(currentUserId);
+    const target = getUserById(targetId);
+    if (!current || !target) return { success: false };
+
+    const updated = (current.sentRequests || []).filter((id) => id !== targetId);
+    updateUserById(currentUserId, { sentRequests: updated });
+
+    const targetPending = (target.pendingRequests || []).filter((id) => id !== currentUserId);
+    updateUserById(targetId, { pendingRequests: targetPending });
+
+    dispatch(reloadProfile());
+    return { success: true, targetId, userId: currentUserId };
+  }
+);
+
+export const acceptFriendRequest = createAsyncThunk(
+  "profile/acceptFriendRequest",
+  async (requesterId: string, { dispatch }) => {
+    const currentUserId = getCurrentUserId();
+    const current = getUserById(currentUserId);
+    const requester = getUserById(requesterId);
+    if (!current || !requester) return { success: false };
+
+    // add each other as friends
+    const newCurrentFriends = Array.from(new Set([requesterId, ...(current.friends || [])]));
+    const newRequesterFriends = Array.from(new Set([currentUserId, ...(requester.friends || [])]));
+
+    // remove pending/sent markers
+    const currentPending = (current.pendingRequests || []).filter((id) => id !== requesterId);
+    const requesterSent = (requester.sentRequests || []).filter((id) => id !== currentUserId);
+
+    updateUserById(currentUserId, { friends: newCurrentFriends, pendingRequests: currentPending });
+    updateUserById(requesterId, { friends: newRequesterFriends, sentRequests: requesterSent });
+
+    dispatch(reloadProfile());
+    return { success: true, requesterId, userId: currentUserId };
+  }
+);
+
+export const declineFriendRequest = createAsyncThunk(
+  "profile/declineFriendRequest",
+  async (requesterId: string, { dispatch }) => {
+    const currentUserId = getCurrentUserId();
+    const current = getUserById(currentUserId);
+    const requester = getUserById(requesterId);
+    if (!current || !requester) return { success: false };
+
+    const currentPending = (current.pendingRequests || []).filter((id) => id !== requesterId);
+    const requesterSent = (requester.sentRequests || []).filter((id) => id !== currentUserId);
+
+    updateUserById(currentUserId, { pendingRequests: currentPending });
+    updateUserById(requesterId, { sentRequests: requesterSent });
+
+    dispatch(reloadProfile());
+    return { success: true, requesterId, userId: currentUserId };
+  }
+);
+
+export const unfriend = createAsyncThunk(
+  "profile/unfriend",
+  async (friendId: string, { dispatch }) => {
+    const currentUserId = getCurrentUserId();
+    const current = getUserById(currentUserId);
+    const friend = getUserById(friendId);
+    if (!current || !friend) return { success: false };
+
+    const currentFriends = (current.friends || []).filter((id) => id !== friendId);
+    const friendFriends = (friend.friends || []).filter((id) => id !== currentUserId);
+
+    updateUserById(currentUserId, { friends: currentFriends });
+    updateUserById(friendId, { friends: friendFriends });
+
+    dispatch(reloadProfile());
+    return { success: true, friendId, userId: currentUserId };
+  }
+);
