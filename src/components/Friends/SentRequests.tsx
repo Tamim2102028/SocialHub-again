@@ -56,7 +56,7 @@ const SentRequests: React.FC = () => {
     .filter((request) => request !== null);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {sentRequests.length === 0 ? (
         <div className="rounded-lg border border-gray-200 bg-white p-8 text-center shadow-sm">
           <h3 className="text-lg font-semibold text-gray-900">

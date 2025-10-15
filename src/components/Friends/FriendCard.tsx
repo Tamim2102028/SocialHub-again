@@ -7,10 +7,12 @@ interface FriendCardProps {
   name: string;
   avatar: string;
   university: string;
-  type: "friend" | "request" | "suggestion" | "search";
+  type: "friend" | "request" | "suggestion" | "search" | "sent";
   onAccept?: (id: string) => void;
   onDecline?: (id: string) => void;
   onAddFriend?: (id: string) => void;
+  // called when a previously-sent friend request should be cancelled
+  onCancelRequest?: (id: string) => void;
 }
 
 const FriendCard: React.FC<FriendCardProps> = ({
@@ -22,6 +24,7 @@ const FriendCard: React.FC<FriendCardProps> = ({
   onAccept,
   onDecline,
   onAddFriend,
+  onCancelRequest,
 }) => {
   const renderActions = () => {
     if (type === "friend") {
@@ -63,6 +66,19 @@ const FriendCard: React.FC<FriendCardProps> = ({
           Add Friend
         </button>
       );
+    } else if (type === "sent") {
+      return (
+        <div className="flex">
+          <button
+            type="button"
+            onClick={() => onCancelRequest && onCancelRequest(id)}
+            className="flex items-center rounded-lg bg-red-100 px-3 py-2 text-red-600 hover:bg-red-200"
+          >
+            <FaTimes className="mr-1" />
+            Cancel Request
+          </button>
+        </div>
+      );
     } else if (type === "search") {
       return null;
     } else {
@@ -86,9 +102,7 @@ const FriendCard: React.FC<FriendCardProps> = ({
             {name}
           </NavLink>
         </h3>
-        {university && (
-          <p className="text-sm text-gray-500">{university}</p>
-        )}
+        {university && <p className="text-sm text-gray-500">{university}</p>}
       </div>
       {renderActions()}
     </div>
