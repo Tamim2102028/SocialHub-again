@@ -12,9 +12,9 @@ import {
   FaChalkboardTeacher,
   FaSchool,
   FaEllipsisH,
-  FaRobot,
   FaBriefcase,
 } from "react-icons/fa";
+import { BsStars } from "react-icons/bs";
 import { prefetchRoute } from "../routes/prefetch";
 
 const Sidebar: React.FC = () => {
@@ -41,7 +41,7 @@ const Sidebar: React.FC = () => {
       active: location.pathname === "/files",
     },
     {
-      icon: FaRobot,
+      icon: BsStars,
       label: "Study Helper AI",
       path: "/study-helper",
       active: location.pathname === "/study-helper",

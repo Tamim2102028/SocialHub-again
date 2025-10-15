@@ -1,5 +1,6 @@
 import React from "react";
-import { FaRobot, FaBars, FaTimes } from "react-icons/fa";
+import { BsStars } from "react-icons/bs";
+import { FaBars, FaTimes } from "react-icons/fa";
 
 interface AIHeaderProps {
   onMenuToggle: () => void;
@@ -22,8 +23,8 @@ const AIHeader: React.FC<AIHeaderProps> = ({ onMenuToggle, isSidebarOpen }) => {
       </button>
 
       {/* AI Icon */}
-      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-500">
-        <FaRobot className="text-sm text-white" />
+      <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-500">
+        <BsStars className="text-xl text-white" />
       </div>
 
       {/* Title */}
