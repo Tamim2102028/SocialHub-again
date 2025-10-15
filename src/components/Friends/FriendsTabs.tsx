@@ -5,7 +5,10 @@ interface FriendsTabsProps {
   onTabChange: (tab: "all" | "requests" | "suggestions" | "sent") => void;
 }
 
-const FriendsTabs: React.FC<FriendsTabsProps> = ({ activeTab, onTabChange }) => {
+const FriendsTabs: React.FC<FriendsTabsProps> = ({
+  activeTab,
+  onTabChange,
+}) => {
   const handleTabClick = (tab: "all" | "requests" | "suggestions" | "sent") => {
     onTabChange(tab);
   };
