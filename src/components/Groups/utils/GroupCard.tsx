@@ -5,7 +5,7 @@ import {
   getCurrentUserId,
   getUserById,
   updateUserById,
-} from "../../data/profile-data/userData";
+} from "../../../data/profile-data/userData";
 
 // Accepts group with 'id' property instead of 'groupId'.
 type SmallGroup = {
@@ -59,7 +59,9 @@ const GroupCard: React.FC<GroupCardProps> = ({
     e.stopPropagation();
     const user = getUserById(currentUserId);
     if (!user) return;
-    const updated = (user.sentRequestGroup || []).filter((id) => id !== group.id);
+    const updated = (user.sentRequestGroup || []).filter(
+      (id) => id !== group.id
+    );
     updateUserById(currentUserId, { sentRequestGroup: updated });
     setIsRequested(false);
     if (onRequestChange) onRequestChange(group.id, false);

@@ -1,10 +1,10 @@
 import React from "react";
-import GroupsHeader from "../components/Groups/GroupsHeader";
-import MyGroups from "../components/Groups/MyGroups";
-import SuggestedGroups from "../components/Groups/SuggestedGroups";
-import CareerGroups from "../components/Groups/CareerGroups";
-import UniversityGroups from "../components/Groups/UniversityGroups";
-import SentGroupRequests from "../components/Groups/SentGroupRequests.tsx";
+import GroupsHeader from "../components/Groups/utils/GroupsHeader.tsx";
+import MyGroups from "../components/Groups/group-tabs/MyGroups.tsx";
+import SuggestedGroups from "../components/Groups/group-tabs/SuggestedGroups.tsx";
+import CareerGroups from "../components/Groups/group-tabs/CareerGroups.tsx";
+import UniversityGroups from "../components/Groups/group-tabs/UniversityGroups.tsx";
+import SentGroupRequests from "../components/Groups/group-tabs/SentGroupRequests.tsx";
 
 const Groups: React.FC = () => {
   // Static data for demonstration

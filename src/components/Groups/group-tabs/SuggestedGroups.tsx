@@ -1,17 +1,19 @@
 import React, { useState } from "react";
-import GroupCard from "./GroupCard";
-import { getGroupById } from "../../data/group-data/groupsData";
+import GroupCard from "../utils/GroupCard";
+import { getGroupById } from "../../../data/group-data/groupsData";
 import {
   getCurrentUserId,
   getUserById,
-} from "../../data/profile-data/userData";
+} from "../../../data/profile-data/userData";
 
-const pick = ["g21", "g22", "g23"];
+// Pick some groups by id to suggest (display-only)
+const suggestedIds = ["g19", "g5", "g13"];
 
-const CareerGroups: React.FC = () => {
+const SuggestedGroups: React.FC = () => {
+  // tick state to trigger re-evaluation after join/cancel actions
   const [, setRefreshTick] = useState(0);
 
-  const groups = pick
+  const groups = suggestedIds
     .map((id) => getGroupById(id))
     .filter(Boolean)
     .filter((g) => g!.privacy !== "closed")
@@ -33,9 +35,8 @@ const CareerGroups: React.FC = () => {
   return (
     <div>
       <h2 className="mb-3 text-xl font-semibold text-gray-900">
-        Career & Job Groups ({groups.length})
+        Suggested Groups ({groups.length})
       </h2>
-
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
         {groups.map((group) => (
           <GroupCard
@@ -50,4 +51,4 @@ const CareerGroups: React.FC = () => {
   );
 };
 
-export default CareerGroups;
+export default SuggestedGroups;

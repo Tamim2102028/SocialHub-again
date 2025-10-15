@@ -2,9 +2,9 @@ import React from "react";
 import {
   getCurrentUserId,
   getUserById,
-} from "../../data/profile-data/userData";
-import { getGroupById } from "../../data/group-data/groupsData";
-import GroupCard from "./GroupCard";
+} from "../../../data/profile-data/userData";
+import { getGroupById } from "../../../data/group-data/groupsData";
+import GroupCard from "../utils/GroupCard";
 
 const SentGroupRequests: React.FC = () => {
   const userId = getCurrentUserId();

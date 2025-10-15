@@ -1,9 +1,9 @@
-import GroupCard from "./GroupCard";
+import GroupCard from "../utils/GroupCard";
 import {
   getCurrentUserId,
   getUserById,
-} from "../../data/profile-data/userData";
-import { getGroupById } from "../../data/group-data/groupsData";
+} from "../../../data/profile-data/userData";
+import { getGroupById } from "../../../data/group-data/groupsData";
 
 const MyGroups = () => {
   const userId = getCurrentUserId();
