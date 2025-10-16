@@ -54,17 +54,32 @@ const DailyXPClaim: React.FC = () => {
     dispatch(claimDailyXP());
   };
 
+  const rewards = [
+    {
+      icon: FaGift,
+      label: "Daily Reward",
+      value: "10 XP",
+      bgColor: "bg-green-50",
+      iconColor: "text-green-600",
+    },
+    {
+      icon: FaCoins,
+      label: "Your XP",
+      value: `${userXP} XP`,
+      bgColor: "bg-orange-50",
+      iconColor: "text-orange-600",
+    },
+  ];
+
   return (
-    <div className="relative space-y-3 overflow-hidden rounded-lg border border-gray-200 bg-white p-5 shadow">
+    <div className="relative space-y-3 overflow-hidden rounded-lg border border-gray-200 bg-white p-3 shadow">
       {/* Header with Stats */}
       <div className="flex items-start justify-between">
         <div className="flex-1 space-y-1">
           <h3 className="mb-1 text-2xl font-bold text-blue-600">
             Daily XP Claim
           </h3>
-          <p className="text-sm text-gray-600">
-            Claim your free 10 XP every day to participate in tournaments!
-          </p>
+
           {canClaim && (
             <p className="text-sm font-medium text-orange-700">
               Claim expires at midnight ({timeUntilMidnight} remaining)
@@ -72,16 +87,16 @@ const DailyXPClaim: React.FC = () => {
           )}
         </div>
         <div className="flex gap-3">
-          <div className="rounded-lg border border-gray-200 bg-green-50 px-4 py-2 text-center">
-            <FaGift className="mx-auto mb-1 text-xl text-green-600" />
-            <p className="text-xs text-gray-500">Daily Reward</p>
-            <p className="font-bold text-gray-800">10 XP</p>
-          </div>
-          <div className="rounded-lg border border-gray-200 bg-orange-50 px-4 py-2 text-center">
-            <FaCoins className="mx-auto mb-1 text-xl text-orange-600" />
-            <p className="text-xs text-gray-500">Your XP</p>
-            <p className="font-bold text-gray-800">{userXP} XP</p>
-          </div>
+          {rewards.map((item, index) => (
+            <div
+              key={index}
+              className={`rounded-lg border border-gray-200 ${item.bgColor} px-4 py-1.5 text-center`}
+            >
+              <item.icon className={`mx-auto mb-1 text-xl ${item.iconColor}`} />
+              <p className="text-xs text-gray-500">{item.label}</p>
+              <p className="font-bold text-gray-800">{item.value}</p>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -103,33 +118,33 @@ const DailyXPClaim: React.FC = () => {
             </div>
           </div>
         )}
-
-        <button
-          onClick={handleClaim}
-          disabled={!canClaim}
-          className={`w-full rounded-lg py-3 font-semibold text-white shadow transition-all ${
-            canClaim
-              ? "bg-blue-600 hover:bg-blue-700 active:scale-95"
-              : "cursor-not-allowed bg-gray-400"
-          }`}
-        >
-          {canClaim ? (
-            <span className="flex items-center justify-center gap-2">
-              <FaGift />
-              Claim 10 XP Now
-            </span>
-          ) : (
-            "Already Claimed Today"
-          )}
-        </button>
-
-        <button
-          onClick={() => navigate("/gaming/tournament")}
-          className="flex w-full items-center justify-center gap-2 rounded-lg border border-blue-300 bg-white py-3 font-medium text-blue-600 transition-all hover:border-blue-400 hover:bg-blue-50 active:scale-95"
-        >
-          <FaTrophy />
-          View Tournament
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => navigate("/gaming/tournament")}
+            className="flex w-full items-center justify-center gap-2 rounded-lg border border-blue-300 bg-white py-3 font-medium text-blue-600 transition-all hover:border-blue-400 hover:bg-blue-50 active:scale-95"
+          >
+            <FaTrophy />
+            View Tournament
+          </button>
+          <button
+            onClick={handleClaim}
+            disabled={!canClaim}
+            className={`w-full rounded-lg py-3 font-semibold text-white shadow transition-all ${
+              canClaim
+                ? "bg-blue-600 hover:bg-blue-700 active:scale-95"
+                : "cursor-not-allowed bg-gray-400"
+            }`}
+          >
+            {canClaim ? (
+              <span className="flex items-center justify-center gap-2">
+                <FaGift />
+                Claim 10 XP Now
+              </span>
+            ) : (
+              "Already Claimed Today"
+            )}
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -27,7 +27,7 @@ const App: React.FC = () => {
   return (
     <div className="grid h-screen grid-cols-[15rem_1fr_auto] overflow-hidden">
       {/* Left Sidebar - Navigation */}
-      <div className="h-full overflow-y-auto border-r border-gray-500 bg-white">
+      <div className="h-full overflow-y-auto bg-gray-50">
         <Sidebar />
       </div>
 
