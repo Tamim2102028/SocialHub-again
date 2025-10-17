@@ -54,7 +54,7 @@ export const usersData: UserData[] = [
     phone: "+8801712345678",
     avatar:
       "https://ui-avatars.com/api/?name=Tamim+Ikbal&background=3498db&color=fff&size=150&bold=true&rounded=true",
-    bio: "Computer Science student at BUET, passionate about web development",
+    bio: "Computer Science student att BUET, passionate about web development",
     role: ["student"],
     category: "university",
     university: {
