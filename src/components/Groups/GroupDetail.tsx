@@ -22,15 +22,22 @@ import {
 import { selectUserById } from "../../store/slices/profileSlice";
 import GroupPostList from "./GroupPostList";
 import { BsPostcard } from "react-icons/bs";
+import { findGroupById } from "../../data/group-data/groupResolver";
 
 const GroupDetail: React.FC = () => {
   const { groupId } = useParams<{ groupId: string }>();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const group = useAppSelector((s) =>
+  // resolve using central helper (handles pg* vs g* resolution)
+  const liveGroup = useAppSelector((s) =>
     groupId ? selectGroupById(s, groupId) : undefined
   );
+
+  // Resolve group using the centralized resolver. See `groupResolver.ts` for
+  // notes about simplifying this when backend IDs become uniform.
+  const resolved = groupId ? findGroupById(groupId) : undefined;
+  const group = liveGroup || resolved;
 
   const isRequested = useAppSelector((s) =>
     groupId ? selectHasRequested(s, groupId) : false

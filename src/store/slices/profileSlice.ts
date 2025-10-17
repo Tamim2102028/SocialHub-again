@@ -29,7 +29,7 @@ interface ProfileState {
   };
   college?: {
     name: string;
-    dept: "science" | "arts" | "commerce";
+    dept: string;
     section?: string; // optional for teachers
     subsection?: string;
     roll?: string; // optional for teachers
@@ -42,6 +42,8 @@ interface ProfileState {
   saved?: string[];
   // groups the user has joined (ids)
   joinedGroup?: string[];
+  // groups the user pre-joined (ids) - used for showing institution-specific groups
+  preJoinedGroup?: string[];
   // groups the user has sent join requests to (ids)
   sentRequestGroup?: string[];
 }
@@ -52,6 +54,7 @@ const getCurrentUserData = (): ProfileState => {
   const userData = getUserById(currentUserId);
 
   if (userData) {
+    // Map the fixture `UserData` shape into the profile slice shape expected by UI
     return {
       id: userData.id,
       name: userData.name,
@@ -61,14 +64,34 @@ const getCurrentUserData = (): ProfileState => {
       avatar: userData.avatar,
       bio: userData.bio,
       role: userData.role,
-      category: userData.category,
-      university: userData.university,
-      college: userData.college,
+      // derive category from educationLevel
+      category: userData.educationLevel === "UNIVERSITY" ? "university" : "hsc",
+      // normalize university/college fields to the older shape used across the app
+      university: userData.university
+        ? {
+            name: String(userData.university.name || ""),
+            dept: String(userData.university.department || ""),
+            section: userData.university.section,
+            subsection: userData.university.subsection,
+            roll: undefined,
+          }
+        : undefined,
+      college: userData.college
+        ? {
+            name: String(userData.college.name || ""),
+            dept: String(userData.college.department || ""),
+            section: undefined,
+            subsection: undefined,
+            roll: undefined,
+            sscBatch: "",
+          }
+        : undefined,
       gender: userData.gender,
       friends: userData.friends || [],
       pendingRequests: userData.pendingRequests || [],
       saved: userData.saved || [],
       joinedGroup: userData.joinedGroup || [],
+      preJoinedGroup: userData.preJoinedGroup || [],
       sentRequestGroup: userData.sentRequestGroup || [],
     };
   } else {
@@ -92,6 +115,7 @@ const getCurrentUserData = (): ProfileState => {
       pendingRequests: [],
       saved: [],
       joinedGroup: [],
+      preJoinedGroup: [],
       sentRequestGroup: [],
     };
   }
@@ -137,6 +161,7 @@ const profileSlice = createSlice({
         friends: [],
         pendingRequests: [],
         saved: [],
+        preJoinedGroup: [],
       };
     },
   },

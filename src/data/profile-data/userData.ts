@@ -75,8 +75,8 @@ const rawUsersData: UserData[] = [
     saved: [],
 
     preJoinedGroup: ["pg1", "pg3", "pg5"],
-    joinedGroup: ["g1", "g2", "g6"],
-    sentRequestGroup: ["g4", "g5"],
+    joinedGroup: ["g1", "g2", "g6", "g8"],
+    sentRequestGroup: ["g4", "g5" ,"g10"],
   },
   {
     id: "2",

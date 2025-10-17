@@ -1,47 +1,30 @@
 import GroupCard from "../utils/GroupCard";
-import type { Group } from "../../../data/group-data/groupsData";
+import type { Group } from "../../../data/group-data/preGroupData";
 import { useAppSelector } from "../../../store/hooks";
+import {
+  resolveGroupsByIds,
+  getClosedGroups,
+} from "../../../data/group-data/groupResolver";
 
 const UniversityGroups = () => {
   const user = useAppSelector((s) => s.profile);
 
-  // Use the user's joined groups and filter them by category/institution.
-  const joinedIds = user?.joinedGroup || [];
-  const allGroups = useAppSelector((s) => s.groups.groups || []);
-  const joinedGroups = joinedIds
-    .map((gid) => allGroups.find((g) => g.id === gid))
-    .filter((g): g is Group => Boolean(g));
+  // Use the user's preJoinedGroup array to show only those groups in the University tab.
+  // Support both pre-created ids (pg...) and normal group ids (g...)
+  const preJoinedIds: string[] = user?.preJoinedGroup || [];
 
-  // closed pre-created groups that should be visible only in University tab
-  const closedPrecreated = allGroups.filter((grp) => grp.privacy === "closed");
+  // Use the resolver to translate ids => groups. When the backend uses a
+  // single collection with uniform ids you only need to update
+  // `groupResolver.findGroupById` to look into that collection.
+  const preJoinedGroups = resolveGroupsByIds(preJoinedIds);
+  const closedGroups = getClosedGroups();
 
-  const filtered = joinedGroups
-    // keep joined groups that match institution/category rules
-    .filter((g) => {
-      if (user?.category === "university") {
-        if (!g.categories?.includes("university")) return false;
-        if (user.university?.name && g.university?.name) {
-          const uName = String(user.university.name).trim().toLowerCase();
-          const gName = String(g.university.name).trim().toLowerCase();
-          return uName === gName;
-        }
-        return true;
-      }
+  const map = new Map<string, Group>();
+  [...preJoinedGroups, ...closedGroups].forEach((g) =>
+    map.set(g.id, g as Group)
+  );
 
-      if (user?.category === "hsc") {
-        if (!g.categories?.includes("hsc")) return false;
-        if (user.college?.name && g.college?.name) {
-          const uName = String(user.college.name).trim().toLowerCase();
-          const gName = String(g.college.name).trim().toLowerCase();
-          return uName === gName;
-        }
-        return true;
-      }
-
-      return false;
-    });
-
-  const groups = filtered.map((g) => ({
+  const groups = Array.from(map.values()).map((g) => ({
     id: g.id,
     name: g.name,
     description: g.description,
@@ -49,45 +32,6 @@ const UniversityGroups = () => {
     memberCount: g.members?.length || 0,
     privacy: g.privacy,
   }));
-
-  // Add closed pre-created groups that match user's institution and are not already included
-  const institutionClosed = closedPrecreated.filter((g) => {
-    if (user?.category === "university") {
-      if (!g.categories?.includes("university")) return false;
-      if (user.university?.name && g.university?.name) {
-        return (
-          String(user.university.name).trim().toLowerCase() ===
-          String(g.university.name).trim().toLowerCase()
-        );
-      }
-      return false;
-    }
-    if (user?.category === "hsc") {
-      if (!g.categories?.includes("hsc")) return false;
-      if (user.college?.name && g.college?.name) {
-        return (
-          String(user.college.name).trim().toLowerCase() ===
-          String(g.college.name).trim().toLowerCase()
-        );
-      }
-      return false;
-    }
-    return false;
-  });
-
-  institutionClosed.forEach((g) => {
-    // avoid duplicates
-    if (!groups.find((x) => x.id === g.id)) {
-      groups.push({
-        id: g.id,
-        name: g.name,
-        description: g.description,
-        coverImage: g.coverImage,
-        memberCount: g.members?.length || 0,
-        privacy: g.privacy,
-      });
-    }
-  });
 
   return (
     <div>
