@@ -33,13 +33,14 @@ export interface UserData {
   };
   gender?: "male" | "female";
   religion?: "Islam" | "Hindu" | "Christian" | "Other";
-  friends: string[];
-  pendingRequests?: string[]; // যারা এই user এর কাছে friend request পাঠিয়েছে
-  sentRequests?: string[]; // এই user যাদের কাছে friend request পাঠিয়েছে
-  saved?: string[];
 
-  joinedGroup?: string[]; // group ids where user is a member
-  sentRequestGroup?: string[]; // group ids where user sent join request
+  friends: string[];
+  pendingRequests?: string[];
+  sentRequests?: string[];
+
+  saved?: string[];
+  joinedGroup?: string[];
+  sentRequestGroup?: string[];
 }
 
 export const usersData: UserData[] = [

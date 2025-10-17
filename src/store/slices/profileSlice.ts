@@ -1,4 +1,8 @@
-import { createSlice, createAsyncThunk, type PayloadAction } from "@reduxjs/toolkit";
+import {
+  createSlice,
+  createAsyncThunk,
+  type PayloadAction,
+} from "@reduxjs/toolkit";
 import {
   getCurrentUserId,
   getUserById,
@@ -144,7 +148,8 @@ export default profileSlice.reducer;
  * data access consistent across the app. It intentionally uses the module
  * fixture `getUserById` for now (preview-only behavior).
  */
-export const selectUserById = (_state: RootState, id: string) => getUserById(id);
+export const selectUserById = (_state: RootState, id: string) =>
+  getUserById(id);
 
 /**
  * Friend-related thunks
@@ -181,10 +186,14 @@ export const cancelFriendRequest = createAsyncThunk(
     const target = getUserById(targetId);
     if (!current || !target) return { success: false };
 
-    const updated = (current.sentRequests || []).filter((id) => id !== targetId);
+    const updated = (current.sentRequests || []).filter(
+      (id) => id !== targetId
+    );
     updateUserById(currentUserId, { sentRequests: updated });
 
-    const targetPending = (target.pendingRequests || []).filter((id) => id !== currentUserId);
+    const targetPending = (target.pendingRequests || []).filter(
+      (id) => id !== currentUserId
+    );
     updateUserById(targetId, { pendingRequests: targetPending });
 
     dispatch(reloadProfile());
@@ -201,15 +210,29 @@ export const acceptFriendRequest = createAsyncThunk(
     if (!current || !requester) return { success: false };
 
     // add each other as friends
-    const newCurrentFriends = Array.from(new Set([requesterId, ...(current.friends || [])]));
-    const newRequesterFriends = Array.from(new Set([currentUserId, ...(requester.friends || [])]));
+    const newCurrentFriends = Array.from(
+      new Set([requesterId, ...(current.friends || [])])
+    );
+    const newRequesterFriends = Array.from(
+      new Set([currentUserId, ...(requester.friends || [])])
+    );
 
     // remove pending/sent markers
-    const currentPending = (current.pendingRequests || []).filter((id) => id !== requesterId);
-    const requesterSent = (requester.sentRequests || []).filter((id) => id !== currentUserId);
+    const currentPending = (current.pendingRequests || []).filter(
+      (id) => id !== requesterId
+    );
+    const requesterSent = (requester.sentRequests || []).filter(
+      (id) => id !== currentUserId
+    );
 
-    updateUserById(currentUserId, { friends: newCurrentFriends, pendingRequests: currentPending });
-    updateUserById(requesterId, { friends: newRequesterFriends, sentRequests: requesterSent });
+    updateUserById(currentUserId, {
+      friends: newCurrentFriends,
+      pendingRequests: currentPending,
+    });
+    updateUserById(requesterId, {
+      friends: newRequesterFriends,
+      sentRequests: requesterSent,
+    });
 
     dispatch(reloadProfile());
     return { success: true, requesterId, userId: currentUserId };
@@ -224,8 +247,12 @@ export const declineFriendRequest = createAsyncThunk(
     const requester = getUserById(requesterId);
     if (!current || !requester) return { success: false };
 
-    const currentPending = (current.pendingRequests || []).filter((id) => id !== requesterId);
-    const requesterSent = (requester.sentRequests || []).filter((id) => id !== currentUserId);
+    const currentPending = (current.pendingRequests || []).filter(
+      (id) => id !== requesterId
+    );
+    const requesterSent = (requester.sentRequests || []).filter(
+      (id) => id !== currentUserId
+    );
 
     updateUserById(currentUserId, { pendingRequests: currentPending });
     updateUserById(requesterId, { sentRequests: requesterSent });
@@ -243,8 +270,12 @@ export const unfriend = createAsyncThunk(
     const friend = getUserById(friendId);
     if (!current || !friend) return { success: false };
 
-    const currentFriends = (current.friends || []).filter((id) => id !== friendId);
-    const friendFriends = (friend.friends || []).filter((id) => id !== currentUserId);
+    const currentFriends = (current.friends || []).filter(
+      (id) => id !== friendId
+    );
+    const friendFriends = (friend.friends || []).filter(
+      (id) => id !== currentUserId
+    );
 
     updateUserById(currentUserId, { friends: currentFriends });
     updateUserById(friendId, { friends: friendFriends });
