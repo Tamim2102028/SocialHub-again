@@ -103,6 +103,10 @@ const profileSlice = createSlice({
   name: "profile",
   initialState,
   reducers: {
+    fetchAllUserData() {
+      // This will be used to fetch all user data
+    },
+
     updateProfile(state, action: PayloadAction<Partial<ProfileState>>) {
       return { ...state, ...action.payload };
     },
