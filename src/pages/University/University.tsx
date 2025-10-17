@@ -1,7 +1,7 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 import UniversityNavbar from "../../components/University/UniversityNavbar";
-import UniversityHeader from "../../components/University/Universityheader";
+import UniversityHeader from "../../components/University/UniversityHeader";
 import AcademicTimeline from "./AcademicTimeline";
 import CRCorner from "./CRCorner";
 import UniversityDashboard from "./Dashboard";
