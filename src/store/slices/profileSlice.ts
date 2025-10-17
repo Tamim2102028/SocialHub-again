@@ -7,7 +7,7 @@ import {
   getCurrentUserId,
   getUserById,
   updateUserById,
-} from "../../data/profile-data/userData";
+} from "../../services/userService";
 import type { RootState } from "../store";
 
 interface ProfileState {

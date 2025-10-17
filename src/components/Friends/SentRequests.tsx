@@ -1,6 +1,6 @@
 import React from "react";
 import FriendCard from "./FriendCard";
-import { getUserById } from "../../data/profile-data/userData";
+import { getUserById } from "../../services/userService";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { selectUserById, cancelFriendRequest } from "../../store/slices/profileSlice";
 
