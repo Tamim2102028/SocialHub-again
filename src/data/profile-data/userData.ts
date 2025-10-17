@@ -59,7 +59,7 @@ export const usersData: UserData[] = [
     category: "university",
     university: {
       name: "BUET",
-      dept: "Computer Science and Engineering",
+      dept: "Computer Science & Engineering",
       section: "A",
       subsection: "1",
       roll: "1905001",
