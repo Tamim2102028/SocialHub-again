@@ -25,9 +25,9 @@ const FriendSuggestions: React.FC = () => {
         !(currentUser.sentRequests || []).includes(user.id) // Not in sent requests
     )
     .map((user) => {
-      // Get university/college name based on category
+      // Get university/college name based on education level
       const institutionName =
-        user.category === "university"
+        user.educationLevel === "UNIVERSITY"
           ? user.university?.name
           : user.college?.name;
 

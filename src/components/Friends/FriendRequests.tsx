@@ -27,7 +27,7 @@ const FriendRequests: React.FC = () => {
       if (!requester) return null;
 
       const institutionName =
-        requester.category === "university"
+        requester.educationLevel === "UNIVERSITY"
           ? requester.university?.name
           : requester.college?.name;
 

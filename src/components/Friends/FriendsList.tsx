@@ -22,9 +22,9 @@ const FriendsList: React.FC = () => {
       const friend = getUserById(friendId);
       if (!friend) return null;
 
-      // Get university/college name based on category
+      // Get university/college name based on education level
       const institutionName =
-        friend.category === "university"
+        friend.educationLevel === "UNIVERSITY"
           ? friend.university?.name
           : friend.college?.name;
 

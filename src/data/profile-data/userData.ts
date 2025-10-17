@@ -55,7 +55,7 @@ const rawUsersData: UserData[] = [
     password: "pass3",
     phone: "01710000003",
     avatar: "https://randomuser.me/api/portraits/men/3.jpg",
-    bio: "Medical student",
+    bio: "ektu ektu kore kaj hosse hosse",
     role: ["student"],
     gender: "male",
     religion: "Islam",
@@ -71,7 +71,9 @@ const rawUsersData: UserData[] = [
     friends: ["2", "4", "5", "9", "11"],
     pendingRequests: ["6", "7", "8", "10"],
     sentRequests: ["12", "13", "14", "15"],
+
     saved: [],
+
     preJoinedGroup: ["pg1", "pg3", "pg5"],
     joinedGroup: ["g1", "g2", "g6"],
     sentRequestGroup: ["g4", "g5"],
