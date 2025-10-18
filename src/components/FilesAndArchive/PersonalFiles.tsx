@@ -4,8 +4,8 @@ import ActionBar from "./PersonalFiles/ActionBar";
 import Breadcrumb from "./PersonalFiles/Breadcrumb";
 import EmptyState from "./PersonalFiles/EmptyState";
 import FilesList from "./PersonalFiles/FilesList";
-import NewFolderModal from "./PersonalFiles/NewFolderModal";
 import UploadModal from "./PersonalFiles/UploadModal";
+import Swal from "sweetalert2";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
   navigateToFolder,
@@ -28,7 +28,6 @@ const PersonalFiles: React.FC = () => {
   const breadcrumbPath = useAppSelector(selectBreadcrumbPath);
 
   // Local UI state (only for modals and search)
-  const [showNewFolderModal, setShowNewFolderModal] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -46,8 +45,50 @@ const PersonalFiles: React.FC = () => {
   };
 
   // File management functions using Redux actions
-  const handleCreateNewFolder = (folderName: string) => {
-    dispatch(createFolder(folderName));
+
+  const handleOpenNewFolder = async () => {
+    const { value: folderName } = await Swal.fire<string>({
+      title: "Create New Folder",
+      input: "text",
+      inputPlaceholder: "Enter folder name",
+      showCancelButton: true,
+      confirmButtonText: "Create Folder",
+      cancelButtonText: "Cancel",
+      cancelButtonColor: "#d33",
+      inputAttributes: {
+        maxlength: "50",
+        autocapitalize: "off",
+        autocorrect: "off",
+      },
+      preConfirm: (value) => {
+        if (!value || !value.trim()) {
+          Swal.showValidationMessage("Folder name is required");
+          return null;
+        }
+        const invalidChars = /[<>:"/\\|?*]/;
+        if (invalidChars.test(value)) {
+          Swal.showValidationMessage("Folder name contains invalid characters");
+          return null;
+        }
+        if (value.trim().length > 50) {
+          Swal.showValidationMessage(
+            "Folder name must be less than 50 characters"
+          );
+          return null;
+        }
+        return value.trim();
+      },
+    });
+
+    if (folderName) {
+      dispatch(createFolder(folderName));
+      Swal.fire({
+        icon: "success",
+        title: "Folder created",
+        timer: 1000,
+        showConfirmButton: false,
+      });
+    }
   };
 
   const handleUploadFiles = (files: File[]) => {
@@ -57,7 +98,9 @@ const PersonalFiles: React.FC = () => {
   // Current folder files (from store)
   const currentFiles = useAppSelector(selectCurrentFiles);
   // Get raw user fixture so we can read university.year and semester
-  const rawUser = useAppSelector((s: RootState) => selectUserById(s, s.profile.id));
+  const rawUser = useAppSelector((s: RootState) =>
+    selectUserById(s, s.profile.id)
+  );
   const userLevel = rawUser?.university?.year;
   const userTerm = rawUser?.university?.semester;
 
@@ -88,7 +131,7 @@ const PersonalFiles: React.FC = () => {
       <ActionBar
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
-        onNewFolder={() => setShowNewFolderModal(true)}
+        onNewFolder={handleOpenNewFolder}
         onUpload={() => setShowUploadModal(true)}
       />
 
@@ -139,8 +182,8 @@ const PersonalFiles: React.FC = () => {
                       }
                       className={`flex transform flex-col items-start rounded-xl border p-4 shadow-sm transition-all duration-150 hover:shadow-md ${
                         isHighlighted
-                          ? "bg-green-50 border-blue-300"
-                          : "bg-white border-gray-200"
+                          ? "border-blue-300 bg-green-50"
+                          : "border-gray-200 bg-white"
                       }`}
                       aria-label={`Open ${folderName}`}
                     >
@@ -149,10 +192,14 @@ const PersonalFiles: React.FC = () => {
                           <FaFolder className="h-5 w-5" />
                         </div>
                         <div className="text-left">
-                          <div className={`text-lg font-semibold ${isHighlighted ? 'text-green-700' : 'text-gray-800'}`}>
+                          <div
+                            className={`text-lg font-semibold ${isHighlighted ? "text-green-700" : "text-gray-800"}`}
+                          >
                             Level {folder.level}
                           </div>
-                          <div className={`text-sm font-semibold ${isHighlighted ? 'text-green-600' : 'text-gray-600'}`}>
+                          <div
+                            className={`text-sm font-semibold ${isHighlighted ? "text-green-600" : "text-gray-600"}`}
+                          >
                             Term {folder.term}
                           </div>
                         </div>
@@ -172,7 +219,7 @@ const PersonalFiles: React.FC = () => {
                 <div className="mt-6">
                   <EmptyState
                     searchQuery={searchQuery}
-                    onNewFolder={() => setShowNewFolderModal(true)}
+                    onNewFolder={handleOpenNewFolder}
                     onUpload={() => setShowUploadModal(true)}
                   />
                 </div>
@@ -190,7 +237,7 @@ const PersonalFiles: React.FC = () => {
             ) : (
               <EmptyState
                 searchQuery={searchQuery}
-                onNewFolder={() => setShowNewFolderModal(true)}
+                onNewFolder={handleOpenNewFolder}
                 onUpload={() => setShowUploadModal(true)}
               />
             )}
@@ -199,11 +246,6 @@ const PersonalFiles: React.FC = () => {
       </div>
 
       {/* Modals */}
-      <NewFolderModal
-        isOpen={showNewFolderModal}
-        onClose={() => setShowNewFolderModal(false)}
-        onCreateFolder={handleCreateNewFolder}
-      />
       <UploadModal
         isOpen={showUploadModal}
         onClose={() => setShowUploadModal(false)}
