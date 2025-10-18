@@ -3,31 +3,29 @@ import GroupCard from "../utils/GroupCard";
 // profile data is read from Redux via useAppSelector
 import { useAppSelector } from "../../../store/hooks";
 
-// Pick some groups by id to suggest (display-only)
-const suggestedIds = ["g19", "g5", "g13"];
-
 const SuggestedGroups: React.FC = () => {
   const joined = useAppSelector((s) => s.profile.joinedGroup || []);
+  const preJoined = useAppSelector((s) => s.profile.preJoinedGroup || []);
   const sent = useAppSelector((s) => s.profile.sentRequestGroup || []);
 
   const allGroups = useAppSelector((s) => s.groups.groups || []);
 
-  const groups = suggestedIds
-    .map((id) => allGroups.find((g) => g.id === id))
-    .filter(Boolean)
-    .filter((g) => g!.privacy !== "closed")
-    .filter((g) => {
-      const joinedSet = new Set(joined || []);
-      const sentSet = new Set(sent || []);
-      return !joinedSet.has(g!.id) && !sentSet.has(g!.id);
-    })
+  // Exclude groups the user already joined, was pre-joined into, or has sent a request to
+  const exclude = new Set<string>([
+    ...(joined || []),
+    ...(preJoined || []),
+    ...(sent || []),
+  ]);
+
+  const groups = allGroups
+    .filter((g) => !exclude.has(g.id))
     .map((g) => ({
-      id: g!.id,
-      name: g!.name,
-      description: g!.description,
-      coverImage: g!.coverImage,
-      memberCount: g!.members?.length || 0,
-      privacy: g!.privacy,
+      id: g.id,
+      name: g.name,
+      description: g.description,
+      coverImage: g.coverImage,
+      memberCount: g.members?.length || 0,
+      privacy: g.privacy,
     }));
 
   return (

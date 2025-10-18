@@ -85,6 +85,28 @@ export const cancelJoinRequest = createAsyncThunk(
   }
 );
 
+/**
+ * leaveGroup thunk
+ * - Responsibility: remove a group from the current user's joinedGroup list.
+ * - Mutates the in-memory fixture (preview app) and reloads profile state.
+ */
+export const leaveGroup = createAsyncThunk(
+  "groups/leaveGroup",
+  async (groupId: string, { dispatch }) => {
+    const currentUserId = getCurrentUserId();
+    const current = getUserById(currentUserId);
+    if (!current) return { success: false };
+
+    const updated = (current.joinedGroup || []).filter(
+      (g: string) => g !== groupId
+    );
+    updateUserById(currentUserId, { joinedGroup: updated });
+    dispatch(reloadProfile());
+
+    return { success: true, groupId, userId: currentUserId };
+  }
+);
+
 const groupSlice = createSlice({
   name: "groups",
   initialState,
@@ -117,6 +139,14 @@ const groupSlice = createSlice({
         state.status = "loading";
       })
       .addCase(cancelJoinRequest.fulfilled, (state) => {
+        state.status = "idle";
+      });
+
+    builder
+      .addCase(leaveGroup.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(leaveGroup.fulfilled, (state) => {
         state.status = "idle";
       });
   },

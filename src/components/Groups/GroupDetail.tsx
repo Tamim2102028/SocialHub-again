@@ -19,6 +19,7 @@ import {
   selectIsMember,
   selectHasRequested,
 } from "../../store/slices/groupSlice";
+import { leaveGroup } from "../../store/slices/groupSlice";
 import { selectUserById } from "../../store/slices/profileSlice";
 import GroupPostList from "./GroupPostList";
 import { BsPostcard } from "react-icons/bs";
@@ -149,14 +150,16 @@ const GroupDetail: React.FC = () => {
 
                   {/* Action Buttons */}
                   <div className="mt-6 flex flex-wrap gap-3">
-                    {!isMember && !isRequested && group.privacy !== "closed" && (
-                      <button
-                        onClick={handleJoin}
-                        className="rounded-lg bg-blue-600 px-6 py-2.5 font-semibold text-white transition hover:bg-blue-700"
-                      >
-                        Join Group
-                      </button>
-                    )}
+                    {!isMember &&
+                      !isRequested &&
+                      group.privacy !== "closed" && (
+                        <button
+                          onClick={handleJoin}
+                          className="rounded-lg bg-blue-600 px-6 py-2.5 font-semibold text-white transition hover:bg-blue-700"
+                        >
+                          Join Group
+                        </button>
+                      )}
 
                     {isRequested && !isMember && (
                       <button
@@ -167,11 +170,19 @@ const GroupDetail: React.FC = () => {
                       </button>
                     )}
 
-                    {isMember && (
-                      <button className="rounded-lg bg-gray-200 px-6 py-2.5 font-semibold text-gray-700 transition hover:bg-gray-300">
-                        Joined
-                      </button>
-                    )}
+                    {isMember &&
+                      (group.privacy === "closed" ? (
+                        <div className="rounded-lg bg-gray-100 px-6 py-2.5 font-semibold text-gray-700">
+                          Closed
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => dispatch(leaveGroup(group.id))}
+                          className="rounded-lg bg-gray-200 px-6 py-2.5 font-semibold text-gray-700 transition hover:bg-gray-300"
+                        >
+                          Joined
+                        </button>
+                      ))}
 
                     <button className="flex items-center gap-2 rounded-lg bg-gray-200 px-6 py-2.5 font-semibold text-gray-700 hover:bg-gray-300">
                       <FaBell className="h-4 w-4" />
