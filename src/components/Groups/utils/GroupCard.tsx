@@ -13,6 +13,7 @@ type SmallGroup = {
   name: string;
   description?: string;
   coverImage?: string;
+  profileImage?: string;
   memberCount?: number;
   privacy?: string;
   category?: string;
@@ -60,7 +61,11 @@ const GroupCard: React.FC<GroupCardProps> = ({
     >
       <div className="relative overflow-hidden">
         <img
-          src={group.coverImage || "/images/default-group-cover.jpg"}
+          src={
+            group.profileImage ||
+            group.coverImage ||
+            "/images/default-group-cover.jpg"
+          }
           alt={group.name}
           className="h-40 w-full object-cover transition-transform duration-300 group-hover:scale-110"
         />

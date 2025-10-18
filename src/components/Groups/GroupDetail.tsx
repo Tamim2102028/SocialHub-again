@@ -24,6 +24,7 @@ import { selectUserById } from "../../store/slices/profileSlice";
 import GroupPostList from "./GroupPostList";
 import { BsPostcard } from "react-icons/bs";
 import { findGroupById } from "../../data/group-data/groupResolver";
+import Swal from "sweetalert2";
 
 const GroupDetail: React.FC = () => {
   const { groupId } = useParams<{ groupId: string }>();
@@ -177,7 +178,21 @@ const GroupDetail: React.FC = () => {
                         </div>
                       ) : (
                         <button
-                          onClick={() => dispatch(leaveGroup(group.id))}
+                          onClick={() => {
+                            Swal.fire({
+                              title: "Are you sure?",
+                              text: "You will leave this group and will need to join again.",
+                              icon: "warning",
+                              showCancelButton: true,
+                              confirmButtonColor: "#3085d6",
+                              cancelButtonColor: "#d33",
+                              confirmButtonText: "Yes, leave group!",
+                            }).then((result) => {
+                              if (result.isConfirmed) {
+                                dispatch(leaveGroup(group.id));
+                              }
+                            });
+                          }}
                           className="rounded-lg bg-gray-200 px-6 py-2.5 font-semibold text-gray-700 transition hover:bg-gray-300"
                         >
                           Joined
