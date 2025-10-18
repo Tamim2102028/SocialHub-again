@@ -167,9 +167,11 @@ const ProfilePostCard: React.FC<ProfilePostCardProps> = ({
       {/* Post Stats */}
       <div className="border-t border-gray-100 px-4 py-2">
         <div className="flex items-center justify-between text-sm text-gray-500">
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-3">
             <span>{likesCount} likes</span>
+            <span className="text-gray-300">•</span>
             <span>{post.comments} comments</span>
+            <span className="text-gray-300">•</span>
             <span>{post.shares} shares</span>
           </div>
         </div>

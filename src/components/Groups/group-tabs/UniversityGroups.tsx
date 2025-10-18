@@ -1,10 +1,6 @@
 import GroupCard from "../utils/GroupCard";
-import type { Group } from "../../../data/group-data/preGroupData";
 import { useAppSelector } from "../../../store/hooks";
-import {
-  resolveGroupsByIds,
-  getClosedGroups,
-} from "../../../data/group-data/groupResolver";
+import { resolveGroupsByIds } from "../../../data/group-data/groupResolver";
 
 const UniversityGroups = () => {
   const user = useAppSelector((s) => s.profile);
@@ -17,14 +13,8 @@ const UniversityGroups = () => {
   // single collection with uniform ids you only need to update
   // `groupResolver.findGroupById` to look into that collection.
   const preJoinedGroups = resolveGroupsByIds(preJoinedIds);
-  const closedGroups = getClosedGroups();
 
-  const map = new Map<string, Group>();
-  [...preJoinedGroups, ...closedGroups].forEach((g) =>
-    map.set(g.id, g as Group)
-  );
-
-  const groups = Array.from(map.values()).map((g) => ({
+  const groups = preJoinedGroups.map((g) => ({
     id: g.id,
     name: g.name,
     description: g.description,

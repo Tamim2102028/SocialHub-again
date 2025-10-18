@@ -94,21 +94,39 @@ const GroupDetail: React.FC = () => {
     <div className="space-y-5 overflow-hidden">
       {/* Cover */}
       <div className="relative">
-        <div className="h-64 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500" />
+        {group.coverImage ? (
+          <img
+            src={group.coverImage}
+            alt={group.name}
+            className="h-64 w-full object-cover"
+          />
+        ) : (
+          <div className="h-64 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500" />
+        )}
 
         <div className="mx-auto max-w-5xl px-4">
           <div className="relative -mt-20">
             <div className="rounded-2xl bg-white p-6 shadow-lg">
               <div className="flex flex-col items-start gap-6 md:flex-row">
                 {/* Avatar */}
-                <div className="flex h-32 w-32 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-purple-600 text-4xl font-bold text-white shadow-xl">
-                  {group.name
-                    ? group.name
-                        .split(" ")
-                        .slice(0, 2)
-                        .map((n) => n[0])
-                        .join("")
-                    : "G"}
+                <div>
+                  {group.profileImage ? (
+                    <img
+                      src={group.profileImage}
+                      alt={group.name}
+                      className="h-32 w-32 rounded-2xl object-cover shadow-xl"
+                    />
+                  ) : (
+                    <div className="flex h-32 w-32 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-purple-600 text-4xl font-bold text-white shadow-xl">
+                      {group.name
+                        ? group.name
+                            .split(" ")
+                            .slice(0, 2)
+                            .map((n) => n[0])
+                            .join("")
+                        : "G"}
+                    </div>
+                  )}
                 </div>
 
                 {/* Info */}
@@ -131,7 +149,7 @@ const GroupDetail: React.FC = () => {
 
                   {/* Action Buttons */}
                   <div className="mt-6 flex flex-wrap gap-3">
-                    {!isMember && !isRequested && (
+                    {!isMember && !isRequested && group.privacy !== "closed" && (
                       <button
                         onClick={handleJoin}
                         className="rounded-lg bg-blue-600 px-6 py-2.5 font-semibold text-white transition hover:bg-blue-700"

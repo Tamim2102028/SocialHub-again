@@ -1,8 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import {
-  groups as groupsData,
-  type Group,
-} from "../../data/group-data/groupsData";
+import type { Group } from "../../data/group-data/preGroupData";
+import { groups } from "../../data/group-data/groupsData";
 import {
   groupPostsData,
   type GroupPost,
@@ -25,7 +23,7 @@ interface GroupState {
 }
 
 const initialState: GroupState = {
-  groups: groupsData,
+  groups: groups,
   posts: groupPostsData,
   currentGroupId: undefined,
   status: "idle",
@@ -148,8 +146,11 @@ export const selectGroupPosts = (
 
 // selectIsMember/selectHasRequested read membership info from the profile slice
 // because membership is stored on the user/profile fixture for this preview app.
-export const selectIsMember = (state: RootState, groupId: string): boolean =>
-  !!(state.profile?.joinedGroup || []).includes(groupId);
+export const selectIsMember = (state: RootState, groupId: string): boolean => {
+  const joined = state.profile?.joinedGroup || [];
+  const preJoined = state.profile?.preJoinedGroup || [];
+  return !![...joined, ...preJoined].includes(groupId);
+};
 
 export const selectHasRequested = (
   state: RootState,

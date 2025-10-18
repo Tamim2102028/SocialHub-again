@@ -36,6 +36,11 @@ const GroupCard: React.FC<GroupCardProps> = ({
   const isMember = useAppSelector(
     (s) => !!s.profile?.joinedGroup?.includes(group.id)
   );
+  // treat pre-joined groups as membership too
+  const isPreJoined = useAppSelector(
+    (s) => !!s.profile?.preJoinedGroup?.includes(group.id)
+  );
+  const effectiveMember = isMember || isPreJoined;
 
   const handleJoin = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -81,7 +86,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
         </div>
       </div>
 
-      <div className="p-4">
+      <div className="p-3">
         <h3 className="mb-2 text-lg font-bold text-gray-900">{group.name}</h3>
 
         <div className="mb-3 flex items-center gap-2 text-sm text-gray-600">
@@ -91,15 +96,18 @@ const GroupCard: React.FC<GroupCardProps> = ({
           </span>
         </div>
 
-        {showJoinButton && !isRequested && !isMember && (
-          <button
-            type="button"
-            onClick={handleJoin}
-            className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
-          >
-            Join Group
-          </button>
-        )}
+        {showJoinButton &&
+          !isRequested &&
+          !effectiveMember &&
+          group.privacy !== "closed" && (
+            <button
+              type="button"
+              onClick={handleJoin}
+              className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
+            >
+              Join Group
+            </button>
+          )}
 
         {isRequested && showCancelButton && (
           <button
@@ -110,6 +118,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
             Cancel Request
           </button>
         )}
+
         {isRequested && !showCancelButton && (
           <button
             type="button"
