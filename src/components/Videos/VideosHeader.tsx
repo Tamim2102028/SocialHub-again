@@ -16,8 +16,8 @@ const VideosHeader: React.FC = () => {
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search videos by title or creator..."
-            className="w-65 rounded-md border border-gray-500 py-2 pr-2 pl-10 text-sm placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+            placeholder="Search videos"
+            className="w-50 rounded-md border border-gray-500 py-2 pr-2 pl-10 placeholder-gray-400 focus:border-blue-500 focus:outline-none"
           />
         </label>
       </div>
