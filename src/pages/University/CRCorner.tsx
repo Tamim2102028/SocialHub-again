@@ -34,7 +34,10 @@ interface Announcement {
 }
 
 const CRCorner: React.FC = () => {
-  const [selectedPoll, setSelectedPoll] = useState<number | null>(null);
+  // track selected option per poll: { [pollId]: optionId }
+  const [selectedPolls, setSelectedPolls] = useState<
+    Record<number, number | null>
+  >({});
   const [feedback, setFeedback] = useState("");
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [postTitle, setPostTitle] = useState("");
@@ -119,24 +122,26 @@ const CRCorner: React.FC = () => {
   };
 
   const handleVote = (pollId: number, optionId: number) => {
+    const prevSelected = selectedPolls[pollId] ?? null;
+
     setPolls((prevPolls) =>
       prevPolls.map((poll) => {
         if (poll.id === pollId) {
           const updatedOptions = poll.options.map((option) => {
             // If this was previously selected and we're changing, decrease its count
-            if (option.id === selectedPoll && selectedPoll !== optionId) {
+            if (option.id === prevSelected && prevSelected !== optionId) {
               return { ...option, votes: option.votes - 1 };
             }
             // If this is the newly selected option, increase its count
-            if (option.id === optionId && selectedPoll !== optionId) {
+            if (option.id === optionId && prevSelected !== optionId) {
               return { ...option, votes: option.votes + 1 };
             }
             return option;
           });
 
-          // Update total votes only when voting for the first time
+          // Update total votes only when voting for the first time for this poll
           const totalVotes =
-            selectedPoll === null ? poll.totalVotes + 1 : poll.totalVotes;
+            prevSelected === null ? poll.totalVotes + 1 : poll.totalVotes;
 
           return { ...poll, options: updatedOptions, totalVotes };
         }
@@ -144,18 +149,19 @@ const CRCorner: React.FC = () => {
       })
     );
 
-    setSelectedPoll(optionId);
+    setSelectedPolls((prev) => ({ ...prev, [pollId]: optionId }));
   };
 
   const handleCancelVote = (pollId: number) => {
-    if (selectedPoll === null) return;
+    const prevSelected = selectedPolls[pollId] ?? null;
+    if (prevSelected === null) return;
 
     setPolls((prevPolls) =>
       prevPolls.map((poll) => {
         if (poll.id === pollId) {
           const updatedOptions = poll.options.map((option) => {
-            // Decrease vote count for the selected option
-            if (option.id === selectedPoll) {
+            // Decrease vote count for the previously selected option
+            if (option.id === prevSelected) {
               return { ...option, votes: option.votes - 1 };
             }
             return option;
@@ -164,14 +170,14 @@ const CRCorner: React.FC = () => {
           return {
             ...poll,
             options: updatedOptions,
-            totalVotes: poll.totalVotes - 1,
+            totalVotes: Math.max(0, poll.totalVotes - 1),
           };
         }
         return poll;
       })
     );
 
-    setSelectedPoll(null);
+    setSelectedPolls((prev) => ({ ...prev, [pollId]: null }));
   };
 
   const handleSendFeedback = () => {
@@ -657,19 +663,10 @@ const CRCorner: React.FC = () => {
 
       {/* Active Poll - Full Width */}
       <div className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
-        <div className="mb-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <FaPoll className="h-5 w-5 text-blue-600" />
-            <h2 className="text-lg font-semibold text-gray-900">Active Poll</h2>
-          </div>
-          {selectedPoll !== null && (
-            <button
-              onClick={() => handleCancelVote(polls[0].id)}
-              className="rounded-md border border-red-300 bg-red-50 px-4 py-1.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-100"
-            >
-              Cancel Vote
-            </button>
-          )}
+        {/* Poll Header */}
+        <div className="mb-4 flex items-center gap-3">
+          <FaPoll className="h-5 w-5 text-blue-600" />
+          <h2 className="text-lg font-semibold text-gray-900">Active Poll</h2>
         </div>
 
         {/* Poll List */}
@@ -678,15 +675,15 @@ const CRCorner: React.FC = () => {
             key={poll.id}
             className="relative mb-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
           >
-            {/* 3-dot menu button for poll */}
+            {/* 3-dot menu , cancel button & count */}
             <div className="absolute top-3 right-3 flex items-center justify-center gap-2">
               <div className="text-sm text-gray-500">
                 {poll.totalVotes} vote{poll.totalVotes !== 1 ? "s" : ""}
               </div>
-              {selectedPoll !== null && (
+              {selectedPolls[poll.id] != null && (
                 <button
-                  onClick={() => handleCancelVote(polls[0].id)}
-                  className="rounded-md border border-red-300 bg-red-50 px-4 py-1.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-100"
+                  onClick={() => handleCancelVote(poll.id)}
+                  className="rounded-md border border-red-300 bg-red-50 px-3 py-1.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-100"
                 >
                   Cancel Vote
                 </button>
@@ -734,7 +731,8 @@ const CRCorner: React.FC = () => {
                 const percentage = poll.totalVotes
                   ? ((option.votes / poll.totalVotes) * 100).toFixed(1)
                   : "0.0";
-                const isSelected = selectedPoll === option.id;
+                const isSelected =
+                  (selectedPolls[poll.id] ?? null) === option.id;
 
                 return (
                   <div
