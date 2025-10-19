@@ -670,123 +670,144 @@ const CRCorner: React.FC = () => {
         </div>
 
         {/* Poll List */}
-        {polls.map((poll) => (
-          <div
-            key={poll.id}
-            className="relative mb-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
-          >
-            {/* 3-dot menu , cancel button & count */}
-            <div className="absolute top-3 right-3 flex items-center justify-center gap-2">
-              <div className="text-sm text-gray-500">
-                {poll.totalVotes} vote{poll.totalVotes !== 1 ? "s" : ""}
-              </div>
-              {selectedPolls[poll.id] != null && (
-                <button
-                  onClick={() => handleCancelVote(poll.id)}
-                  className="rounded-md border border-red-300 bg-red-50 px-3 py-1.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-100"
-                >
-                  Cancel Vote
-                </button>
-              )}
-              <button
-                onClick={() =>
-                  setPollMenuOpenFor((prev) =>
-                    prev === poll.id ? null : poll.id
-                  )
-                }
-                className="cursor-pointer rounded-full p-1 text-gray-600 hover:bg-gray-100"
-                aria-label="Open poll menu"
-              >
-                <BsThreeDots className="h-5 w-5" />
-              </button>
-
-              {pollMenuOpenFor === poll.id && (
-                <div className="absolute top-8 right-0 z-20 w-40 rounded-md border border-gray-200 bg-white shadow-lg">
+        {polls.length === 0 ? (
+          // No polls placeholder
+          <div className="flex flex-col items-center justify-center gap-3 rounded-md border border-dashed border-gray-200 bg-gray-50 p-6 text-center">
+            <FaPoll className="h-8 w-8 text-gray-400" />
+            <p className="max-w-xl text-sm text-gray-600">
+              No polls yet. Create the first poll to gather class feedback and
+              start discussions.
+            </p>
+            <button
+              onClick={() => setShowCreatePoll(true)}
+              className="flex items-center gap-2 rounded-lg border-2 border-dashed border-blue-300 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-600 transition-colors hover:border-blue-400 hover:bg-blue-100"
+            >
+              <FaPlus className="h-5 w-5" />
+              Create Poll
+            </button>
+          </div>
+        ) : (
+          // Render polls
+          polls.map((poll) => (
+            <div
+              key={poll.id}
+              className="relative mb-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
+            >
+              {/* 3-dot menu , cancel button & count */}
+              <div className="absolute top-3 right-3 flex items-center justify-center gap-2">
+                <div className="text-sm text-gray-500">
+                  {poll.totalVotes} vote{poll.totalVotes !== 1 ? "s" : ""}
+                </div>
+                {selectedPolls[poll.id] != null && (
                   <button
-                    onClick={() => {
-                      setPollMenuOpenFor(null);
-                      alert("Edit poll not implemented yet");
-                    }}
-                    className="w-full px-3 py-2 text-left text-sm hover:bg-gray-50"
+                    onClick={() => handleCancelVote(poll.id)}
+                    className="rounded-md border border-red-300 bg-red-50 px-3 py-1.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-100"
                   >
-                    Edit
+                    Cancel Vote
                   </button>
+                )}
+                <button
+                  onClick={() =>
+                    setPollMenuOpenFor((prev) =>
+                      prev === poll.id ? null : poll.id
+                    )
+                  }
+                  className="cursor-pointer rounded-full p-1 text-gray-600 hover:bg-gray-100"
+                  aria-label="Open poll menu"
+                >
+                  <BsThreeDots className="h-5 w-5" />
+                </button>
+
+                {pollMenuOpenFor === poll.id && (
+                  <div className="absolute top-8 right-0 z-20 w-40 rounded-md border border-gray-200 bg-white shadow-lg">
+                    <button
+                      onClick={() => {
+                        setPollMenuOpenFor(null);
+                        alert("Edit poll not implemented yet");
+                      }}
+                      className="w-full px-3 py-2 text-left text-sm hover:bg-gray-50"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDeletePoll(poll.id)}
+                      className="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-gray-50"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                )}
+              </div>
+              <div className="mb-3 flex items-start justify-between">
+                <h3 className="text-base font-medium text-gray-900">
+                  {poll.question}
+                </h3>
+              </div>
+
+              <div className="space-y-3">
+                {poll.options.map((option) => {
+                  const percentage = poll.totalVotes
+                    ? ((option.votes / poll.totalVotes) * 100).toFixed(1)
+                    : "0.0";
+                  const isSelected =
+                    (selectedPolls[poll.id] ?? null) === option.id;
+
+                  return (
+                    <div
+                      key={option.id}
+                      className={`relative w-full cursor-pointer overflow-hidden rounded-md border p-4 transition-all ${
+                        isSelected
+                          ? "border-blue-500 bg-blue-50"
+                          : "border-gray-200 bg-white hover:border-blue-300 hover:bg-blue-50"
+                      }`}
+                      onClick={() => handleVote(poll.id, option.id)}
+                    >
+                      <div className="relative flex items-center justify-between">
+                        <span className="text-base font-medium text-gray-900">
+                          {option.text}
+                        </span>
+                        <span className="text-sm font-semibold text-blue-600">
+                          {percentage}% ({option.votes} votes)
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Poll Feedback Section */}
+              <div className="mt-6 rounded-lg border border-gray-200 bg-gray-50 p-4">
+                <div className="mb-3 flex items-center gap-2">
+                  <FaComments className="h-4 w-4 text-blue-600" />
+                  <h4 className="text-base font-semibold text-gray-900">
+                    Share Your Thoughts on This Poll
+                  </h4>
+                </div>
+
+                <textarea
+                  value={feedback}
+                  onChange={(e) => setFeedback(e.target.value)}
+                  className="w-full rounded-md border border-blue-300 p-3 text-sm text-gray-900 placeholder-gray-500"
+                  rows={3}
+                  placeholder="Share your opinion, concerns, or suggestions about this poll..."
+                />
+
+                <div className="mt-3 flex items-center justify-between">
+                  <p className="text-sm text-gray-500">
+                    Your feedback will be sent anonymously
+                  </p>
                   <button
-                    onClick={() => handleDeletePoll(poll.id)}
-                    className="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-gray-50"
+                    onClick={handleSendFeedback}
+                    disabled={!feedback.trim()}
+                    className="rounded-md bg-blue-600 px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-300"
                   >
-                    Delete
+                    Send Feedback
                   </button>
                 </div>
-              )}
-            </div>
-            <div className="mb-3 flex items-start justify-between">
-              <h3 className="text-base font-medium text-gray-900">
-                {poll.question}
-              </h3>
-            </div>
-
-            <div className="space-y-3">
-              {poll.options.map((option) => {
-                const percentage = poll.totalVotes
-                  ? ((option.votes / poll.totalVotes) * 100).toFixed(1)
-                  : "0.0";
-                const isSelected =
-                  (selectedPolls[poll.id] ?? null) === option.id;
-
-                return (
-                  <div
-                    key={option.id}
-                    className={`relative w-full cursor-pointer overflow-hidden rounded-md border p-4 transition-all ${
-                      isSelected
-                        ? "border-blue-500 bg-blue-50"
-                        : "border-gray-200 bg-white hover:border-blue-300 hover:bg-blue-50"
-                    }`}
-                    onClick={() => handleVote(poll.id, option.id)}
-                  >
-                    <div className="relative flex items-center justify-between">
-                      <span className="text-base font-medium text-gray-900">
-                        {option.text}
-                      </span>
-                      <span className="text-sm font-semibold text-blue-600">
-                        {percentage}% ({option.votes} votes)
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Poll Feedback Section */}
-            <div className="mt-6 rounded-lg border border-gray-200 bg-gray-50 p-4">
-              <div className="mb-3 flex items-center gap-2">
-                <FaComments className="h-4 w-4 text-blue-600" />
-                <h4 className="text-base font-semibold text-gray-900">
-                  Share Your Thoughts on This Poll
-                </h4>
-              </div>
-
-              <textarea
-                value={feedback}
-                onChange={(e) => setFeedback(e.target.value)}
-                className="w-full rounded-md border border-blue-700 p-3 text-sm text-gray-900 placeholder-gray-500"
-                rows={3}
-                placeholder="Share your opinion, concerns, or suggestions about this poll..."
-              />
-
-              <div className="mt-3 flex items-center justify-between">
-                <p>Your feedback will be sent anonymously</p>
-                <button
-                  onClick={handleSendFeedback}
-                  disabled={!feedback.trim()}
-                  className="rounded-md bg-blue-600 px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-300"
-                >
-                  Send Feedback
-                </button>
               </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </div>
   );
