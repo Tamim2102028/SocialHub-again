@@ -290,6 +290,9 @@ const CRCorner: React.FC = () => {
   // which announcement menu is open (id -> boolean)
   const [menuOpenFor, setMenuOpenFor] = useState<number | null>(null);
 
+  // which poll menu is open
+  const [pollMenuOpenFor, setPollMenuOpenFor] = useState<number | null>(null);
+
   const toggleMenu = (id: number) => {
     setMenuOpenFor((prev) => (prev === id ? null : id));
   };
@@ -298,6 +301,11 @@ const CRCorner: React.FC = () => {
     setAnnouncements((prev) => prev.filter((a) => a.id !== id));
     // close menu if it was open
     if (menuOpenFor === id) setMenuOpenFor(null);
+  };
+
+  const handleDeletePoll = (id: number) => {
+    setPolls((prev) => prev.filter((p) => p.id !== id));
+    if (pollMenuOpenFor === id) setPollMenuOpenFor(null);
   };
 
   return (
@@ -510,8 +518,9 @@ const CRCorner: React.FC = () => {
               </p>
               <button
                 onClick={() => setShowCreatePost(true)}
-                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+                className="flex items-center gap-2 rounded-lg border-2 border-dashed border-blue-300 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-600 transition-colors hover:border-blue-400 hover:bg-blue-100"
               >
+                <FaPlus className="h-5 w-5" />
                 Create Announcement
               </button>
             </div>
@@ -666,8 +675,40 @@ const CRCorner: React.FC = () => {
         {polls.map((poll) => (
           <div
             key={poll.id}
-            className="mb-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
+            className="relative mb-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
           >
+            {/* 3-dot menu button for poll */}
+            <div className="absolute top-3 right-3">
+              <button
+                onClick={() =>
+                  setPollMenuOpenFor((prev) => (prev === poll.id ? null : poll.id))
+                }
+                className="cursor-pointer rounded-full p-1 text-gray-600 hover:bg-gray-100"
+                aria-label="Open poll menu"
+              >
+                <BsThreeDots className="h-5 w-5" />
+              </button>
+
+              {pollMenuOpenFor === poll.id && (
+                <div className="absolute top-8 right-0 z-20 w-40 rounded-md border border-gray-200 bg-white shadow-lg">
+                  <button
+                    onClick={() => {
+                      setPollMenuOpenFor(null);
+                      alert("Edit poll not implemented yet");
+                    }}
+                    className="w-full px-3 py-2 text-left text-sm hover:bg-gray-50"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDeletePoll(poll.id)}
+                    className="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-gray-50"
+                  >
+                    Delete
+                  </button>
+                </div>
+              )}
+            </div>
             <div className="mb-3 flex items-start justify-between">
               <h3 className="text-base font-medium text-gray-900">
                 {poll.question}
