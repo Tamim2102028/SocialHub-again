@@ -672,16 +672,30 @@ const CRCorner: React.FC = () => {
           )}
         </div>
 
+        {/* Poll List */}
         {polls.map((poll) => (
           <div
             key={poll.id}
             className="relative mb-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
           >
             {/* 3-dot menu button for poll */}
-            <div className="absolute top-3 right-3">
+            <div className="absolute top-3 right-3 flex items-center justify-center gap-2">
+              <div className="text-sm text-gray-500">
+                {poll.totalVotes} vote{poll.totalVotes !== 1 ? "s" : ""}
+              </div>
+              {selectedPoll !== null && (
+                <button
+                  onClick={() => handleCancelVote(polls[0].id)}
+                  className="rounded-md border border-red-300 bg-red-50 px-4 py-1.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-100"
+                >
+                  Cancel Vote
+                </button>
+              )}
               <button
                 onClick={() =>
-                  setPollMenuOpenFor((prev) => (prev === poll.id ? null : poll.id))
+                  setPollMenuOpenFor((prev) =>
+                    prev === poll.id ? null : poll.id
+                  )
                 }
                 className="cursor-pointer rounded-full p-1 text-gray-600 hover:bg-gray-100"
                 aria-label="Open poll menu"
@@ -713,9 +727,6 @@ const CRCorner: React.FC = () => {
               <h3 className="text-base font-medium text-gray-900">
                 {poll.question}
               </h3>
-              <div className="text-sm text-gray-500">
-                {poll.totalVotes} vote{poll.totalVotes !== 1 ? "s" : ""}
-              </div>
             </div>
 
             <div className="space-y-3">
