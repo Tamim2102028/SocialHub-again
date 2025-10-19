@@ -318,15 +318,10 @@ const CRCorner: React.FC = () => {
     <div className="space-y-5">
       {/* Header with Create Button */}
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">CR Corner</h1>
-          <p className="mt-1 text-gray-600">
-            Connect with your Class Representative and participate in class
-            decisions
-          </p>
-        </div>
+        <h1 className="text-2xl font-bold text-gray-900">CR Corner</h1>
+
         {isCurrentUserCr ? (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             <button
               onClick={() => setShowCreatePost(!showCreatePost)}
               className="flex items-center gap-2 rounded-lg border-2 border-dashed border-blue-300 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-600 transition-colors hover:border-blue-400 hover:bg-blue-100"
