@@ -1,5 +1,5 @@
 import React from "react";
-import { FaPaperPlane, FaPaperclip } from "react-icons/fa";
+import { FaArrowUp, FaPlus } from "react-icons/fa";
 
 interface AIMessageInputProps {
   message: string;
@@ -15,10 +15,10 @@ const AIMessageInput: React.FC<AIMessageInputProps> = ({
   onKeyPress,
 }) => {
   return (
-    <div className="flex items-center gap-3 border-t border-gray-200 bg-white p-2.5">
+    <div className="flex items-center gap-2.5 border-t border-gray-200 bg-white p-2.5">
       {/* Attachment Button */}
-      <button className="flex h-10 w-10 items-center justify-center rounded-full text-gray-600 transition-colors hover:bg-gray-100">
-        <FaPaperclip className="h-5 w-5" />
+      <button className="flex h-full w-12.5 items-center justify-center rounded-2xl bg-blue-50 text-gray-600 transition-colors hover:bg-gray-100">
+        <FaPlus className="h-5 w-5" />
       </button>
 
       {/* Message Input Area */}
@@ -28,20 +28,18 @@ const AIMessageInput: React.FC<AIMessageInputProps> = ({
         onKeyDown={onKeyPress}
         placeholder="Ask me anything about your studies..."
         rows={1}
-        className="w-full resize-none rounded-lg border border-gray-300 px-3 py-2.5 focus:border-blue-500 focus:outline-none"
+        className="w-full resize-none rounded-xl border border-gray-300 px-3 py-2.5 focus:outline-none"
       />
 
       {/* Send Button */}
       <button
         onClick={onSendMessage}
         disabled={!message.trim()}
-        className={`flex h-10 w-10 items-center justify-center rounded-full transition-all ${
-          message.trim()
-            ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:shadow-lg"
-            : "bg-gray-200 text-gray-400"
+        className={`flex h-full w-12.5 items-center justify-center rounded-2xl bg-blue-500 text-white transition-all ${
+          message.trim() ? "hover:shadow-lg" : "bg-gray-200 text-gray-400"
         }`}
       >
-        <FaPaperPlane className="h-4 w-4" />
+        <FaArrowUp className="h-5 w-5" />
       </button>
     </div>
   );
