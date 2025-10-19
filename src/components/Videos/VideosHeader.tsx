@@ -1,47 +1,25 @@
-import React from "react";
-import { useAppSelector, useAppDispatch } from "../../store/hooks";
-import { setVideoFilter } from "../../store/slices/uiSlice";
+import React, { useState } from "react";
+import { FaSearch } from "react-icons/fa";
 
 const VideosHeader: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const filter = useAppSelector((state) => state.ui.videos.filter);
+  const [query, setQuery] = useState("");
 
   return (
     <div className="mb-6 flex items-center justify-between">
       <h1 className="text-2xl font-bold text-gray-900">Videos</h1>
 
-      {/* Filter Tabs */}
-      <div className="flex space-x-4">
-        <button
-          onClick={() => dispatch(setVideoFilter("all"))}
-          className={`rounded-lg px-4 py-2 font-medium transition-colors ${
-            filter === "all"
-              ? "bg-blue-600 text-white"
-              : "text-gray-600 hover:bg-gray-100"
-          }`}
-        >
-          All
-        </button>
-        <button
-          onClick={() => dispatch(setVideoFilter("trending"))}
-          className={`rounded-lg px-4 py-2 font-medium transition-colors ${
-            filter === "trending"
-              ? "bg-blue-600 text-white"
-              : "text-gray-600 hover:bg-gray-100"
-          }`}
-        >
-          Trending
-        </button>
-        <button
-          onClick={() => dispatch(setVideoFilter("recent"))}
-          className={`rounded-lg px-4 py-2 font-medium transition-colors ${
-            filter === "recent"
-              ? "bg-blue-600 text-white"
-              : "text-gray-600 hover:bg-gray-100"
-          }`}
-        >
-          Recent
-        </button>
+      {/* Search box (replaced filter tabs) */}
+      <div className="ml-4">
+        <label className="relative block">
+          <FaSearch className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400" />
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search videos by title or creator..."
+            className="w-65 rounded-md border border-gray-500 py-2 pr-2 pl-10 text-sm placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+          />
+        </label>
       </div>
     </div>
   );
