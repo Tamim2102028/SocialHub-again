@@ -20,6 +20,7 @@ export interface UserData {
     subsection?: "1" | "2";
     year?: 1 | 2 | 3 | 4 | 5;
     semester?: 1 | 2;
+    isCr?: boolean;
   };
 
   college?: {
@@ -29,7 +30,7 @@ export interface UserData {
       | "Dhaka College"
       | "Rajuk College";
     boardType?: "madrasah" | "general";
-    board?: "dhaka" | "chittagong";
+    board?: "dhaka" | "chittagong" | "rajshahi";
     department?: "science" | "commerce" | "arts";
     year?: "1" | "2" | "admission";
     version?: "bangla" | "english";
@@ -67,6 +68,7 @@ const rawUsersData: UserData[] = [
       subsection: "1",
       year: 3,
       semester: 1,
+      isCr: true,
     },
     friends: ["2", "4", "5", "9", "11"],
     pendingRequests: ["6", "7", "8", "10"],
@@ -128,6 +130,7 @@ const rawUsersData: UserData[] = [
       subsection: "2",
       year: 2,
       semester: 1,
+      isCr: true,
     },
     friends: [],
     pendingRequests: [],

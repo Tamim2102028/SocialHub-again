@@ -1,4 +1,8 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "../../store/hooks";
+import { selectUserById } from "../../store/slices/profileSlice";
+import type { RootState } from "../../store/store";
 import {
   FaPoll,
   FaComments,
@@ -7,6 +11,7 @@ import {
   FaFile,
   FaTimes,
 } from "react-icons/fa";
+import { BsThreeDots } from "react-icons/bs";
 
 interface Poll {
   id: number;
@@ -21,8 +26,11 @@ interface Announcement {
   content: string;
   date: string;
   postedBy: string;
+  postedById?: string;
   hasFile?: boolean;
   fileName?: string;
+  fileUrl?: string;
+  readBy?: string[]; // list of userIds who have marked this announcement as read
 }
 
 const CRCorner: React.FC = () => {
@@ -32,6 +40,19 @@ const CRCorner: React.FC = () => {
   const [postTitle, setPostTitle] = useState("");
   const [postContent, setPostContent] = useState("");
   const [attachedFile, setAttachedFile] = useState<File | null>(null);
+
+  // Poll creation state
+  const [showCreatePoll, setShowCreatePoll] = useState(false);
+  const [pollQuestion, setPollQuestion] = useState("");
+  const [pollOptions, setPollOptions] = useState<string[]>(["", ""]);
+
+  // current logged-in user (from profile slice)
+  const currentUser = useAppSelector((s: RootState) =>
+    selectUserById(s, s.profile.id)
+  );
+  const navigate = useNavigate();
+
+  const isCurrentUserCr = !!currentUser?.university?.isCr;
 
   const [polls, setPolls] = useState<Poll[]>([
     {
@@ -46,14 +67,16 @@ const CRCorner: React.FC = () => {
     },
   ]);
 
-  const announcements: Announcement[] = [
+  const [announcements, setAnnouncements] = useState<Announcement[]>([
     {
       id: 1,
       title: "Class Representative Meeting",
       content:
         "All CRs are requested to attend the monthly meeting in Room 301.",
       date: "Oct 5, 2025",
-      postedBy: "Tamim Ahmed (CR)",
+      postedBy: "Tamim Ahmed",
+      postedById: "tamim-id",
+      readBy: [],
     },
     {
       id: 2,
@@ -61,7 +84,9 @@ const CRCorner: React.FC = () => {
       content:
         "Our professor has shared the complete lecture notes for Circuit Analysis. Download and study before the midterm exam.",
       date: "Oct 3, 2025",
-      postedBy: "Sadia Rahman (CR)",
+      postedBy: "Sadia Rahman",
+      postedById: "sadia-id",
+      readBy: [],
       hasFile: true,
       fileName: "Circuit_Analysis_Notes.pdf",
     },
@@ -71,9 +96,27 @@ const CRCorner: React.FC = () => {
       content:
         "Good news! The CSE 305 assignment deadline has been extended to Oct 15. Make sure to submit on time.",
       date: "Oct 2, 2025",
-      postedBy: "Tamim Ahmed (CR)",
+      postedBy: "Tamim Ahmed",
+      postedById: "tamim-id",
+      readBy: [],
     },
-  ];
+  ]);
+
+  // Toggle read state for a given announcement for the current user
+  const toggleRead = (id: number) => {
+    if (!currentUser?.id) return; // require logged-in user
+    const userId = currentUser.id;
+    setAnnouncements((prev) =>
+      prev.map((a) => {
+        if (a.id !== id) return a;
+        const readSet = new Set(a.readBy || []);
+        // Only add the user id (one-way). If already present, do nothing.
+        if (readSet.has(userId)) return a;
+        readSet.add(userId);
+        return { ...a, readBy: Array.from(readSet) };
+      })
+    );
+  };
 
   const handleVote = (pollId: number, optionId: number) => {
     setPolls((prevPolls) =>
@@ -149,13 +192,112 @@ const CRCorner: React.FC = () => {
   };
 
   const handleCreatePost = () => {
+    if (!isCurrentUserCr) {
+      alert("Only Class Representatives can create announcements.");
+      return;
+    }
+
     if (postTitle.trim() && postContent.trim()) {
-      alert("Announcement posted successfully!");
+      const newAnnouncement: Announcement = {
+        id: Date.now(),
+        title: postTitle.trim(),
+        content: postContent.trim(),
+        date: new Date().toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        }),
+        // use the logged-in user's name if available
+        postedBy: currentUser?.name || "CR",
+        postedById: currentUser?.id,
+        hasFile: !!attachedFile,
+        fileName: attachedFile ? attachedFile.name : undefined,
+        readBy: [],
+      };
+
+      // If there's an attached file, we store it in-memory using URL.createObjectURL
+      if (attachedFile) {
+        // attach a temporary download URL (not persisted)
+        newAnnouncement.fileUrl = URL.createObjectURL(attachedFile);
+      }
+
+      setAnnouncements((prev) => [newAnnouncement, ...prev]);
       setPostTitle("");
       setPostContent("");
       setAttachedFile(null);
       setShowCreatePost(false);
     }
+  };
+
+  // Poll creation helpers
+  const addPollOption = () => setPollOptions((s) => [...s, ""]);
+  const removePollOption = (index: number) =>
+    setPollOptions((s) => s.filter((_, i) => i !== index));
+  const updatePollOption = (index: number, value: string) =>
+    setPollOptions((s) => s.map((o, i) => (i === index ? value : o)));
+
+  const handleCreatePoll = () => {
+    if (!isCurrentUserCr) {
+      alert("Only Class Representatives can create polls.");
+      return;
+    }
+
+    const q = pollQuestion.trim();
+    const opts = pollOptions.map((o) => o.trim()).filter(Boolean);
+    if (!q || opts.length < 2) {
+      alert("Please provide a question and at least two options.");
+      return;
+    }
+
+    const newPoll: Poll = {
+      id: Date.now(),
+      question: q,
+      options: opts.map((text, i) => ({ id: i + 1, text, votes: 0 })),
+      totalVotes: 0,
+    };
+
+    setPolls((prev) => [newPoll, ...prev]);
+    setPollQuestion("");
+    setPollOptions(["", ""]);
+    setShowCreatePoll(false);
+  };
+
+  const handleDownload = (announcement: Announcement) => {
+    const maybeUrl = announcement.fileUrl;
+    if (maybeUrl) {
+      const link = document.createElement("a");
+      link.href = maybeUrl;
+      link.download = announcement.fileName || "attachment";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      // Revoke object URL after a short delay
+      setTimeout(() => URL.revokeObjectURL(maybeUrl), 5000);
+      return;
+    }
+
+    // Fallback: just alert the filename (real app would fetch from server)
+    alert(`Downloading ${announcement.fileName || "file"}`);
+  };
+
+  // track which announcement ids are expanded
+  const [expanded, setExpanded] = useState<Record<number, boolean>>({});
+
+  const toggleExpanded = (id: number) => {
+    setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  // which announcement menu is open (id -> boolean)
+  const [menuOpenFor, setMenuOpenFor] = useState<number | null>(null);
+
+  const toggleMenu = (id: number) => {
+    setMenuOpenFor((prev) => (prev === id ? null : id));
+  };
+
+  const handleDeleteAnnouncement = (id: number) => {
+    setAnnouncements((prev) => prev.filter((a) => a.id !== id));
+    // close menu if it was open
+    if (menuOpenFor === id) setMenuOpenFor(null);
   };
 
   return (
@@ -169,13 +311,24 @@ const CRCorner: React.FC = () => {
             decisions
           </p>
         </div>
-        <button
-          onClick={() => setShowCreatePost(!showCreatePost)}
-          className="flex items-center gap-2 rounded-lg border-2 border-dashed border-blue-300 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-600 transition-colors hover:border-blue-400 hover:bg-blue-100"
-        >
-          <FaPlus className="h-5 w-5" />
-          Create Announcement
-        </button>
+        {isCurrentUserCr ? (
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowCreatePost(!showCreatePost)}
+              className="flex items-center gap-2 rounded-lg border-2 border-dashed border-blue-300 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-600 transition-colors hover:border-blue-400 hover:bg-blue-100"
+            >
+              <FaPlus className="h-5 w-5" />
+              Create Announcement
+            </button>
+            <button
+              onClick={() => setShowCreatePoll((s) => !s)}
+              className="flex items-center gap-2 rounded-lg border border-blue-300 bg-white px-3 py-2 text-sm font-semibold text-blue-600 transition-colors hover:border-blue-400 hover:bg-blue-50"
+            >
+              <FaPoll className="h-4 w-4" />
+              Create Poll
+            </button>
+          </div>
+        ) : null}
       </div>
 
       {/* Create Post Form - Full Width */}
@@ -263,48 +416,233 @@ const CRCorner: React.FC = () => {
         </div>
       )}
 
+      {/* Create Poll Form (CR only) */}
+      {showCreatePoll && isCurrentUserCr && (
+        <div className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+          <div className="mb-4 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <FaPoll className="h-5 w-5 text-blue-600" />
+              <h3 className="text-lg font-semibold text-gray-900">New Poll</h3>
+            </div>
+            <button
+              onClick={() => setShowCreatePoll(false)}
+              className="rounded p-1 text-gray-500 hover:bg-gray-100"
+            >
+              <FaTimes className="h-5 w-5" />
+            </button>
+          </div>
+
+          <div className="space-y-4">
+            <input
+              type="text"
+              placeholder="Poll question"
+              value={pollQuestion}
+              onChange={(e) => setPollQuestion(e.target.value)}
+              className="w-full rounded-md border border-gray-300 px-4 py-3 text-base focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+            />
+
+            <div className="space-y-2">
+              {pollOptions.map((opt, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <input
+                    value={opt}
+                    onChange={(e) => updatePollOption(i, e.target.value)}
+                    placeholder={`Option ${i + 1}`}
+                    className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-base focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                  />
+                  <button
+                    onClick={() => removePollOption(i)}
+                    disabled={pollOptions.length <= 2}
+                    className="rounded bg-red-50 px-3 py-2 text-sm text-red-600 hover:bg-red-100 disabled:opacity-50"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+
+              <div>
+                <button
+                  onClick={addPollOption}
+                  className="rounded bg-blue-50 px-3 py-2 text-sm font-medium text-blue-600 hover:bg-blue-100"
+                >
+                  Add option
+                </button>
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowCreatePoll(false)}
+                className="flex-1 rounded-md border border-gray-300 py-2.5 text-base font-medium text-gray-700 transition-colors hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleCreatePoll}
+                disabled={
+                  !pollQuestion.trim() ||
+                  pollOptions.map((o) => o.trim()).filter(Boolean).length < 2
+                }
+                className="flex-1 rounded-md bg-blue-600 py-2.5 text-base font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-300"
+              >
+                Create Poll
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* CR Announcements - Full Width */}
       <div className="rounded-lg border border-gray-200 bg-white p-3 shadow-sm">
+        {/* Announcement Header */}
         <div className="mb-4 flex items-center gap-2">
           <FaBullhorn className="h-5 w-5 text-blue-600" />
           <h2 className="text-lg font-semibold text-gray-900">Announcements</h2>
         </div>
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
-          {announcements.map((announcement) => (
-            <div
-              key={announcement.id}
-              className="flex flex-col rounded-md border border-gray-200 bg-gray-50 p-3 transition-shadow hover:shadow-sm"
-            >
-              <h4 className="mb-2 line-clamp-2 text-base font-semibold text-gray-900">
-                {announcement.title}
-              </h4>
-              <p className="mb-3 line-clamp-3 flex-1 text-sm leading-relaxed text-gray-700">
-                {announcement.content}
+        {/* Announcement List */}
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-1">
+          {announcements.length === 0 ? (
+            <div className="flex flex-col items-center justify-center gap-3 rounded-md border border-dashed border-gray-200 bg-gray-50 p-6 text-center">
+              <FaBullhorn className="h-8 w-8 text-gray-400" />
+              <p className="max-w-xl text-sm text-gray-600">
+                No announcements yet. Create the first announcement for your
+                class so everyone stays informed.
               </p>
-
-              {/* File Attachment Display */}
-              {announcement.hasFile && (
-                <div className="mb-3 flex items-center justify-between rounded bg-blue-50 px-3 py-2">
-                  <div className="flex min-w-0 flex-1 items-center gap-2">
-                    <FaFile className="h-4 w-4 flex-shrink-0 text-blue-600" />
-                    <span className="truncate text-sm font-medium text-blue-700">
-                      {announcement.fileName}
-                    </span>
-                  </div>
-                  <button className="ml-2 flex-shrink-0 text-sm font-semibold text-blue-600 hover:text-blue-800">
-                    Download
-                  </button>
-                </div>
-              )}
-
-              <div className="mt-auto flex items-center justify-between border-t border-gray-200 pt-3 text-sm text-gray-500">
-                <span className="truncate font-medium">
-                  {announcement.postedBy}
-                </span>
-                <span className="ml-2 flex-shrink-0">{announcement.date}</span>
-              </div>
+              <button
+                onClick={() => setShowCreatePost(true)}
+                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+              >
+                Create Announcement
+              </button>
             </div>
-          ))}
+          ) : (
+            announcements.map((announcement) => {
+              return (
+                <div
+                  key={announcement.id}
+                  className={`relative flex flex-col overflow-visible rounded-md border p-3 transition-shadow hover:shadow-sm ${
+                    (announcement.readBy || []).includes(currentUser!.id)
+                      ? "border-gray-200 bg-gray-100 text-gray-500"
+                      : "border-gray-500 bg-green-100"
+                  }`}
+                >
+                  {/* 3-dot menu button */}
+                  <div className="absolute top-3 right-3">
+                    <button
+                      onClick={() => toggleMenu(announcement.id)}
+                      className="cursor-pointer rounded-full p-1 text-gray-600 hover:bg-gray-100"
+                      aria-label="Open menu"
+                    >
+                      <BsThreeDots className="h-5 w-5" />
+                    </button>
+
+                    {/* menu popup */}
+                    {menuOpenFor === announcement.id && (
+                      <div className="absolute top-8 right-0 z-20 w-40 rounded-md border border-gray-200 bg-white shadow-lg">
+                        <button
+                          onClick={() => {
+                            /* placeholder edit */
+                            setMenuOpenFor(null);
+                            alert("Edit not implemented yet");
+                          }}
+                          className="w-full px-3 py-2 text-left text-sm hover:bg-gray-50"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() =>
+                            handleDeleteAnnouncement(announcement.id)
+                          }
+                          className="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-gray-50"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                  <h4 className="mb-2 line-clamp-2 text-base font-semibold text-gray-900">
+                    {announcement.title}
+                  </h4>
+                  <div className="mb-3 text-sm leading-relaxed text-gray-700">
+                    <p
+                      className={`text-justify text-sm leading-relaxed text-gray-700 ${
+                        expanded[announcement.id] ? "" : "line-clamp-3"
+                      }`}
+                    >
+                      {announcement.content}
+                    </p>
+
+                    {/* See more / See less toggle */}
+                    {announcement.content &&
+                      announcement.content.split("\n").join(" ").length >
+                        180 && (
+                        <button
+                          onClick={() => toggleExpanded(announcement.id)}
+                          className="mt-2 text-sm font-medium text-blue-600 hover:text-blue-800"
+                        >
+                          {expanded[announcement.id] ? "See less" : "See more"}
+                        </button>
+                      )}
+                  </div>
+
+                  {/* File Attachment Display */}
+                  {announcement.hasFile && (
+                    <div className="mb-3 flex items-center justify-between rounded bg-blue-50 px-3 py-2">
+                      <div className="flex min-w-0 flex-1 items-center gap-2">
+                        <FaFile className="h-4 w-4 flex-shrink-0 text-blue-600" />
+                        <span className="truncate text-sm font-medium text-blue-700">
+                          {announcement.fileName}
+                        </span>
+                      </div>
+                      <button
+                        onClick={() => handleDownload(announcement)}
+                        className="ml-2 flex-shrink-0 text-sm font-semibold text-blue-600 hover:text-blue-800"
+                      >
+                        Download
+                      </button>
+                    </div>
+                  )}
+
+                  <div className="flex items-center justify-between border-t border-gray-200 pt-3 text-sm text-gray-500">
+                    <span className="truncate font-medium">
+                      {announcement.postedById ? (
+                        <button
+                          onClick={() =>
+                            navigate(`/profile/${announcement.postedById}`)
+                          }
+                          className="cursor-pointer text-sm font-medium text-gray-900 transition-colors hover:text-blue-600 hover:underline"
+                        >
+                          {announcement.postedBy}
+                        </button>
+                      ) : (
+                        announcement.postedBy
+                      )}
+                    </span>
+                    <div className="ml-2 flex items-center gap-3">
+                      <span className="flex-shrink-0">{announcement.date}</span>
+
+                      {/* Render mark-as-read toggle only for non-CR posters */}
+                      <button
+                        onClick={() => toggleRead(announcement.id)}
+                        disabled={(announcement.readBy || []).includes(
+                          currentUser!.id
+                        )}
+                        className={`cursor-pointer rounded px-2 py-0.5 text-xs font-medium transition-colors disabled:cursor-not-allowed ${
+                          (announcement.readBy || []).includes(currentUser!.id)
+                            ? "bg-gray-200 text-gray-700"
+                            : "bg-red-50 text-red-600"
+                        }`}
+                      >
+                        {(announcement.readBy || []).includes(currentUser!.id)
+                          ? "Marked"
+                          : "Mark as read"}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          )}
         </div>
       </div>
 
@@ -326,17 +664,24 @@ const CRCorner: React.FC = () => {
         </div>
 
         {polls.map((poll) => (
-          <div key={poll.id}>
-            <h3 className="mb-4 text-base font-medium text-gray-900">
-              {poll.question}
-            </h3>
+          <div
+            key={poll.id}
+            className="mb-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
+          >
+            <div className="mb-3 flex items-start justify-between">
+              <h3 className="text-base font-medium text-gray-900">
+                {poll.question}
+              </h3>
+              <div className="text-sm text-gray-500">
+                {poll.totalVotes} vote{poll.totalVotes !== 1 ? "s" : ""}
+              </div>
+            </div>
 
             <div className="space-y-3">
               {poll.options.map((option) => {
-                const percentage = (
-                  (option.votes / poll.totalVotes) *
-                  100
-                ).toFixed(1);
+                const percentage = poll.totalVotes
+                  ? ((option.votes / poll.totalVotes) * 100).toFixed(1)
+                  : "0.0";
                 const isSelected = selectedPoll === option.id;
 
                 return (
