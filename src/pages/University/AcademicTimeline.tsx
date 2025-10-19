@@ -141,7 +141,7 @@ const AcademicTimeline: React.FC = () => {
               <div key={event.id} className="group relative flex items-start">
                 {/* Icon Container */}
                 <div
-                  className={`relative z-10 flex h-16 w-16 items-center justify-center rounded-full ${iconBgClass} border-4 border-white shadow-lg transition-transform duration-300`}
+                  className={`relative z-10 flex h-16 w-16 items-center justify-center rounded-full ${iconBgClass} border-4 ${isPast ? "border-white" : "border-green-500"} shadow-lg transition-transform duration-300`}
                 >
                   <event.icon className={`h-6 w-6 ${iconColorClass}`} />
                   {isPast && (
