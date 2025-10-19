@@ -637,10 +637,10 @@ const CRCorner: React.FC = () => {
                         disabled={(announcement.readBy || []).includes(
                           currentUser!.id
                         )}
-                        className={`cursor-pointer rounded px-2 py-0.5 text-xs font-medium transition-colors disabled:cursor-not-allowed ${
+                        className={`cursor-pointer rounded px-2 py-0.5 text-sm font-medium transition-colors disabled:cursor-not-allowed ${
                           (announcement.readBy || []).includes(currentUser!.id)
                             ? "bg-gray-200 text-gray-700"
-                            : "bg-red-50 text-red-600"
+                            : "bg-red-50 text-red-700"
                         }`}
                       >
                         {(announcement.readBy || []).includes(currentUser!.id)
