@@ -533,7 +533,7 @@ const CRCorner: React.FC = () => {
                   className={`relative flex flex-col overflow-visible rounded-md border p-3 transition-shadow hover:shadow-sm ${
                     (announcement.readBy || []).includes(currentUser!.id)
                       ? "border-gray-200 bg-gray-100 text-gray-500"
-                      : "border-gray-500 bg-green-100"
+                      : "border-gray-500 bg-blue-100"
                   }`}
                 >
                   {/* 3-dot menu button */}
