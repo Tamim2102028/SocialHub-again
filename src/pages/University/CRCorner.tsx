@@ -787,7 +787,7 @@ const CRCorner: React.FC = () => {
                 <textarea
                   value={feedback}
                   onChange={(e) => setFeedback(e.target.value)}
-                  className="w-full rounded-md border border-blue-300 p-3 text-sm text-gray-900 placeholder-gray-500"
+                  className="w-full rounded-md border border-gray-300 p-3 text-sm text-gray-900 placeholder-gray-500 focus:outline-none"
                   rows={3}
                   placeholder="Share your opinion, concerns, or suggestions about this poll..."
                 />
