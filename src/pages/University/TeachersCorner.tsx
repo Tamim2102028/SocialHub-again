@@ -132,7 +132,7 @@ const TeachersCorner: React.FC = () => {
                   const seed = teacher?.name || r.name || r.id;
                   return (
                     <li key={r.id}>
-                      <div className="w-full rounded-lg border border-gray-100 bg-white p-4 shadow-sm transition hover:shadow-lg">
+                      <div className="w-full rounded-lg border border-gray-100 bg-white p-3 shadow-sm transition hover:shadow-lg">
                         <div className="flex items-start justify-between gap-4">
                           <div className="flex min-w-0 items-start gap-3">
                             <div
