@@ -77,7 +77,7 @@ export const routes: RouteConfig[] = [
     meta: { description: "University resources and academics (nested)" },
   },
   {
-    path: "/classroom",
+    path: "/classroom/*",
     component: lazy(() => import("../pages/ClassRoom")),
     requireAuth: true,
     title: "ClassRoom",
