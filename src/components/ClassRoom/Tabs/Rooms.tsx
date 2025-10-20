@@ -31,10 +31,7 @@ const Rooms: React.FC<{
 
       {/* create room form */}
       {showCreateForm && (
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow">
-          <h3 className="text-md mb-3 font-medium text-gray-900">
-            Create Room
-          </h3>
+        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow">
           <div>
             <RoomForm
               onSubmit={(d) => onCreate?.(d)}
