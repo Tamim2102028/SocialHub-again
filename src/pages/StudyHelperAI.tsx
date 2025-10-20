@@ -27,7 +27,7 @@ const StudyHelperAI: React.FC = () => {
   };
 
   return (
-    <div className="flex h-[calc(100vh-88px)] flex-col overflow-hidden rounded-lg bg-white shadow-sm">
+    <div className="flex h-[calc(100vh-88px)] flex-col overflow-hidden rounded-lg border border-gray-300 bg-white shadow-sm">
       {/* Header */}
       <AIHeader
         onMenuToggle={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -42,7 +42,7 @@ const StudyHelperAI: React.FC = () => {
         />
 
         {/* Chat Area */}
-        <div className="flex-1 overflow-y-auto bg-gray-50 p-4">
+        <div className="flex flex-1 justify-center overflow-y-auto bg-gray-50 p-3">
           {!hasMessages ? <AIWelcomeContent /> : <ChatArea />}
         </div>
       </div>

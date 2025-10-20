@@ -12,7 +12,7 @@ import {
 import type { GroupPost } from "../../data/group-data/groupPostsData";
 import { useAppSelector } from "../../store/hooks";
 import { selectUserById } from "../../store/slices/profileSlice";
-import { formatPostTime } from "../../utils/dateUtils";
+import { formatPostDate, formatPostClock } from "../../utils/dateUtils";
 
 type Props = {
   post: GroupPost;
@@ -55,15 +55,19 @@ const GroupPostCardSimple: React.FC<Props> = ({ post }) => {
             >
               {author?.name || post.createdBy}
             </h3>
-            <p className="text-sm text-gray-500">
-              @
-              <span
-                className="cursor-pointer transition-colors hover:text-blue-600 hover:underline"
-                onClick={() => navigate(`/profile/${post.createdBy}`)}
-              >
-                {author?.username || post.createdBy}
-              </span>{" "}
-              • {formatPostTime(post.createdAt)}
+            <p className="text-sm text-gray-500 flex items-center gap-2">
+              <span>@
+                <span
+                  className="cursor-pointer transition-colors hover:text-blue-600 hover:underline"
+                  onClick={() => navigate(`/profile/${post.createdBy}`)}
+                >
+                  {author?.username || post.createdBy}
+                </span>
+              </span>
+              <span className="h-1 w-1 rounded-full bg-gray-400" aria-hidden />
+              <span>{formatPostDate(post.createdAt)}</span>
+              <span className="h-1 w-1 rounded-full bg-gray-400" aria-hidden />
+              <span>{formatPostClock(post.createdAt)}</span>
             </p>
           </div>
         </div>
