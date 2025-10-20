@@ -14,6 +14,7 @@ export interface Teacher {
   bio?: string;
   email?: string;
   phone?: string;
+  university?: string;
   subjects?: string[];
   officeHours?: OfficeHoursSlot[];
   allowMessaging?: boolean;
@@ -25,6 +26,7 @@ export const mockTeachers: Teacher[] = [
     name: "Dr. Ayesha Rahman",
     title: "Associate Professor",
     department: "Computer Science",
+    university: "National University",
     avatar:
       "https://ui-avatars.com/api/?name=Ayesha+Rahman&background=10b981&color=fff",
     bio: "Researcher in distributed systems and databases. Office hours for consultation and project guidance.",
@@ -51,6 +53,7 @@ export const mockTeachers: Teacher[] = [
     name: "Prof. Imran Hossain",
     title: "Professor",
     department: "Electrical Engineering",
+    university: "Dhaka University",
     avatar:
       "https://ui-avatars.com/api/?name=Imran+Hossain&background=3b82f6&color=fff",
     bio: "TEACHING: Signals and Systems, Circuit Analysis. Available for project consultation and lab help.",
@@ -71,6 +74,7 @@ export const mockTeachers: Teacher[] = [
     name: "Ms. Farzana Khan",
     title: "Lecturer",
     department: "Mathematics",
+    university: "BUET",
     avatar:
       "https://ui-avatars.com/api/?name=Farzana+Khan&background=f59e0b&color=fff",
     bio: "Lecturer for Calculus and Linear Algebra. Happy to help with tutorial problems.",

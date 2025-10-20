@@ -326,14 +326,14 @@ const CRCorner: React.FC = () => {
               onClick={() => setShowCreatePost(!showCreatePost)}
               className="flex items-center gap-2 rounded-lg border-2 border-dashed border-blue-300 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-600 transition-colors hover:border-blue-400 hover:bg-blue-100"
             >
-              <FaPlus className="h-5 w-5" />
+              <FaPlus className="h-4 w-4" />
               Announcement
             </button>
             <button
               onClick={() => setShowCreatePoll((s) => !s)}
               className="flex items-center gap-2 rounded-lg border-2 border-dashed border-blue-300 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-600 transition-colors hover:border-blue-400 hover:bg-blue-100"
             >
-              <FaPlus className="h-5 w-5" />
+              <FaPlus className="h-4 w-4" />
               Poll
             </button>
           </div>
