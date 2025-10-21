@@ -4,6 +4,7 @@ import Header from "../components/ClassRoom/Header";
 import ClassroomTabs from "../components/ClassRoom/ClassroomTabs";
 // Section component removed per request
 import { Routes, Route, Navigate } from "react-router-dom";
+import { useMatch } from "react-router-dom";
 import Rooms from "../components/ClassRoom/Tabs/Rooms";
 import LiveTab from "../components/ClassRoom/Tabs/LiveTab";
 import GroupsTab from "../components/ClassRoom/Tabs/GroupsTab";
@@ -23,7 +24,12 @@ const ClassRoom: React.FC = () => {
   const openCreateForm = () => setShowCreateForm(true);
   const closeCreateForm = () => setShowCreateForm(false);
 
-  const handleCreate = (data: { university: string; department: string; section: string; subsection: string }) => {
+  const handleCreate = (data: {
+    university: string;
+    department: string;
+    section: string;
+    subsection: string;
+  }) => {
     const id = `room_${Date.now()}`;
     const room: Room = {
       id,
@@ -34,15 +40,27 @@ const ClassRoom: React.FC = () => {
     setShowCreateForm(false);
   };
 
+  const matchIndex = useMatch({ path: "/classroom", end: true });
+
   return (
     <div className="space-y-5">
-  <Header onOpenCreate={openCreateForm} />
+      <Header onOpenCreate={openCreateForm} showCreate={!!matchIndex} />
       <ClassroomTabs />
 
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-1">
         <main>
           <Routes>
-            <Route index element={<Rooms rooms={rooms} showCreateForm={showCreateForm} onCreate={handleCreate} onCancelCreate={closeCreateForm} />} />
+            <Route
+              index
+              element={
+                <Rooms
+                  rooms={rooms}
+                  showCreateForm={showCreateForm}
+                  onCreate={handleCreate}
+                  onCancelCreate={closeCreateForm}
+                />
+              }
+            />
             <Route path="live" element={<LiveTab />} />
             <Route path="groups" element={<GroupsTab />} />
             <Route path="community" element={<CommunityTab />} />

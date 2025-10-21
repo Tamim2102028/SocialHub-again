@@ -1,13 +1,16 @@
 import React from "react";
-import dayjs from "dayjs";
-import { usersData } from "../../../data/profile-data/userData";
+import sampleRooms from "../../../data/roomsData";
+import type { Room as SampleRoom } from "../../../data/roomsData";
 import RoomForm from "../RoomForm";
 
-type Room = {
+// Rooms can come from local state (minimal shape) or from sampleRooms (richer shape).
+type LocalRoom = {
   id: string;
   name: string;
   createdAt: string;
 };
+
+type CombinedRoom = LocalRoom | SampleRoom;
 
 type CreatePayload = {
   university: string;
@@ -17,11 +20,14 @@ type CreatePayload = {
 };
 
 const Rooms: React.FC<{
-  rooms?: Room[];
+  rooms?: CombinedRoom[];
   showCreateForm?: boolean;
   onCreate?: (data: CreatePayload) => void;
   onCancelCreate?: () => void;
 }> = ({ rooms = [], showCreateForm = false, onCreate, onCancelCreate }) => {
+  // use sampleRooms as fallback when no rooms provided from parent state
+  const displayRooms: CombinedRoom[] = rooms.length > 0 ? rooms : sampleRooms;
+
   return (
     <div className="space-y-3">
       {/* header */}
@@ -42,66 +48,32 @@ const Rooms: React.FC<{
       )}
 
       {/* no rooms message */}
-      {rooms.length === 0 ? (
+      {displayRooms.length === 0 ? (
         <div className="rounded-xl border border-gray-300 bg-white p-6 shadow">
           <p className="text-sm text-gray-600">
             No rooms yet. Create one to get started.
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-4">
-          {rooms.map((r) => {
-            // parse room.name which is stored as "University / Department / Section(-subsection)"
-            const parts = r.name.split("/").map((p) => p.trim());
-            const uni = parts[0] || "";
-            const dept = parts[1] || "";
-            const secPart = parts[2] || ""; // e.g. "A" or "A-1"
-            let section = secPart;
-            let subsection: string | undefined = undefined;
-            if (secPart.includes("-")) {
-              const [s, ss] = secPart.split("-").map((p) => p.trim());
-              section = s;
-              subsection = ss;
-            }
-
-            const activeCount = usersData.filter((u) => {
-              if (!u.university) return false;
-              if (u.university.name !== uni) return false;
-              if (dept && u.university.department !== dept) return false;
-              if (section && u.university.section !== section) return false;
-              if (subsection && u.university.subsection !== subsection)
-                return false;
-              // treat `status` true as online
-              return u.status === true;
-            }).length;
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {displayRooms.map((r) => {
+            // Simplified card: only show cover image and room name
+            const cover =
+              (r as CombinedRoom & { coverImage?: string }).coverImage ||
+              `https://picsum.photos/seed/${r.id}/400/225`;
 
             return (
-              <div
-                key={r.id}
-                className="rounded-lg border border-gray-200 bg-white p-4 shadow transition-shadow hover:shadow-md"
-              >
-                <div className="flex items-start gap-4">
-                  <div className="flex h-12 w-12 flex-none items-center justify-center rounded-md bg-gradient-to-tr from-blue-500 to-indigo-500 font-bold text-white">
-                    {r.name.split(" ")[0].slice(0, 2).toUpperCase()}
-                  </div>
-
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-medium text-gray-900">{r.name}</p>
-                        <p className="text-xs text-gray-500">
-                          Created:{" "}
-                          {dayjs(r.createdAt).format("MMM D, YYYY h:mm A")}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="flex items-center gap-2">
-                          <span className="inline-flex items-center rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700">
-                            {activeCount} online
-                          </span>
-                        </div>
-                      </div>
-                    </div>
+              <div key={r.id} className="overflow-hidden rounded-lg shadow-sm">
+                <div className="relative h-40 w-full bg-gray-100">
+                  <img
+                    src={cover}
+                    alt={r.name}
+                    className="h-full w-full object-cover"
+                  />
+                  <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/60 to-transparent p-2">
+                    <p className="truncate text-sm font-medium text-white">
+                      {r.name}
+                    </p>
                   </div>
                 </div>
               </div>
