@@ -1,5 +1,6 @@
 import React from "react";
 import sampleRooms from "../../../data/roomsData";
+import { usersData } from "../../../data/profile-data/userData";
 import type { Room as SampleRoom } from "../../../data/roomsData";
 import RoomForm from "../RoomForm";
 
@@ -62,6 +63,19 @@ const Rooms: React.FC<{
               (r as CombinedRoom & { coverImage?: string }).coverImage ||
               `https://picsum.photos/seed/${r.id}/400/225`;
 
+            const createdById = (r as CombinedRoom & { createdBy?: string })
+              .createdBy;
+
+            const getCreatorName = (cid?: string) => {
+              if (!cid) return undefined;
+              let id = cid;
+              if (id.startsWith("u")) id = id.slice(1);
+              const user = usersData.find((u) => u.id === id);
+              return user?.name;
+            };
+
+            const creatorName = getCreatorName(createdById);
+
             return (
               <div key={r.id} className="overflow-hidden rounded-lg shadow-sm">
                 <div className="relative h-40 w-full bg-gray-100">
@@ -74,6 +88,11 @@ const Rooms: React.FC<{
                     <p className="truncate text-sm font-medium text-white">
                       {r.name}
                     </p>
+                    {creatorName && (
+                      <p className="mt-0.5 truncate text-xs text-gray-200">
+                        {creatorName}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
