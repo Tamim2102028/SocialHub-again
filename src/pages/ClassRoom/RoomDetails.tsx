@@ -34,7 +34,9 @@ const RoomDetails: React.FC = () => {
       <div className="rounded-lg border border-gray-300 bg-white p-4 shadow-sm">
         <div className="flex items-start gap-4">
           <img
-            src={room.coverImage || `https://picsum.photos/seed/${room.id}/600/300`}
+            src={
+              room.coverImage || `https://picsum.photos/seed/${room.id}/600/300`
+            }
             alt={room.name}
             className="h-36 w-64 rounded object-cover"
           />
@@ -44,7 +46,10 @@ const RoomDetails: React.FC = () => {
             {creator && (
               <p className="mt-1 text-sm text-gray-600">
                 Created by:{" "}
-                <Link to={`/profile/${creator.id}`} className="text-blue-600 hover:underline">
+                <Link
+                  to={`/profile/${creator.id}`}
+                  className="text-blue-600 hover:underline"
+                >
                   {creator.name}
                 </Link>
               </p>
@@ -55,7 +60,9 @@ const RoomDetails: React.FC = () => {
             </p>
 
             {room.createdAt && (
-              <p className="mt-1 text-xs text-gray-500">Created: {new Date(room.createdAt).toLocaleString()}</p>
+              <p className="mt-1 text-xs text-gray-500">
+                Created: {new Date(room.createdAt).toLocaleString()}
+              </p>
             )}
           </div>
         </div>
@@ -70,12 +77,21 @@ const RoomDetails: React.FC = () => {
               const user = usersData.find((u) => u.id === m);
               return (
                 <div key={m} className="flex items-center gap-3">
-                  <img src={user?.avatar || "https://via.placeholder.com/40"} alt={user?.name} className="h-10 w-10 rounded-full object-cover" />
+                  <img
+                    src={user?.avatar || "https://via.placeholder.com/40"}
+                    alt={user?.name}
+                    className="h-10 w-10 rounded-full object-cover"
+                  />
                   <div>
-                    <Link to={`/profile/${m}`} className="font-medium text-gray-900 hover:underline">
+                    <Link
+                      to={`/profile/${m}`}
+                      className="font-medium text-gray-900 hover:underline"
+                    >
                       {user?.name || `User ${m}`}
                     </Link>
-                    <div className="text-xs text-gray-500">{user?.username}</div>
+                    <div className="text-xs text-gray-500">
+                      {user?.username}
+                    </div>
                   </div>
                 </div>
               );
