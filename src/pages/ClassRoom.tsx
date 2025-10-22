@@ -10,6 +10,7 @@ import LiveTab from "../components/ClassRoom/Tabs/LiveTab";
 import GroupsTab from "../components/ClassRoom/Tabs/GroupsTab";
 import CommunityTab from "../components/ClassRoom/Tabs/CommunityTab";
 import MoreTab from "../components/ClassRoom/Tabs/MoreTab";
+import RoomDetails from "./ClassRoom/RoomDetails";
 
 type Room = {
   id: string;
@@ -65,6 +66,8 @@ const ClassRoom: React.FC = () => {
             <Route path="groups" element={<GroupsTab />} />
             <Route path="community" element={<CommunityTab />} />
             <Route path="more" element={<MoreTab />} />
+            {/* room details route */}
+            <Route path="rooms/:roomId" element={<RoomDetails />} />
             {/* redirect unknown to index */}
             <Route path="*" element={<Navigate to="." replace />} />
           </Routes>

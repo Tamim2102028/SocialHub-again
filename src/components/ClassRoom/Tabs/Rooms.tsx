@@ -2,6 +2,7 @@ import React from "react";
 import sampleRooms from "../../../data/roomsData";
 import { FaEllipsisV } from "react-icons/fa";
 import { usersData } from "../../../data/profile-data/userData";
+import { Link } from "react-router-dom";
 import type { Room as SampleRoom } from "../../../data/roomsData";
 import RoomForm from "../RoomForm";
 
@@ -69,41 +70,43 @@ const Rooms: React.FC<{
               .createdBy;
             const getCreatorName = (cid?: string) => {
               if (!cid) return undefined;
-              let id = cid;
-              if (id.startsWith("u")) id = id.slice(1);
-              const user = usersData.find((u) => u.id === id);
+              const user = usersData.find((u) => u.id === cid);
               return user?.name;
             };
             const creatorName = getCreatorName(createdById);
 
             return (
               <div key={r.id} className="overflow-hidden rounded-lg shadow-sm">
-                <div className="relative h-40 w-full bg-gray-100">
-                  <img
-                    src={cover}
-                    alt={r.name}
-                    className="h-full w-full object-cover"
-                  />
+                <Link
+                  to={`/classroom/rooms/${r.id}`}
+                  className="relative block h-40 w-full bg-gray-100"
+                >
+                  <img src={cover} alt={r.name} className="h-full w-full object-cover" />
 
                   {/* three-dot menu button (visual only) */}
                   <button
+                    onClick={(e) => e.stopPropagation()}
                     aria-label="room options"
                     className="absolute top-2 right-2 z-10 inline-flex h-8 w-8 items-center justify-center rounded-full bg-black/40 text-white hover:bg-black/50"
                   >
                     <FaEllipsisV className="h-4 w-4" />
                   </button>
 
-                  <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/60 to-transparent p-2">
-                    <p className="truncate text-sm font-medium text-white">
-                      {r.name}
-                    </p>
+                  <div className="absolute top-0 left-0 w-full bg-black/70 p-2">
+                    <p className="truncate text-sm font-medium text-white">{r.name}</p>
                     {creatorName && (
                       <p className="mt-0.5 truncate text-xs text-gray-200">
-                        by {creatorName}
+                        <Link
+                          onClick={(e) => e.stopPropagation()}
+                          to={`/profile/${createdById}`}
+                          className="text-gray-200 hover:underline"
+                        >
+                          {creatorName}
+                        </Link>
                       </p>
                     )}
                   </div>
-                </div>
+                </Link>
               </div>
             );
           })}
