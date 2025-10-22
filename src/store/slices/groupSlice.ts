@@ -1,8 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import {
-  groups as groupsData,
-  type Group,
-} from "../../data/group-data/groupsData";
+import type { Group } from "../../data/group-data/preGroupData";
+import { groups } from "../../data/group-data/groupsData";
 import {
   groupPostsData,
   type GroupPost,
@@ -11,7 +9,7 @@ import {
   getCurrentUserId,
   getUserById,
   updateUserById,
-} from "../../data/profile-data/userData";
+} from "../../services/userService";
 import { reloadProfile } from "./profileSlice";
 
 interface GroupState {
@@ -25,7 +23,7 @@ interface GroupState {
 }
 
 const initialState: GroupState = {
-  groups: groupsData,
+  groups: groups,
   posts: groupPostsData,
   currentGroupId: undefined,
   status: "idle",
@@ -87,6 +85,28 @@ export const cancelJoinRequest = createAsyncThunk(
   }
 );
 
+/**
+ * leaveGroup thunk
+ * - Responsibility: remove a group from the current user's joinedGroup list.
+ * - Mutates the in-memory fixture (preview app) and reloads profile state.
+ */
+export const leaveGroup = createAsyncThunk(
+  "groups/leaveGroup",
+  async (groupId: string, { dispatch }) => {
+    const currentUserId = getCurrentUserId();
+    const current = getUserById(currentUserId);
+    if (!current) return { success: false };
+
+    const updated = (current.joinedGroup || []).filter(
+      (g: string) => g !== groupId
+    );
+    updateUserById(currentUserId, { joinedGroup: updated });
+    dispatch(reloadProfile());
+
+    return { success: true, groupId, userId: currentUserId };
+  }
+);
+
 const groupSlice = createSlice({
   name: "groups",
   initialState,
@@ -121,6 +141,14 @@ const groupSlice = createSlice({
       .addCase(cancelJoinRequest.fulfilled, (state) => {
         state.status = "idle";
       });
+
+    builder
+      .addCase(leaveGroup.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(leaveGroup.fulfilled, (state) => {
+        state.status = "idle";
+      });
   },
 });
 
@@ -148,8 +176,11 @@ export const selectGroupPosts = (
 
 // selectIsMember/selectHasRequested read membership info from the profile slice
 // because membership is stored on the user/profile fixture for this preview app.
-export const selectIsMember = (state: RootState, groupId: string): boolean =>
-  !!(state.profile?.joinedGroup || []).includes(groupId);
+export const selectIsMember = (state: RootState, groupId: string): boolean => {
+  const joined = state.profile?.joinedGroup || [];
+  const preJoined = state.profile?.preJoinedGroup || [];
+  return !![...joined, ...preJoined].includes(groupId);
+};
 
 export const selectHasRequested = (
   state: RootState,

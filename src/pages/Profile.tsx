@@ -9,7 +9,7 @@ import {
   FaBookmark,
 } from "react-icons/fa";
 import { getPostsByUserId } from "../data/profile-data/profilePostData";
-import { getUserById, getCurrentUserId } from "../data/profile-data/userData";
+import { getUserById, getCurrentUserId } from "../services/userService";
 import { getPublicFoldersByUserId } from "../data/publicFilesData";
 import ProfilePosts from "../components/Profile/ProfilePosts";
 import PublicFiles from "../components/Profile/PublicFiles";

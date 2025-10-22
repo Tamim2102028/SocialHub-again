@@ -10,7 +10,14 @@ const CareerGroups: React.FC = () => {
 
   const allGroups = useAppSelector((s) => s.groups.groups || []);
 
-  const groups = pick
+  // collect IDs from explicit picks and from groups that have type === 'jobs'
+  const ids = new Set<string>();
+  pick.forEach((id) => ids.add(id));
+  allGroups.forEach((g) => {
+    if (g?.type === "jobs") ids.add(g.id);
+  });
+
+  const groups = Array.from(ids)
     .map((id) => allGroups.find((g) => g.id === id))
     .filter(Boolean)
     .filter((g) => g!.privacy !== "closed")

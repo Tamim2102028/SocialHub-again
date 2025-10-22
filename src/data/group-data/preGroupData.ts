@@ -3,20 +3,21 @@ export interface Group {
   name: string;
   groupFor: "students" | "teachers";
   gender?: ("male" | "female")[];
-  type?: "academic" | "hall";
+  type?: "academic" | "hall" | "jobs" | "others";
   description?: string;
   coverImage?: string;
   profileImage?: string;
   rules?: string[];
   tags?: string[];
 
-  educationLevel:
+  educationLevel?:
     | "UNIVERSITY"
     | "MEDICAL_COLLEGE"
     | "NATIONAL_UNIVERSITY"
     | "COLLEGE"
     | "POLYTECHNIC"
     | "SCHOOL";
+
   privacy: "public" | "private" | "closed";
 
   university?: {
@@ -42,10 +43,10 @@ export interface Group {
     medium?: "bangla" | "english";
   };
 
-  createdBy?: string;
-  owner?: string;
-  admins?: string[];
-  members?: string[];
+  createdBy: string;
+  owner: string;
+  admins: string[];
+  members: string[];
 
   postCount?: number; // helpful for quick queries
   systemCreated?: boolean; // if created by app itself
@@ -259,7 +260,7 @@ export const preGroups: Group[] = [
     admins: ["4"],
     members: ["4", "5"],
     privacy: "public",
-    systemCreated: false,
+    systemCreated: true,
     createdAt: new Date(),
     updatedAt: new Date(),
     status: "active",
@@ -277,7 +278,7 @@ export const preGroups: Group[] = [
     admins: ["12"],
     members: ["12", "13"],
     privacy: "private",
-    systemCreated: false,
+    systemCreated: true,
     createdAt: new Date(),
     updatedAt: new Date(),
     status: "active",
@@ -298,7 +299,7 @@ export const preGroups: Group[] = [
     admins: ["32"],
     members: ["32", "33"],
     privacy: "public",
-    systemCreated: false,
+    systemCreated: true,
     createdAt: new Date(),
     updatedAt: new Date(),
     status: "active",
@@ -317,7 +318,7 @@ export const preGroups: Group[] = [
     admins: ["26"],
     members: ["26", "27"],
     privacy: "public",
-    systemCreated: false,
+    systemCreated: true,
     createdAt: new Date(),
     updatedAt: new Date(),
     status: "active",
@@ -336,7 +337,7 @@ export const preGroups: Group[] = [
     admins: ["28"],
     members: ["28", "29"],
     privacy: "public",
-    systemCreated: false,
+    systemCreated: true,
     createdAt: new Date(),
     updatedAt: new Date(),
     status: "active",
@@ -356,7 +357,7 @@ export const preGroups: Group[] = [
     admins: ["16"],
     members: ["16", "17"],
     privacy: "public",
-    systemCreated: false,
+    systemCreated: true,
     createdAt: new Date(),
     updatedAt: new Date(),
     status: "active",
@@ -377,7 +378,7 @@ export const preGroups: Group[] = [
     admins: ["19"],
     members: ["19"],
     privacy: "public",
-    systemCreated: false,
+    systemCreated: true,
     createdAt: new Date(),
     updatedAt: new Date(),
     status: "active",
@@ -396,7 +397,7 @@ export const preGroups: Group[] = [
     admins: ["10"],
     members: ["10", "11"],
     privacy: "public",
-    systemCreated: false,
+    systemCreated: true,
     createdAt: new Date(),
     updatedAt: new Date(),
     status: "active",
@@ -413,7 +414,7 @@ export const preGroups: Group[] = [
     admins: ["8"],
     members: ["8", "9"],
     privacy: "public",
-    systemCreated: false,
+    systemCreated: true,
     createdAt: new Date(),
     updatedAt: new Date(),
     status: "active",
@@ -467,7 +468,7 @@ export const preGroups: Group[] = [
     admins: ["30"],
     members: ["30", "31"],
     privacy: "public",
-    systemCreated: false,
+    systemCreated: true,
     createdAt: new Date(),
     updatedAt: new Date(),
     status: "active",
@@ -484,7 +485,7 @@ export const preGroups: Group[] = [
     admins: ["6"],
     members: ["6", "7"],
     privacy: "public",
-    systemCreated: false,
+    systemCreated: true,
     createdAt: new Date(),
     updatedAt: new Date(),
     status: "active",
@@ -502,7 +503,7 @@ export const preGroups: Group[] = [
     admins: ["28"],
     members: ["28", "29"],
     privacy: "private",
-    systemCreated: false,
+    systemCreated: true,
     createdAt: new Date(),
     updatedAt: new Date(),
     status: "active",
@@ -519,7 +520,7 @@ export const preGroups: Group[] = [
     admins: ["10"],
     members: ["10", "11"],
     privacy: "public",
-    systemCreated: false,
+    systemCreated: true,
     createdAt: new Date(),
     updatedAt: new Date(),
     status: "active",
@@ -536,7 +537,7 @@ export const preGroups: Group[] = [
     admins: ["12"],
     members: ["12", "13"],
     privacy: "public",
-    systemCreated: false,
+    systemCreated: true,
     createdAt: new Date(),
     updatedAt: new Date(),
     status: "active",

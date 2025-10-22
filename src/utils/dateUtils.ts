@@ -9,6 +9,14 @@ export const formatPostTime = (dateString: string): string => {
   return dayjs(dateString).format('DD-MMM-YYYY h:mm A');
 };
 
+export const formatPostDate = (dateString: string): string => {
+  return dayjs(dateString).format('DD-MMM-YYYY');
+};
+
+export const formatPostClock = (dateString: string): string => {
+  return dayjs(dateString).format('h:mm A');
+};
+
 /**
  * Formats a date string for relative time (e.g., "2 hours ago", "Yesterday")
  * Falls back to formatted date if older than 2 days

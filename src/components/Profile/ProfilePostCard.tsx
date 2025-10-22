@@ -8,7 +8,7 @@ import {
   FaBookmark,
   FaRegBookmark,
 } from "react-icons/fa";
-import { formatPostTime } from "../../utils/dateUtils";
+import { formatPostDate, formatPostClock } from "../../utils/dateUtils";
 
 interface Author {
   id: string;
@@ -66,8 +66,12 @@ const ProfilePostCard: React.FC<ProfilePostCardProps> = ({
           />
           <div>
             <h3 className="font-semibold text-gray-900">{post.author.name}</h3>
-            <p className="text-sm text-gray-500">
-              @{post.author.username} • {formatPostTime(post.timestamp)}
+            <p className="text-sm text-gray-500 flex items-center gap-2">
+              <span>@{post.author.username}</span>
+              <span className="h-1 w-1 rounded-full bg-gray-400" aria-hidden />
+              <span>{formatPostDate(post.timestamp)}</span>
+              <span className="h-1 w-1 rounded-full bg-gray-400" aria-hidden />
+              <span>{formatPostClock(post.timestamp)}</span>
             </p>
           </div>
         </div>
@@ -167,9 +171,11 @@ const ProfilePostCard: React.FC<ProfilePostCardProps> = ({
       {/* Post Stats */}
       <div className="border-t border-gray-100 px-4 py-2">
         <div className="flex items-center justify-between text-sm text-gray-500">
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-3">
             <span>{likesCount} likes</span>
+            <span className="text-gray-300">•</span>
             <span>{post.comments} comments</span>
+            <span className="text-gray-300">•</span>
             <span>{post.shares} shares</span>
           </div>
         </div>

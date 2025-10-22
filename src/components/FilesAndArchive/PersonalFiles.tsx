@@ -1,23 +1,11 @@
 import React, { useState } from "react";
-import {
-  FaFolder,
-  FaFile,
-  FaFileAlt,
-  FaFilePdf,
-  FaFileWord,
-  FaFileExcel,
-  FaFileImage,
-  FaFileVideo,
-  FaFileAudio,
-  FaFileCode,
-  FaArrowLeft,
-} from "react-icons/fa";
+import { FaArrowLeft, FaFolder, FaFile } from "react-icons/fa";
 import ActionBar from "./PersonalFiles/ActionBar";
 import Breadcrumb from "./PersonalFiles/Breadcrumb";
-import FilesList from "./PersonalFiles/FilesList";
 import EmptyState from "./PersonalFiles/EmptyState";
-import NewFolderModal from "./PersonalFiles/NewFolderModal";
+import FilesList from "./PersonalFiles/FilesList";
 import UploadModal from "./PersonalFiles/UploadModal";
+import Swal from "sweetalert2";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
   navigateToFolder,
@@ -29,61 +17,19 @@ import {
   selectCurrentPath,
   selectBreadcrumbPath,
 } from "../../store/slices/filesSlice";
-import type { FileItem } from "./PersonalFiles/data/personalFilesData";
+import type { RootState } from "../../store/store";
+import { selectUserById } from "../../store/slices/profileSlice";
+// Note: This view renders a fixed set of folders (Level/Term grid)
 
 const PersonalFiles: React.FC = () => {
   // Redux state and actions
   const dispatch = useAppDispatch();
-  const currentFiles = useAppSelector(selectCurrentFiles);
   const currentPath = useAppSelector(selectCurrentPath);
   const breadcrumbPath = useAppSelector(selectBreadcrumbPath);
 
   // Local UI state (only for modals and search)
-  const [showNewFolderModal, setShowNewFolderModal] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-
-  const getFileIcon = (item: FileItem) => {
-    if (item.type === "folder") {
-      return <FaFolder className="text-blue-500" />;
-    }
-
-    const fileExtension = item.name.split(".").pop()?.toLowerCase();
-
-    switch (fileExtension) {
-      case "pdf":
-        return <FaFilePdf className="text-red-500" />;
-      case "doc":
-      case "docx":
-        return <FaFileWord className="text-blue-600" />;
-      case "xls":
-      case "xlsx":
-        return <FaFileExcel className="text-green-600" />;
-      case "jpg":
-      case "jpeg":
-      case "png":
-      case "gif":
-        return <FaFileImage className="text-purple-500" />;
-      case "mp4":
-      case "avi":
-      case "mov":
-        return <FaFileVideo className="text-indigo-500" />;
-      case "mp3":
-      case "wav":
-        return <FaFileAudio className="text-yellow-500" />;
-      case "js":
-      case "ts":
-      case "jsx":
-      case "tsx":
-      case "py":
-      case "java":
-        return <FaFileCode className="text-gray-700" />;
-      case "txt":
-        return <FaFileAlt className="text-gray-500" />;
-      default:
-        return <FaFile className="text-gray-500" />;
-    }
-  };
 
   // Navigation functions using Redux actions
   const handleNavigateToFolder = (folderId: string, folderName: string) => {
@@ -99,21 +45,85 @@ const PersonalFiles: React.FC = () => {
   };
 
   // File management functions using Redux actions
-  const handleCreateNewFolder = (folderName: string) => {
-    dispatch(createFolder(folderName));
+
+  const handleOpenNewFolder = async () => {
+    const { value: folderName } = await Swal.fire<string>({
+      title: "Create New Folder",
+      input: "text",
+      inputPlaceholder: "Enter folder name",
+      showCancelButton: true,
+      confirmButtonText: "Create Folder",
+      cancelButtonText: "Cancel",
+      cancelButtonColor: "#d33",
+      inputAttributes: {
+        maxlength: "50",
+        autocapitalize: "off",
+        autocorrect: "off",
+      },
+      preConfirm: (value) => {
+        if (!value || !value.trim()) {
+          Swal.showValidationMessage("Folder name is required");
+          return null;
+        }
+        const invalidChars = /[<>:"/\\|?*]/;
+        if (invalidChars.test(value)) {
+          Swal.showValidationMessage("Folder name contains invalid characters");
+          return null;
+        }
+        if (value.trim().length > 50) {
+          Swal.showValidationMessage(
+            "Folder name must be less than 50 characters"
+          );
+          return null;
+        }
+        return value.trim();
+      },
+    });
+
+    if (folderName) {
+      dispatch(createFolder(folderName));
+      Swal.fire({
+        icon: "success",
+        title: "Folder created",
+        timer: 1000,
+        showConfirmButton: false,
+      });
+    }
   };
 
   const handleUploadFiles = (files: File[]) => {
     dispatch(uploadFilesToStore(files));
   };
 
+  // Current folder files (from store)
+  const currentFiles = useAppSelector(selectCurrentFiles);
+  // Get raw user fixture so we can read university.year and semester
+  const rawUser = useAppSelector((s: RootState) =>
+    selectUserById(s, s.profile.id)
+  );
+  const userLevel = rawUser?.university?.year;
+  const userTerm = rawUser?.university?.semester;
+
+  const getFileIcon = (item: { type: string }) => {
+    return item.type === "folder" ? (
+      <FaFolder className="h-5 w-5 text-blue-600" />
+    ) : (
+      <FaFile className="h-5 w-5 text-gray-600" />
+    );
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString();
   };
 
-  const filteredFiles = currentFiles.filter((file) =>
-    file.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Build the fixed 8-folder grid: Level 1..4 × Term 1..2
+  const fixedFolders = [] as { id: string; level: number; term: number }[];
+  for (let level = 1; level <= 4; level++) {
+    for (let term = 1; term <= 2; term++) {
+      const id = `level-${level}-term-${term}`;
+      fixedFolders.push({ id, level, term });
+    }
+  }
 
   return (
     <div className="space-y-3">
@@ -121,7 +131,7 @@ const PersonalFiles: React.FC = () => {
       <ActionBar
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
-        onNewFolder={() => setShowNewFolderModal(true)}
+        onNewFolder={handleOpenNewFolder}
         onUpload={() => setShowUploadModal(true)}
       />
 
@@ -148,28 +158,94 @@ const PersonalFiles: React.FC = () => {
         />
       </div>
 
-      {/* Files Display */}
-      {filteredFiles.length > 0 ? (
-        <FilesList
-          files={filteredFiles}
-          onFolderClick={handleNavigateToFolder}
-          getFileIcon={getFileIcon}
-          formatDate={formatDate}
-        />
-      ) : (
-        <EmptyState
-          searchQuery={searchQuery}
-          onNewFolder={() => setShowNewFolderModal(true)}
-          onUpload={() => setShowUploadModal(true)}
-        />
-      )}
+      {/* Content: show fixed Level/Term grid at root, otherwise show real folder contents */}
+      <div>
+        {currentPath.length === 0 ? (
+          <div>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              {fixedFolders
+                .filter((f) =>
+                  `Level ${f.level} Term ${f.term}`
+                    .toLowerCase()
+                    .includes(searchQuery.toLowerCase())
+                )
+                .map((folder) => {
+                  const folderName = `Level ${folder.level} Term ${folder.term}`;
+                  const isHighlighted =
+                    userLevel === folder.level && userTerm === folder.term;
+
+                  return (
+                    <button
+                      key={folder.id}
+                      onClick={() =>
+                        handleNavigateToFolder(folder.id, folderName)
+                      }
+                      className={`flex transform flex-col items-start rounded-xl border p-4 shadow-sm transition-all duration-150 hover:shadow-md ${
+                        isHighlighted
+                          ? "border-blue-300 bg-green-50"
+                          : "border-gray-200 bg-white"
+                      }`}
+                      aria-label={`Open ${folderName}`}
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className="flex items-center justify-center rounded-lg bg-blue-100 p-3 text-blue-600">
+                          <FaFolder className="h-5 w-5" />
+                        </div>
+                        <div className="text-left">
+                          <div
+                            className={`text-lg font-semibold ${isHighlighted ? "text-green-700" : "text-gray-800"}`}
+                          >
+                            Level {folder.level}
+                          </div>
+                          <div
+                            className={`text-sm font-semibold ${isHighlighted ? "text-green-600" : "text-gray-600"}`}
+                          >
+                            Term {folder.term}
+                          </div>
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+            </div>
+
+            {/* If there's an active search but no results, show the EmptyState */}
+            {searchQuery &&
+              fixedFolders.filter((f) =>
+                `Level ${f.level} Term ${f.term}`
+                  .toLowerCase()
+                  .includes(searchQuery.toLowerCase())
+              ).length === 0 && (
+                <div className="mt-6">
+                  <EmptyState
+                    searchQuery={searchQuery}
+                    onNewFolder={handleOpenNewFolder}
+                    onUpload={() => setShowUploadModal(true)}
+                  />
+                </div>
+              )}
+          </div>
+        ) : (
+          <div>
+            {currentFiles.length > 0 ? (
+              <FilesList
+                files={currentFiles}
+                onFolderClick={handleNavigateToFolder}
+                getFileIcon={(item) => getFileIcon(item)}
+                formatDate={formatDate}
+              />
+            ) : (
+              <EmptyState
+                searchQuery={searchQuery}
+                onNewFolder={handleOpenNewFolder}
+                onUpload={() => setShowUploadModal(true)}
+              />
+            )}
+          </div>
+        )}
+      </div>
 
       {/* Modals */}
-      <NewFolderModal
-        isOpen={showNewFolderModal}
-        onClose={() => setShowNewFolderModal(false)}
-        onCreateFolder={handleCreateNewFolder}
-      />
       <UploadModal
         isOpen={showUploadModal}
         onClose={() => setShowUploadModal(false)}

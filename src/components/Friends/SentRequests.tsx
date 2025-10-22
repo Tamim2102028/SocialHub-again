@@ -1,8 +1,11 @@
 import React from "react";
 import FriendCard from "./FriendCard";
-import { getUserById } from "../../data/profile-data/userData";
+import { getUserById } from "../../services/userService";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { selectUserById, cancelFriendRequest } from "../../store/slices/profileSlice";
+import {
+  selectUserById,
+  cancelFriendRequest,
+} from "../../store/slices/profileSlice";
 
 const SentRequests: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -11,9 +14,6 @@ const SentRequests: React.FC = () => {
   if (!currentUser) {
     return <div>User not found</div>;
   }
-
-
-
 
   const handleCancelRequest = (targetId: string) => {
     dispatch(cancelFriendRequest(targetId));
@@ -26,7 +26,7 @@ const SentRequests: React.FC = () => {
       if (!requestedUser) return null;
 
       const institutionName =
-        requestedUser.category === "university"
+        requestedUser.educationLevel === "UNIVERSITY"
           ? requestedUser.university?.name
           : requestedUser.college?.name;
 

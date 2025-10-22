@@ -8,35 +8,33 @@ const FilesAndArchive: React.FC = () => {
     "personal"
   );
 
+  const tabs: {
+    id: "personal" | "community";
+    label: string;
+    Icon: React.ElementType;
+  }[] = [
+    { id: "personal", label: "My Personal Files", Icon: FaFolder },
+    { id: "community", label: "Community Study Archive", Icon: FaUsers },
+  ];
+
   return (
     <>
-      {/* Header */}
-      <div className="border-b bg-gray-50">
-        {/* Tab Navigation */}
-        <div className="flex justify-evenly">
+      {/* Tab Navigation */}
+      <div className="flex justify-evenly rounded-2xl border border-gray-300 bg-gray-50">
+        {tabs.map((tab) => (
           <button
-            onClick={() => setActiveTab("personal")}
-            className={`flex items-center gap-2 border-b-2 px-6 py-3 text-sm font-medium transition-colors ${
-              activeTab === "personal"
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`flex items-center gap-2 border-b-3 px-5 py-3 text-sm font-medium transition-colors ${
+              activeTab === tab.id
                 ? "border-blue-600 text-blue-600"
-                : "border-transparent text-gray-500 hover:border-black hover:text-black"
+                : "border-transparent text-gray-500 hover:border-gray-500 hover:text-gray-700"
             }`}
           >
-            <FaFolder className="text-lg" />
-            My Personal Files
+            <tab.Icon className="text-lg" />
+            {tab.label}
           </button>
-          <button
-            onClick={() => setActiveTab("community")}
-            className={`flex items-center gap-2 border-b-2 px-6 py-3 text-sm font-medium transition-colors ${
-              activeTab === "community"
-                ? "border-blue-600 text-blue-600"
-                : "border-transparent text-gray-500 hover:border-black hover:text-black"
-            }`}
-          >
-            <FaUsers className="text-lg" />
-            Community Study Archive
-          </button>
-        </div>
+        ))}
       </div>
 
       {/* Tab Content */}

@@ -2,7 +2,10 @@ import React from "react";
 import FriendCard from "./FriendCard";
 import { usersData } from "../../data/profile-data/userData";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { selectUserById, sendFriendRequest } from "../../store/slices/profileSlice";
+import {
+  selectUserById,
+  sendFriendRequest,
+} from "../../store/slices/profileSlice";
 
 const FriendSuggestions: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -22,9 +25,9 @@ const FriendSuggestions: React.FC = () => {
         !(currentUser.sentRequests || []).includes(user.id) // Not in sent requests
     )
     .map((user) => {
-      // Get university/college name based on category
+      // Get university/college name based on education level
       const institutionName =
-        user.category === "university"
+        user.educationLevel === "UNIVERSITY"
           ? user.university?.name
           : user.college?.name;
 

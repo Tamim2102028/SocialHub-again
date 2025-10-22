@@ -28,9 +28,7 @@ interface UIState {
     activeTab: "friends" | "requests" | "suggestions";
     searchQuery: string;
   };
-  videos: {
-    filter: "all" | "trending" | "recent" | "liked";
-  };
+  
   settings: {
     notifications: {
       likes: boolean;
@@ -88,9 +86,7 @@ const initialState: UIState = {
     activeTab: "friends",
     searchQuery: "",
   },
-  videos: {
-    filter: "all",
-  },
+  
   settings: {
     notifications: {
       likes: true,
@@ -219,13 +215,7 @@ const uiSlice = createSlice({
       state.friends.searchQuery = action.payload;
     },
 
-    // Videos component
-    setVideoFilter: (
-      state,
-      action: PayloadAction<"all" | "trending" | "recent" | "liked">
-    ) => {
-      state.videos.filter = action.payload;
-    },
+    // Videos component: removed video filter (replaced with header search box)
 
     // Settings component
     updateNotificationSettings: (
@@ -304,7 +294,6 @@ export const {
   setNotificationFilter,
   setFriendsActiveTab,
   setFriendsSearchQuery,
-  setVideoFilter,
   updateNotificationSettings,
   updatePrivacySettings,
   setAppTheme,

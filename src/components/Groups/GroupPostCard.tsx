@@ -12,7 +12,7 @@ import {
 import type { GroupPost } from "../../data/group-data/groupPostsData";
 import { useAppSelector } from "../../store/hooks";
 import { selectUserById } from "../../store/slices/profileSlice";
-import { formatPostTime } from "../../utils/dateUtils";
+import { formatPostDate, formatPostClock } from "../../utils/dateUtils";
 
 type Props = {
   post: GroupPost;
@@ -55,15 +55,19 @@ const GroupPostCardSimple: React.FC<Props> = ({ post }) => {
             >
               {author?.name || post.createdBy}
             </h3>
-            <p className="text-sm text-gray-500">
-              @
-              <span
-                className="cursor-pointer transition-colors hover:text-blue-600 hover:underline"
-                onClick={() => navigate(`/profile/${post.createdBy}`)}
-              >
-                {author?.username || post.createdBy}
-              </span>{" "}
-              • {formatPostTime(post.createdAt)}
+            <p className="text-sm text-gray-500 flex items-center gap-2">
+              <span>@
+                <span
+                  className="cursor-pointer transition-colors hover:text-blue-600 hover:underline"
+                  onClick={() => navigate(`/profile/${post.createdBy}`)}
+                >
+                  {author?.username || post.createdBy}
+                </span>
+              </span>
+              <span className="h-1 w-1 rounded-full bg-gray-400" aria-hidden />
+              <span>{formatPostDate(post.createdAt)}</span>
+              <span className="h-1 w-1 rounded-full bg-gray-400" aria-hidden />
+              <span>{formatPostClock(post.createdAt)}</span>
             </p>
           </div>
         </div>
@@ -147,9 +151,11 @@ const GroupPostCardSimple: React.FC<Props> = ({ post }) => {
       {/* Post Stats */}
       <div className="border-t border-gray-100 px-4 py-2">
         <div className="flex items-center justify-between text-sm text-gray-500">
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-3">
             <span>{likesCount} likes</span>
+            <span className="text-gray-300">•</span>
             <span>{0} comments</span>
+            <span className="text-gray-300">•</span>
             <span>{post.sharesBy?.length || 0} shares</span>
           </div>
         </div>
