@@ -69,7 +69,7 @@ export const sampleRooms: Room[] = [
     id: "room-7",
     name: "Study-Buddy Pairing",
     status: "open",
-    members: ["8", "8"],
+    members: ["1", "8", "10"],
     coverImage: "https://picsum.photos/seed/room-7/800/450",
     createdBy: "8",
     createdAt: "2025-07-07T07:07:07.000Z",
