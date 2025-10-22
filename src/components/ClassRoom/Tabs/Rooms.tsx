@@ -34,7 +34,7 @@ const Rooms: React.FC<{
     <div className="space-y-3">
       {/* header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-gray-900">Room</h2>
+        <h2 className="text-xl font-semibold text-gray-900">Rooms</h2>
       </div>
 
       {/* create room form */}
