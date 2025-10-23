@@ -38,16 +38,6 @@ const PostsTab: React.FC<Props> = ({
   submitReply,
   currentUserId,
 }) => {
-  const [expandedPosts, setExpandedPosts] = useState<Record<string, boolean>>(
-    {}
-  );
-
-  const REPLIES_SHOWN = 3;
-
-  const toggleExpand = (postId: string) =>
-    setExpandedPosts((s) => ({ ...s, [postId]: !s[postId] }));
-
-  const dispatch = useAppDispatch();
   const [openMenu, setOpenMenu] = useState<{
     type: "post" | "reply";
     id: string;
@@ -61,6 +51,17 @@ const PostsTab: React.FC<Props> = ({
   const [replyEditText, setReplyEditText] = useState<Record<string, string>>(
     {}
   );
+
+  const [expandedPosts, setExpandedPosts] = useState<Record<string, boolean>>(
+    {}
+  );
+
+  const REPLIES_SHOWN = 3;
+
+  const toggleExpand = (postId: string) =>
+    setExpandedPosts((s) => ({ ...s, [postId]: !s[postId] }));
+
+  const dispatch = useAppDispatch();
 
   const roomPosts = posts
     .filter((p) => p.roomId === roomId)
@@ -339,57 +340,35 @@ const PostsTab: React.FC<Props> = ({
                                     <p className="mt-1 text-justify text-sm break-words whitespace-pre-wrap text-gray-700">
                                       {r.content}
                                     </p>
-                                    <div className="absolute top-0 right-0">
+                                    <div className="mt-2 flex gap-3">
                                       <button
-                                        onClick={() =>
-                                          setOpenMenu(
-                                            openMenu &&
-                                              openMenu.type === "reply" &&
-                                              openMenu.id === r.id
-                                              ? null
-                                              : { type: "reply", id: r.id }
-                                          )
-                                        }
-                                        className="p-1 text-gray-500 hover:text-gray-800"
+                                        onClick={() => {
+                                          setReplyEditing({
+                                            postId: p.id,
+                                            replyId: r.id,
+                                          });
+                                          setReplyEditText((s) => ({
+                                            ...s,
+                                            [r.id]: r.content,
+                                          }));
+                                        }}
+                                        className="cursor-pointer text-sm font-medium text-blue-600 hover:underline"
                                       >
-                                        ⋯
+                                        Edit
                                       </button>
-                                      {openMenu &&
-                                        openMenu.type === "reply" &&
-                                        openMenu.id === r.id && (
-                                          <div className="absolute right-0 z-10 mt-8 w-40 rounded border bg-white shadow-sm">
-                                            <button
-                                              onClick={() => {
-                                                setReplyEditing({
-                                                  postId: p.id,
-                                                  replyId: r.id,
-                                                });
-                                                setOpenMenu(null);
-                                                setReplyEditText((s) => ({
-                                                  ...s,
-                                                  [r.id]: r.content,
-                                                }));
-                                              }}
-                                              className="block w-full px-3 py-2 text-left text-sm hover:bg-gray-50"
-                                            >
-                                              Edit
-                                            </button>
-                                            <button
-                                              onClick={() => {
-                                                dispatch(
-                                                  deleteReply({
-                                                    postId: p.id,
-                                                    replyId: r.id,
-                                                  })
-                                                );
-                                                setOpenMenu(null);
-                                              }}
-                                              className="block w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-gray-50"
-                                            >
-                                              Delete
-                                            </button>
-                                          </div>
-                                        )}
+                                      <button
+                                        onClick={() => {
+                                          dispatch(
+                                            deleteReply({
+                                              postId: p.id,
+                                              replyId: r.id,
+                                            })
+                                          );
+                                        }}
+                                        className="cursor-pointer text-sm font-medium text-red-600 hover:underline"
+                                      >
+                                        Delete
+                                      </button>
                                     </div>
                                   </div>
                                 )}
