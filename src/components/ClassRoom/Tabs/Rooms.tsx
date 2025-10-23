@@ -59,57 +59,136 @@ const Rooms: React.FC<{
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {displayRooms.map((r) => {
-            // cover image (use provided coverImage or fallback)
-            const cover =
-              (r as CombinedRoom & { coverImage?: string }).coverImage ||
-              `https://picsum.photos/seed/${r.id}/400/225`;
+          {displayRooms
+            .filter((rr) => (rr as SampleRoom).status !== "hide")
+            .map((r) => {
+              // cover image (use provided coverImage or fallback)
+              const cover =
+                (r as CombinedRoom & { coverImage?: string }).coverImage ||
+                `https://picsum.photos/seed/${r.id}/400/225`;
 
-            // get creator name from usersData (sample createdBy uses 'u' prefix)
-            const createdById = (r as CombinedRoom & { createdBy?: string })
-              .createdBy;
-            const getCreatorName = (cid?: string) => {
-              if (!cid) return undefined;
-              const user = usersData.find((u) => u.id === cid);
-              return user?.name;
-            };
-            const creatorName = getCreatorName(createdById);
+              // get creator name from usersData (sample createdBy uses 'u' prefix)
+              const createdById = (r as CombinedRoom & { createdBy?: string })
+                .createdBy;
+              const getCreatorName = (cid?: string) => {
+                if (!cid) return undefined;
+                const user = usersData.find((u) => u.id === cid);
+                return user?.name;
+              };
+              const creatorName = getCreatorName(createdById);
 
-            return (
-              <div key={r.id} className="overflow-hidden rounded-lg shadow-sm">
-                <Link
-                  to={`/classroom/rooms/${r.id}`}
-                  className="relative block h-40 w-full bg-gray-100"
+              return (
+                <div
+                  key={r.id}
+                  className="overflow-hidden rounded-lg shadow-sm"
                 >
-                  <img src={cover} alt={r.name} className="h-full w-full object-cover" />
-
-                  {/* three-dot menu button (visual only) */}
-                  <button
-                    onClick={(e) => e.stopPropagation()}
-                    aria-label="room options"
-                    className="absolute top-2 right-2 z-10 inline-flex h-8 w-8 items-center justify-center rounded-full bg-black/40 text-white hover:bg-black/50"
+                  <Link
+                    to={`/classroom/rooms/${r.id}`}
+                    className="relative block h-40 w-full bg-gray-100"
                   >
-                    <FaEllipsisV className="h-4 w-4" />
-                  </button>
+                    <img
+                      src={cover}
+                      alt={r.name}
+                      className="h-full w-full object-cover"
+                    />
 
-                  <div className="absolute top-0 left-0 w-full bg-black/70 p-2">
-                    <p className="truncate text-sm font-medium text-white">{r.name}</p>
-                    {creatorName && (
-                      <p className="mt-0.5 truncate text-xs text-gray-200">
-                        <Link
-                          onClick={(e) => e.stopPropagation()}
-                          to={`/profile/${createdById}`}
-                          className="text-gray-200 hover:underline"
-                        >
-                          {creatorName}
-                        </Link>
+                    {/* three-dot menu button (visual only) */}
+                    <button
+                      onClick={(e) => e.stopPropagation()}
+                      aria-label="room options"
+                      className="absolute top-2 right-2 z-10 inline-flex h-8 w-8 items-center justify-center rounded-full bg-black/40 text-white hover:bg-black/50"
+                    >
+                      <FaEllipsisV className="h-4 w-4" />
+                    </button>
+
+                    <div className="absolute top-0 left-0 w-full bg-black/70 p-2">
+                      <p className="truncate text-sm font-medium text-white">
+                        {r.name}
                       </p>
-                    )}
+                      {creatorName && (
+                        <p className="mt-0.5 truncate text-xs text-gray-200">
+                          <Link
+                            onClick={(e) => e.stopPropagation()}
+                            to={`/profile/${createdById}`}
+                            className="text-gray-200 hover:underline"
+                          >
+                            {creatorName}
+                          </Link>
+                        </p>
+                      )}
+                    </div>
+                  </Link>
+                </div>
+              );
+            })}
+        </div>
+      )}
+      {/* Hidden rooms section (rooms with status 'hide') */}
+      {/** Use sampleRooms/displayRooms that include richer shape when available */}
+      {(displayRooms as CombinedRoom[]).filter(
+        (rr) => (rr as SampleRoom).status === "hide"
+      ).length > 0 && (
+        <div className="space-y-3">
+          <h3 className="text-xl font-semibold text-gray-900">Hidden rooms</h3>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {(displayRooms as CombinedRoom[])
+              .filter((rr) => (rr as SampleRoom).status === "hide")
+              .map((r) => {
+                const cover =
+                  (r as CombinedRoom & { coverImage?: string }).coverImage ||
+                  `https://picsum.photos/seed/${r.id}/400/225`;
+
+                const createdById = (r as CombinedRoom & { createdBy?: string })
+                  .createdBy;
+                const getCreatorName = (cid?: string) => {
+                  if (!cid) return undefined;
+                  const user = usersData.find((u) => u.id === cid);
+                  return user?.name;
+                };
+                const creatorName = getCreatorName(createdById);
+
+                return (
+                  <div key={r.id} className="overflow-hidden rounded-lg shadow-sm">
+                    <Link
+                      to={`/classroom/rooms/${r.id}`}
+                      className="relative block h-40 w-full bg-gray-100"
+                    >
+                      <img
+                        src={cover}
+                        alt={r.name}
+                        className="h-full w-full object-cover"
+                      />
+
+                      {/* three-dot menu button (visual only) */}
+                      <button
+                        onClick={(e) => e.stopPropagation()}
+                        aria-label="room options"
+                        className="absolute top-2 right-2 z-10 inline-flex h-8 w-8 items-center justify-center rounded-full bg-black/40 text-white hover:bg-black/50"
+                      >
+                        <FaEllipsisV className="h-4 w-4" />
+                      </button>
+
+                      <div className="absolute top-0 left-0 w-full bg-black/70 p-2">
+                        <p className="truncate text-sm font-medium text-white">
+                          {r.name}
+                        </p>
+                        {creatorName && (
+                          <p className="mt-0.5 truncate text-xs text-gray-200">
+                            <Link
+                              onClick={(e) => e.stopPropagation()}
+                              to={`/profile/${createdById}`}
+                              className="text-gray-200 hover:underline"
+                            >
+                              {creatorName}
+                            </Link>
+                          </p>
+                        )}
+                      </div>
+                    </Link>
                   </div>
-                </Link>
-              </div>
-            );
-          })}
+                );
+              })}
+          </div>
         </div>
       )}
     </div>

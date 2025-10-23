@@ -3,6 +3,7 @@ import FriendCard from "./FriendCard";
 import { getUserById } from "../../services/userService";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { selectUserById, unfriend } from "../../store/slices/profileSlice";
+import confirm from "../../utils/confirm";
 
 const FriendsList: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -12,8 +13,15 @@ const FriendsList: React.FC = () => {
     return <div>User not found</div>;
   }
 
-  const handleUnfriend = (friendId: string) => {
-    dispatch(unfriend(friendId));
+  const handleUnfriend = async (friendId: string) => {
+    const ok = await confirm({
+      title: "Are you sure?",
+      text: "You will remove this friend.",
+      confirmButtonText: "Yes, unfriend",
+      icon: "warning",
+    });
+
+    if (ok) dispatch(unfriend(friendId));
   };
 
   // Get friends data from current user's friends list

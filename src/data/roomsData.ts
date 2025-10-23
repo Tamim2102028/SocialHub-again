@@ -33,7 +33,7 @@ export const sampleRooms: Room[] = [
     id: "room-3",
     name: "Private Study Room",
     status: "hide",
-    members: ["3", "4", "2"],
+    members: ["1", "3", "4", "2"],
     coverImage: "https://picsum.photos/seed/room-3/800/450",
     createdBy: "3",
     createdAt: "2025-06-02T12:00:00.000Z",
