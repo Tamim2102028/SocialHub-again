@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 // RoomCard contains the visual markup and needed imports
-import type { Room as SampleRoom } from "../../../data/roomsData";
+import type { Room as SampleRoom } from "../../../data/rooms-data/roomsData";
 import RoomForm from "../RoomForm";
 import RoomCard from "../RoomCard";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";

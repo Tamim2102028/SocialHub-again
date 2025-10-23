@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { FaEllipsisV } from "react-icons/fa";
-import type { Room as SampleRoom } from "../../data/roomsData";
+import type { Room as SampleRoom } from "../../data/rooms-data/roomsData";
 import { usersData } from "../../data/profile-data/userData";
 
 type Props = {

@@ -14,7 +14,7 @@ import RoomDetails from "./ClassRoom/RoomDetails";
 
 import { useAppDispatch } from "../store/hooks";
 import { updateRoom } from "../store/slices/classRoomSlice";
-import type { Room as SampleRoom } from "../data/roomsData";
+import type { Room as SampleRoom } from "../data/rooms-data/roomsData";
 
 const ClassRoom: React.FC = () => {
   const dispatch = useAppDispatch();

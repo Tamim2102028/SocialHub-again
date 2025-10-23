@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { FaUsers, FaImage, FaInfoCircle, FaThumbtack } from "react-icons/fa";
 import { BsPostcard } from "react-icons/bs";
-import sampleRooms, { type Room } from "../../data/roomsData";
+import sampleRooms, { type Room } from "../../data/rooms-data/roomsData";
 import { usersData } from "../../data/profile-data/userData";
 import { formatPostDate, formatPostClock } from "../../utils/dateUtils";
-import { roomPosts } from "../../data/roomPostData";
+import { roomPosts } from "../../data/rooms-data/roomPostData";
 import FriendCard from "../../components/Friends/FriendCard";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
