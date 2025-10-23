@@ -12,6 +12,7 @@ import bloodDonationSlice from "./slices/mainMore/bloodDonationSlice.js";
 import tournamentSlice from "./slices/tournamentSlice";
 import achievementSlice from "./slices/achievementSlice";
 import groupSlice from "./slices/groupSlice";
+import classRoomSlice from "./slices/classRoomSlice";
 
 export const store = configureStore({
   reducer: {
@@ -23,6 +24,7 @@ export const store = configureStore({
     files: filesSlice,
     communityStudyArchive: communityStudyArchiveSlice,
     profile: profileSlice,
+    classRoom: classRoomSlice,
     groups: groupSlice,
     messages: messagesSlice,
     bloodDonation: bloodDonationSlice,
