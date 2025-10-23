@@ -73,12 +73,7 @@ const HomePostCard: React.FC<HomePostCardProps> = ({ post }) => {
             </h3>
             <p className="text-sm text-gray-500 flex items-center gap-2">
               <span>@
-                <span
-                  className="cursor-pointer transition-colors hover:text-blue-600 hover:underline"
-                  onClick={handleProfileClick}
-                >
-                  {userData?.username || "username"}
-                </span>
+                <span className="text-gray-500">{userData?.username || "username"}</span>
               </span>
               <span className="h-1 w-1 rounded-full bg-gray-400" aria-hidden />
               <span>{formatPostDate(post.createdAt)}</span>

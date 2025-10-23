@@ -12,14 +12,12 @@ import CommunityTab from "../components/ClassRoom/Tabs/CommunityTab";
 import MoreTab from "../components/ClassRoom/Tabs/MoreTab";
 import RoomDetails from "./ClassRoom/RoomDetails";
 
-type Room = {
-  id: string;
-  name: string;
-  createdAt: string;
-};
+import { useAppDispatch } from "../store/hooks";
+import { updateRoom } from "../store/slices/classRoomSlice";
+import type { Room as SampleRoom } from "../data/roomsData";
 
 const ClassRoom: React.FC = () => {
-  const [rooms, setRooms] = React.useState<Room[]>([]);
+  const dispatch = useAppDispatch();
   const [showCreateForm, setShowCreateForm] = React.useState<boolean>(false);
 
   const openCreateForm = () => setShowCreateForm(true);
@@ -32,12 +30,15 @@ const ClassRoom: React.FC = () => {
     subsection: string;
   }) => {
     const id = `room_${Date.now()}`;
-    const room: Room = {
+    const room: SampleRoom = {
       id,
       name: `${data.university} / ${data.department} / ${data.section}${data.subsection ? `-${data.subsection}` : ""}`,
+      status: "open",
+      members: [],
       createdAt: dayjs().toISOString(),
     };
-    setRooms((prev) => [room, ...prev]);
+    // dispatch to redux slice (updateRoom will add if not existing)
+    dispatch(updateRoom(room));
     setShowCreateForm(false);
   };
 
@@ -55,7 +56,6 @@ const ClassRoom: React.FC = () => {
               index
               element={
                 <Rooms
-                  rooms={rooms}
                   showCreateForm={showCreateForm}
                   onCreate={handleCreate}
                   onCancelCreate={closeCreateForm}

@@ -14,8 +14,21 @@ export interface UserData {
 
   educationLevel: "UNIVERSITY" | "COLLEGE";
 
+  // optional office hours for users who are teachers
+  officeHours?: {
+    id: string;
+    start: string; // ISO
+    end: string; // ISO
+    location?: string;
+  }[];
+
   university?: {
     name: "BUET" | "DU" | "RUET" | "CUET" | "KUET";
+    title?:
+      | "Lecturer"
+      | "Assistant Professor"
+      | "Associate Professor"
+      | "Professor";
     department?: "CSE" | "EEE" | "ME" | "CE" | "CHE";
     section?: "A" | "B" | "C";
     subsection?: "1" | "2";
@@ -57,8 +70,8 @@ const rawUsersData: UserData[] = [
     password: "pass3",
     phone: "01710000003",
     avatar: "https://randomuser.me/api/portraits/men/3.jpg",
-    bio: "ektu ektu kore kaj hosse hosse",
-    role: ["student"],
+    bio: "Assistant lecturer in Chemical Engineering. Available for office hours and consultation.",
+    role: ["teacher"],
     gender: "male",
     religion: "Islam",
     educationLevel: "UNIVERSITY",
@@ -72,6 +85,14 @@ const rawUsersData: UserData[] = [
       isCr: true,
     },
     status: true,
+    officeHours: [
+      {
+        id: "oh1-1",
+        start: "2025-10-24T11:00:00.000Z",
+        end: "2025-10-24T12:00:00.000Z",
+        location: "Office 101",
+      },
+    ],
     friends: ["2", "4", "5", "9", "11"],
     pendingRequests: ["6", "7", "8", "10"],
     sentRequests: ["12", "13", "14", "15"],
@@ -260,6 +281,14 @@ const rawUsersData: UserData[] = [
       medium: "english",
     },
     status: true,
+    officeHours: [
+      {
+        id: "oh7-1",
+        start: "2025-10-23T10:00:00.000Z",
+        end: "2025-10-23T11:00:00.000Z",
+        location: "Room 12",
+      },
+    ],
     friends: [],
     pendingRequests: [],
     sentRequests: [],
@@ -283,13 +312,26 @@ const rawUsersData: UserData[] = [
     educationLevel: "UNIVERSITY",
     university: {
       name: "RUET",
+      title: "Lecturer",
       department: "ME",
-      section: "A",
-      subsection: "1",
       year: 3,
       semester: 2,
     },
     status: true,
+    officeHours: [
+      {
+        id: "oh8-1",
+        start: "2025-10-24T14:00:00.000Z",
+        end: "2025-10-24T15:00:00.000Z",
+        location: "Zoom",
+      },
+      {
+        id: "oh8-2",
+        start: "2025-10-25T09:00:00.000Z",
+        end: "2025-10-25T10:00:00.000Z",
+        location: "Room 301",
+      },
+    ],
     friends: [],
     pendingRequests: [],
     sentRequests: [],
@@ -313,9 +355,7 @@ const rawUsersData: UserData[] = [
     educationLevel: "UNIVERSITY",
     university: {
       name: "CUET",
-      department: "EEE",
-      section: "B",
-      subsection: "2",
+      department: "ME",
       year: 2,
       semester: 2,
     },
@@ -367,8 +407,8 @@ const rawUsersData: UserData[] = [
     password: "pass11",
     phone: "01710000031",
     avatar: "https://randomuser.me/api/portraits/men/31.jpg",
-    bio: "Medical college student",
-    role: ["student"],
+    bio: "Faculty in Mechanical Engineering with interest in thermodynamics and labs.",
+    role: ["teacher"],
     gender: "male",
     religion: "Islam",
     educationLevel: "UNIVERSITY",
@@ -382,6 +422,14 @@ const rawUsersData: UserData[] = [
     },
     status: true,
     friends: ["1", "5"],
+    officeHours: [
+      {
+        id: "oh11-1",
+        start: "2025-10-25T14:00:00.000Z",
+        end: "2025-10-25T15:00:00.000Z",
+        location: "Dept Office",
+      },
+    ],
     pendingRequests: [],
     sentRequests: [],
     saved: [],
@@ -443,6 +491,14 @@ const rawUsersData: UserData[] = [
       medium: "english",
     },
     status: true,
+    officeHours: [
+      {
+        id: "oh13-1",
+        start: "2025-10-22T12:00:00.000Z",
+        end: "2025-10-22T13:00:00.000Z",
+        location: "Office",
+      },
+    ],
     friends: [],
     pendingRequests: [],
     sentRequests: [],
@@ -474,6 +530,14 @@ const rawUsersData: UserData[] = [
       medium: "bangla",
     },
     status: true,
+    officeHours: [
+      {
+        id: "oh14-1",
+        start: "2025-10-23T16:00:00.000Z",
+        end: "2025-10-23T17:00:00.000Z",
+        location: "Room 5",
+      },
+    ],
     friends: [],
     pendingRequests: [],
     sentRequests: [],

@@ -4,6 +4,8 @@ import { FaUsers, FaImage, FaInfoCircle, FaThumbtack } from "react-icons/fa";
 import { BsPostcard } from "react-icons/bs";
 import sampleRooms, { type Room } from "../../data/roomsData";
 import { usersData } from "../../data/profile-data/userData";
+import { formatPostDate, formatPostClock } from "../../utils/dateUtils";
+import { roomPosts } from "../../data/roomPostData";
 import FriendCard from "../../components/Friends/FriendCard";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
@@ -124,7 +126,73 @@ const RoomDetails: React.FC = () => {
         {/* Tab Content */}
         <div className="p-3">
           {activeTab === "posts" && (
-            <div className="text-sm text-gray-600">No posts for this room.</div>
+            <div className="space-y-3">
+              {roomPosts.filter((p) => p.roomId === room.id).length === 0 ? (
+                <div className="text-sm text-gray-600">
+                  No posts for this room.
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {roomPosts
+                    .filter((p) => p.roomId === room.id)
+                    .sort(
+                      (a, b) =>
+                        new Date(b.createdAt).getTime() -
+                        new Date(a.createdAt).getTime()
+                    )
+                    .map((p) => {
+                      const author = usersData.find((u) => u.id === p.authorId);
+                      return (
+                        <div
+                          key={p.id}
+                          className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
+                        >
+                          <div className="flex items-start gap-3">
+                            <img
+                              src={author?.avatar}
+                              alt={author?.name}
+                              className="h-10 w-10 rounded-full object-cover"
+                            />
+                            <div className="flex-1">
+                              <div className="flex items-center justify-between">
+                                <div>
+                                  <div className="font-semibold text-gray-900">
+                                    <Link
+                                      to={`/profile/${author?.id}`}
+                                      className="cursor-pointer transition-colors hover:text-blue-600 hover:underline"
+                                    >
+                                      {author?.name || "Unknown"}
+                                    </Link>
+                                  </div>
+                                  <p className="flex items-center gap-2 text-sm text-gray-500">
+                                    <span>
+                                      @
+                                      <span>
+                                        {author?.username || "username"}
+                                      </span>
+                                    </span>
+                                    <span
+                                      className="h-1 w-1 rounded-full bg-gray-400"
+                                      aria-hidden
+                                    />
+                                    <span>{formatPostDate(p.createdAt)}</span>
+                                    <span
+                                      className="h-1 w-1 rounded-full bg-gray-400"
+                                      aria-hidden
+                                    />
+                                    <span>{formatPostClock(p.createdAt)}</span>
+                                  </p>
+                                </div>
+                              </div>
+                              <p className="mt-2 text-gray-700">{p.content}</p>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+              )}
+            </div>
           )}
 
           {activeTab === "pinned" && (
