@@ -5,11 +5,11 @@ import { BsPostcard } from "react-icons/bs";
 import sampleRooms, { type Room } from "../../data/rooms-data/roomsData";
 import { usersData } from "../../data/profile-data/userData";
 import { roomPosts } from "../../data/rooms-data/roomPostData";
-import PostsTab from "./Tabs/PostsTab";
-import PinnedTab from "./Tabs/PinnedTab";
-import MembersTab from "./Tabs/MembersTab";
-import MediaTab from "./Tabs/MediaTab";
-import AboutTab from "./Tabs/AboutTab";
+import PostsTab from "../../components/ClassRoom/detailsPageTabs/PostsTab";
+// PinnedTab replaced by rendering PostsTab with pinned posts
+import MembersTab from "../../components/ClassRoom/detailsPageTabs/MembersTab";
+import MediaTab from "../../components/ClassRoom/detailsPageTabs/MediaTab";
+import AboutTab from "../../components/ClassRoom/detailsPageTabs/AboutTab";
 import { addReply } from "../../store/slices/classRoom/roomPostsSlice";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
@@ -156,7 +156,21 @@ const RoomDetails: React.FC = () => {
             </div>
           )}
 
-          {activeTab === "pinned" && <PinnedTab />}
+          {activeTab === "pinned" && (
+            <div className="space-y-3">
+              <PostsTab
+                roomId={room.id}
+                posts={postsFromStore.filter((p) => p.pinned)}
+                users={usersData}
+                showReplyFor={showReplyFor}
+                replyText={replyText}
+                toggleReply={toggleReply}
+                setReplyText={setReplyText}
+                submitReply={submitReply}
+                currentUserId={currentUser?.id}
+              />
+            </div>
+          )}
 
           {activeTab === "members" && (
             <MembersTab

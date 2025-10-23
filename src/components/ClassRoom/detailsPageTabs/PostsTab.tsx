@@ -9,9 +9,11 @@ import {
   togglePinPost,
 } from "../../../store/slices/classRoom/roomPostsSlice";
 import { BsThreeDots } from "react-icons/bs";
+import Swal from "sweetalert2";
 import { formatPostDate, formatPostClock } from "../../../utils/dateUtils";
 import { type RoomPost } from "../../../data/rooms-data/roomPostData";
 import { type UserData } from "../../../data/profile-data/userData";
+import EmptyState from "../EmptyState";
 
 interface Props {
   roomId: string;
@@ -38,10 +40,6 @@ const PostsTab: React.FC<Props> = ({
   submitReply,
   currentUserId,
 }) => {
-  const [openMenu, setOpenMenu] = useState<{
-    type: "post" | "reply";
-    id: string;
-  } | null>(null);
   const [postEditingId, setPostEditingId] = useState<string | null>(null);
   const [replyEditing, setReplyEditing] = useState<{
     postId: string;
@@ -63,6 +61,71 @@ const PostsTab: React.FC<Props> = ({
 
   const dispatch = useAppDispatch();
 
+  const handlePostMenu = async (post: RoomPost) => {
+    const pinLabel = post.pinned ? "Unpin" : "Pin";
+
+    await Swal.fire({
+      title: "Post options",
+      html: `
+        <div class="flex flex-col items-center gap-2 min-w-[160px]">
+          <button id="swal-edit" class="w-50 px-3 py-2 rounded border border-gray-200 bg-white text-gray-700 hover:bg-gray-50">Edit</button>
+          <button id="swal-pin" class="w-50 px-3 py-2 rounded border border-gray-200 bg-white text-gray-700 hover:bg-gray-50">${pinLabel}</button>
+          <button id="swal-del" class="w-50 px-3 py-2 rounded border border-red-100 bg-white text-red-600 hover:bg-red-50">Delete</button>
+        </div>
+      `,
+      showConfirmButton: false,
+      showCloseButton: true,
+      didOpen: () => {
+        const popup = Swal.getPopup();
+        if (!popup) return;
+        const editBtn = popup.querySelector(
+          "#swal-edit"
+        ) as HTMLButtonElement | null;
+        const pinBtn = popup.querySelector(
+          "#swal-pin"
+        ) as HTMLButtonElement | null;
+        const delBtn = popup.querySelector(
+          "#swal-del"
+        ) as HTMLButtonElement | null;
+
+        const onEdit = () => {
+          setPostEditingId(post.id);
+          setPostEditText((s) => ({ ...s, [post.id]: post.content }));
+          Swal.close();
+        };
+
+        const onPin = () => {
+          dispatch(togglePinPost(post.id));
+          Swal.close();
+        };
+
+        const onDel = () => {
+          dispatch(deletePost(post.id));
+          Swal.close();
+        };
+
+        editBtn?.addEventListener("click", onEdit);
+        pinBtn?.addEventListener("click", onPin);
+        delBtn?.addEventListener("click", onDel);
+
+        // cleanup listeners when swal closes
+        const removeListeners = () => {
+          editBtn?.removeEventListener("click", onEdit);
+          pinBtn?.removeEventListener("click", onPin);
+          delBtn?.removeEventListener("click", onDel);
+        };
+
+        const observer = new MutationObserver(() => {
+          if (!document.contains(popup)) {
+            removeListeners();
+            observer.disconnect();
+          }
+        });
+        observer.observe(document, { childList: true, subtree: true });
+      },
+    });
+  };
+
   const roomPosts = posts
     .filter((p) => p.roomId === roomId)
     .sort(
@@ -71,7 +134,14 @@ const PostsTab: React.FC<Props> = ({
     );
 
   if (roomPosts.length === 0)
-    return <div className="text-sm text-gray-600">No posts for this room.</div>;
+    return (
+      <EmptyState
+        title="No posts yet"
+        message="This room doesn't have any posts yet. Be the first to start a conversation — share an announcement, question, or resource with your classmates."
+        actionLabel="Create post"
+        onAction={() => toggleReply(roomId)}
+      />
+    );
 
   return (
     <div className="space-y-4">
@@ -116,57 +186,12 @@ const PostsTab: React.FC<Props> = ({
 
                   <div className="relative">
                     <button
-                      onClick={() =>
-                        setOpenMenu(
-                          openMenu &&
-                            openMenu.type === "post" &&
-                            openMenu.id === p.id
-                            ? null
-                            : { type: "post", id: p.id }
-                        )
-                      }
+                      onClick={() => handlePostMenu(p)}
                       className="p-1 text-gray-500 hover:text-gray-800"
                       aria-label="Post menu"
                     >
                       <BsThreeDots className="h-5 w-5 cursor-pointer" />
                     </button>
-                    {openMenu &&
-                      openMenu.type === "post" &&
-                      openMenu.id === p.id && (
-                        <div className="absolute right-0 z-10 mt-8 w-40 rounded border bg-white shadow-sm">
-                          <button
-                            onClick={() => {
-                              setPostEditingId(p.id);
-                              setOpenMenu(null);
-                              setPostEditText((s) => ({
-                                ...s,
-                                [p.id]: p.content,
-                              }));
-                            }}
-                            className="block w-full px-3 py-2 text-left text-sm hover:bg-gray-50"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => {
-                              dispatch(togglePinPost(p.id));
-                              setOpenMenu(null);
-                            }}
-                            className="block w-full px-3 py-2 text-left text-sm hover:bg-gray-50"
-                          >
-                            {p.pinned ? "Unpin" : "Pin"}
-                          </button>
-                          <button
-                            onClick={() => {
-                              dispatch(deletePost(p.id));
-                              setOpenMenu(null);
-                            }}
-                            className="block w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-gray-50"
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      )}
                   </div>
                 </div>
                 {postEditingId === p.id ? (
