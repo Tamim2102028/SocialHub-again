@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { FaEllipsisV } from "react-icons/fa";
-import { usersData } from "../../../data/profile-data/userData";
-import { Link } from "react-router-dom";
+// RoomCard contains the visual markup and needed imports
 import type { Room as SampleRoom } from "../../../data/roomsData";
 import RoomForm from "../RoomForm";
+import RoomCard from "../RoomCard";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import type { RootState } from "../../../store/store";
 import {
@@ -82,88 +81,15 @@ const Rooms: React.FC<{
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {openRooms
             .filter((rr) => (rr as SampleRoom).status !== "hide")
-            .map((r) => {
-              // cover image (use provided coverImage or fallback)
-              const cover =
-                (r as SampleRoom & { coverImage?: string }).coverImage ||
-                `https://picsum.photos/seed/${r.id}/400/225`;
-
-              // get creator name from usersData (sample createdBy uses 'u' prefix)
-              const createdById = (r as SampleRoom & { createdBy?: string })
-                .createdBy;
-              const getCreatorName = (cid?: string) => {
-                if (!cid) return undefined;
-                const user = usersData.find((u) => u.id === cid);
-                return user?.name;
-              };
-              const creatorName = getCreatorName(createdById);
-
-              return (
-                <div
-                  key={r.id}
-                  className="overflow-hidden rounded-lg shadow-sm"
-                >
-                  <Link
-                    to={`/classroom/rooms/${r.id}`}
-                    className="relative block h-40 w-full bg-gray-100"
-                  >
-                    <img
-                      src={cover}
-                      alt={r.name}
-                      className="h-full w-full object-cover"
-                    />
-
-                    {/* three-dot menu button (functional) */}
-                    <div className="absolute top-2 right-2 z-10">
-                      <button
-                        onClick={(e) => toggleMenu(e, r.id)}
-                        aria-label="room options"
-                        className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-black/40 text-white hover:bg-black/50"
-                      >
-                        <FaEllipsisV className="h-4 w-4" />
-                      </button>
-
-                      {menuOpenFor === r.id && (
-                        <div
-                          onClick={(e) => e.stopPropagation()}
-                          className="absolute right-0 mt-2 w-40 rounded bg-white shadow-lg ring-1 ring-black/5"
-                        >
-                          <button
-                            className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              toggleRoomStatusLocal(r.id);
-                            }}
-                          >
-                            {(r as SampleRoom).status === "hide"
-                              ? "Unhide"
-                              : "Hide"}
-                          </button>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="absolute top-0 left-0 w-full bg-black/70 p-2">
-                      <p className="truncate text-sm font-medium text-white">
-                        {r.name}
-                      </p>
-                      {creatorName && (
-                        <p className="mt-0.5 truncate text-xs text-gray-200">
-                          <Link
-                            onClick={(e) => e.stopPropagation()}
-                            to={`/profile/${createdById}`}
-                            className="text-gray-200 hover:underline"
-                          >
-                            {creatorName}
-                          </Link>
-                        </p>
-                      )}
-                    </div>
-                  </Link>
-                </div>
-              );
-            })}
+            .map((r) => (
+              <RoomCard
+                key={r.id}
+                room={r}
+                menuOpenFor={menuOpenFor}
+                toggleMenu={toggleMenu}
+                onToggleStatus={toggleRoomStatusLocal}
+              />
+            ))}
         </div>
       )}
       {/* Hidden rooms section (rooms with status 'hide') */}
@@ -175,86 +101,15 @@ const Rooms: React.FC<{
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {hiddenRooms
               .filter((rr) => (rr as SampleRoom).status === "hide")
-              .map((r) => {
-                const cover =
-                  (r as SampleRoom & { coverImage?: string }).coverImage ||
-                  `https://picsum.photos/seed/${r.id}/400/225`;
-
-                const createdById = (r as SampleRoom & { createdBy?: string })
-                  .createdBy;
-                const getCreatorName = (cid?: string) => {
-                  if (!cid) return undefined;
-                  const user = usersData.find((u) => u.id === cid);
-                  return user?.name;
-                };
-                const creatorName = getCreatorName(createdById);
-
-                return (
-                  <div
-                    key={r.id}
-                    className="overflow-hidden rounded-lg shadow-sm"
-                  >
-                    <Link
-                      to={`/classroom/rooms/${r.id}`}
-                      className="relative block h-40 w-full bg-gray-100"
-                    >
-                      <img
-                        src={cover}
-                        alt={r.name}
-                        className="h-full w-full object-cover"
-                      />
-
-                      {/* three-dot menu button (visual + functional) */}
-                      <div className="absolute top-2 right-2 z-10">
-                        <button
-                          onClick={(e) => toggleMenu(e, r.id)}
-                          aria-label="room options"
-                          className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-black/40 text-white hover:bg-black/50"
-                        >
-                          <FaEllipsisV className="h-4 w-4" />
-                        </button>
-
-                        {menuOpenFor === r.id && (
-                          <div
-                            onClick={(e) => e.stopPropagation()}
-                            className="absolute right-0 mt-2 w-40 rounded bg-white shadow-lg ring-1 ring-black/5"
-                          >
-                            <button
-                              className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                toggleRoomStatusLocal(r.id);
-                              }}
-                            >
-                              {(r as SampleRoom).status === "hide"
-                                ? "Unhide"
-                                : "Hide"}
-                            </button>
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="absolute top-0 left-0 w-full bg-black/70 p-2">
-                        <p className="truncate text-sm font-medium text-white">
-                          {r.name}
-                        </p>
-                        {creatorName && (
-                          <p className="mt-0.5 truncate text-xs text-gray-200">
-                            <Link
-                              onClick={(e) => e.stopPropagation()}
-                              to={`/profile/${createdById}`}
-                              className="text-gray-200 hover:underline"
-                            >
-                              {creatorName}
-                            </Link>
-                          </p>
-                        )}
-                      </div>
-                    </Link>
-                  </div>
-                );
-              })}
+              .map((r) => (
+                <RoomCard
+                  key={r.id}
+                  room={r}
+                  menuOpenFor={menuOpenFor}
+                  toggleMenu={toggleMenu}
+                  onToggleStatus={toggleRoomStatusLocal}
+                />
+              ))}
           </div>
         </div>
       )}
