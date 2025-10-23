@@ -13,7 +13,7 @@ import MoreTab from "../components/ClassRoom/Tabs/MoreTab";
 import RoomDetails from "./ClassRoom/RoomDetails";
 
 import { useAppDispatch } from "../store/hooks";
-import { updateRoom } from "../store/slices/classRoomSlice";
+import { updateRoom } from "../store/slices/classRoom/classRoomSlice";
 import type { Room as SampleRoom } from "../data/rooms-data/roomsData";
 
 const ClassRoom: React.FC = () => {

@@ -4,6 +4,13 @@ export interface RoomPost {
   authorId: string;
   content: string;
   createdAt: string;
+  pinned?: boolean;
+  replies?: Array<{
+    id: string;
+    authorId?: string;
+    content: string;
+    createdAt: string;
+  }>;
 }
 
 export const roomPosts: RoomPost[] = [
@@ -15,6 +22,32 @@ export const roomPosts: RoomPost[] = [
     content:
       "Welcome to Math Study Group! Let's start with calculus questions.",
     createdAt: "2025-01-01T10:00:00.000Z",
+    replies: [
+      {
+        id: "rpr1-1",
+        authorId: "4",
+        content: "Thanks! I have a question about limits.",
+        createdAt: "2025-01-01T11:00:00.000Z",
+      },
+      {
+        id: "rpr1-2",
+        authorId: "9",
+        content: "I can help with that question!",
+        createdAt: "2025-01-01T11:30:00.000Z",
+      },
+      {
+        id: "rpr1-3",
+        authorId: "1",
+        content: "Sure, what specifically are you struggling with?",
+        createdAt: "2025-01-01T12:00:00.000Z",
+      },
+      {
+        id: "rpr1-4",
+        authorId: "4",
+        content: "I'm having trouble understanding L'Hôpital's rule.",
+        createdAt: "2025-01-01T12:15:00.000Z",
+      },
+    ],
   },
   {
     id: "pr2",
@@ -38,6 +71,38 @@ export const roomPosts: RoomPost[] = [
     authorId: "7",
     content: "Frontend Helpers: share your favorite React tips here.",
     createdAt: "2025-02-01T09:00:00.000Z",
+    replies: [
+      {
+        id: "rpr1-1",
+        authorId: "4",
+        content: "Thanks! I have a question about limits.",
+        createdAt: "2025-01-01T11:00:00.000Z",
+      },
+      {
+        id: "rpr1-2",
+        authorId: "9",
+        content: "I can help with that question!",
+        createdAt: "2025-01-01T11:30:00.000Z",
+      },
+      {
+        id: "rpr1-3",
+        authorId: "1",
+        content: "Sure, what specifically are you struggling with?",
+        createdAt: "2025-01-01T12:00:00.000Z",
+      },
+      {
+        id: "rpr1-4",
+        authorId: "4",
+        content: "I'm having trouble understanding L'Hôpital's rule.",
+        createdAt: "2025-01-01T12:15:00.000Z",
+      },
+      {
+        id: "rpr4-1",
+        authorId: "11",
+        content: "Use useMemo/useCallback sparingly and measure first.",
+        createdAt: "2025-02-01T09:30:00.000Z",
+      },
+    ],
   },
   {
     id: "pr5",

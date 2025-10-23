@@ -28,6 +28,12 @@ const Sidebar: React.FC = () => {
       active: location.pathname === "/groups",
     },
     {
+      icon: FaSchool,
+      label: "ClassRoom",
+      path: "/classroom",
+      active: location.pathname === "/classroom",
+    },
+    {
       icon: FaBell,
       label: "Notifications",
       path: "/notifications",
@@ -51,12 +57,6 @@ const Sidebar: React.FC = () => {
       label: "Career Hub",
       path: "/career-hub",
       active: location.pathname === "/career-hub",
-    },
-    {
-      icon: FaSchool,
-      label: "ClassRoom",
-      path: "/classroom",
-      active: location.pathname === "/classroom",
     },
     {
       icon: FaStore,

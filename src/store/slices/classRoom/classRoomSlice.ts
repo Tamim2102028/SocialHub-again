@@ -1,7 +1,7 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import sampleRooms, {
   type Room as SampleRoom,
-} from "../../data/rooms-data/roomsData";
+} from "../../../data/rooms-data/roomsData";
 
 export interface ClassRoomState {
   rooms: SampleRoom[];

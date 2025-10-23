@@ -9,7 +9,7 @@ import {
   toggleRoomStatus,
   selectOpenRooms,
   selectHiddenRooms,
-} from "../../../store/slices/classRoomSlice";
+} from "../../../store/slices/classRoom/classRoomSlice";
 type CreatePayload = {
   university: string;
   department: string;
@@ -96,7 +96,7 @@ const Rooms: React.FC<{
       {hiddenRooms.filter((rr) => (rr as SampleRoom).status === "hide").length >
         0 && (
         <div className="space-y-3">
-          <h3 className="text-xl font-semibold text-gray-900">Hidden rooms</h3>
+          <h3 className="text-xl font-semibold text-gray-900">Hidden Rooms</h3>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {hiddenRooms
               .filter((rr) => (rr as SampleRoom).status === "hide")

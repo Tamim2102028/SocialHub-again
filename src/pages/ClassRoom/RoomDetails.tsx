@@ -4,9 +4,13 @@ import { FaUsers, FaImage, FaInfoCircle, FaThumbtack } from "react-icons/fa";
 import { BsPostcard } from "react-icons/bs";
 import sampleRooms, { type Room } from "../../data/rooms-data/roomsData";
 import { usersData } from "../../data/profile-data/userData";
-import { formatPostDate, formatPostClock } from "../../utils/dateUtils";
 import { roomPosts } from "../../data/rooms-data/roomPostData";
-import FriendCard from "../../components/Friends/FriendCard";
+import PostsTab from "./Tabs/PostsTab";
+import PinnedTab from "./Tabs/PinnedTab";
+import MembersTab from "./Tabs/MembersTab";
+import MediaTab from "./Tabs/MediaTab";
+import AboutTab from "./Tabs/AboutTab";
+import { addReply } from "../../store/slices/classRoom/roomPostsSlice";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
   selectUserById,
@@ -21,12 +25,11 @@ import confirm from "../../utils/confirm";
 const RoomDetails: React.FC = () => {
   const { roomId } = useParams<{ roomId: string }>();
 
-  // find room from sample data
   const room: Room | undefined = sampleRooms.find((r) => r.id === roomId);
 
   const [activeTab, setActiveTab] = useState<
     "posts" | "pinned" | "members" | "media" | "about"
-  >("members");
+  >("posts");
 
   const tabs: Array<{
     id: "posts" | "pinned" | "members" | "media" | "about";
@@ -42,6 +45,28 @@ const RoomDetails: React.FC = () => {
 
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector((s) => selectUserById(s, s.profile.id));
+
+  const [showReplyFor, setShowReplyFor] = useState<Record<string, boolean>>({});
+  const [replyText, setReplyText] = useState<Record<string, string>>({});
+  const postsFromStore = useAppSelector((s) => s.roomPosts?.posts || roomPosts);
+
+  const toggleReply = (postId: string) =>
+    setShowReplyFor((s) => ({ ...s, [postId]: !s[postId] }));
+
+  const submitReply = (postId: string) => {
+    const text = (replyText[postId] || "").trim();
+    if (!text) return;
+
+    const newReply = {
+      id: `reply-${postId}-${Date.now()}`,
+      authorId: currentUser?.id,
+      content: text,
+      createdAt: new Date().toISOString(),
+    };
+    dispatch(addReply({ postId, reply: newReply }));
+    setReplyText((r) => ({ ...r, [postId]: "" }));
+    setShowReplyFor((s) => ({ ...s, [postId]: false }));
+  };
 
   if (!room) {
     return (
@@ -74,7 +99,6 @@ const RoomDetails: React.FC = () => {
             alt={room.name}
             className="h-36 w-64 rounded object-cover"
           />
-
           <div className="flex-1">
             <h1 className="text-2xl font-bold text-gray-900">{room.name}</h1>
             {creator && (
@@ -87,11 +111,9 @@ const RoomDetails: React.FC = () => {
                 </Link>
               </p>
             )}
-
             <p className="mt-2 text-sm text-gray-700">
               Status: <span className="font-medium">{room.status}</span>
             </p>
-
             {room.createdAt && (
               <p className="mt-1 text-xs text-gray-500">
                 Created: {new Date(room.createdAt).toLocaleString()}
@@ -101,20 +123,14 @@ const RoomDetails: React.FC = () => {
         </div>
       </div>
 
-      {/* Tabs (Posts, Pinned, Members, Media, About) */}
       <div className="mx-auto max-w-5xl rounded-lg bg-white shadow">
-        {/* Tabs */}
         <div className="border-b border-gray-200 bg-white">
           <div className="flex justify-between px-3">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 border-b-2 px-6 py-4 font-semibold transition-colors ${
-                  activeTab === tab.id
-                    ? "border-blue-600 text-blue-600"
-                    : "border-transparent text-gray-600 hover:text-gray-900"
-                }`}
+                className={`flex items-center gap-2 border-b-2 px-6 py-4 font-semibold transition-colors ${activeTab === tab.id ? "border-blue-600 text-blue-600" : "border-transparent text-gray-600 hover:text-gray-900"}`}
               >
                 <tab.icon className="h-5 w-5" />
                 {tab.label}
@@ -123,196 +139,59 @@ const RoomDetails: React.FC = () => {
           </div>
         </div>
 
-        {/* Tab Content */}
         <div className="p-3">
           {activeTab === "posts" && (
             <div className="space-y-3">
-              {roomPosts.filter((p) => p.roomId === room.id).length === 0 ? (
-                <div className="text-sm text-gray-600">
-                  No posts for this room.
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {roomPosts
-                    .filter((p) => p.roomId === room.id)
-                    .sort(
-                      (a, b) =>
-                        new Date(b.createdAt).getTime() -
-                        new Date(a.createdAt).getTime()
-                    )
-                    .map((p) => {
-                      const author = usersData.find((u) => u.id === p.authorId);
-                      return (
-                        <div
-                          key={p.id}
-                          className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
-                        >
-                          <div className="flex items-start gap-3">
-                            <img
-                              src={author?.avatar}
-                              alt={author?.name}
-                              className="h-10 w-10 rounded-full object-cover"
-                            />
-                            <div className="flex-1">
-                              <div className="flex items-center justify-between">
-                                <div>
-                                  <div className="font-semibold text-gray-900">
-                                    <Link
-                                      to={`/profile/${author?.id}`}
-                                      className="cursor-pointer transition-colors hover:text-blue-600 hover:underline"
-                                    >
-                                      {author?.name || "Unknown"}
-                                    </Link>
-                                  </div>
-                                  <p className="flex items-center gap-2 text-sm text-gray-500">
-                                    <span>
-                                      @
-                                      <span>
-                                        {author?.username || "username"}
-                                      </span>
-                                    </span>
-                                    <span
-                                      className="h-1 w-1 rounded-full bg-gray-400"
-                                      aria-hidden
-                                    />
-                                    <span>{formatPostDate(p.createdAt)}</span>
-                                    <span
-                                      className="h-1 w-1 rounded-full bg-gray-400"
-                                      aria-hidden
-                                    />
-                                    <span>{formatPostClock(p.createdAt)}</span>
-                                  </p>
-                                </div>
-                              </div>
-                              <p className="mt-2 text-gray-700">{p.content}</p>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                </div>
-              )}
+              <PostsTab
+                roomId={room.id}
+                posts={postsFromStore}
+                users={usersData}
+                showReplyFor={showReplyFor}
+                replyText={replyText}
+                toggleReply={toggleReply}
+                setReplyText={setReplyText}
+                submitReply={submitReply}
+                currentUserId={currentUser?.id}
+              />
             </div>
           )}
 
-          {activeTab === "pinned" && (
-            <div className="text-sm text-gray-600">No pinned items.</div>
-          )}
+          {activeTab === "pinned" && <PinnedTab />}
 
           {activeTab === "members" && (
-            <div>
-              <h2 className="text-lg font-semibold text-gray-900">
-                Members ({room.members ? room.members.length : 0})
-              </h2>
-              <div className="mt-3 space-y-2.5">
-                {room.members && room.members.length > 0 ? (
-                  room.members.map((m) => {
-                    const user = usersData.find((u) => u.id === m);
-
-                    if (!user) return null;
-
-                    // Determine relation type relative to current user
-                    const isFriend = currentUser?.friends?.includes(user.id);
-                    const hasPending = currentUser?.pendingRequests?.includes(
-                      user.id
-                    );
-                    const hasSent = currentUser?.sentRequests?.includes(
-                      user.id
-                    );
-
-                    let type: Parameters<typeof FriendCard>[0]["type"] =
-                      "search";
-                    const isCurrent = currentUser && m === currentUser.id;
-                    if (isCurrent) {
-                      // show current user but without friend actions
-                      type = "search";
-                    } else if (isFriend) type = "friend";
-                    else if (hasPending)
-                      type = "request"; // they requested current user
-                    else if (hasSent)
-                      type = "sent"; // current user sent request to them
-                    else type = "suggestion"; // not friends, not pending
-
-                    const institutionName =
-                      user.educationLevel === "UNIVERSITY"
-                        ? user.university?.name
-                        : user.college?.name;
-
-                    return (
-                      <FriendCard
-                        key={user.id}
-                        id={user.id}
-                        name={user.name}
-                        avatar={user.avatar}
-                        university={institutionName || "Unknown Institution"}
-                        type={type}
-                        onAccept={(id) => dispatch(acceptFriendRequest(id))}
-                        onDecline={(id) => dispatch(declineFriendRequest(id))}
-                        onAddFriend={(id) => dispatch(sendFriendRequest(id))}
-                        onCancelRequest={(id) =>
-                          dispatch(cancelFriendRequest(id))
-                        }
-                        onUnfriend={async (id) => {
-                          const ok = await confirm({
-                            title: "Are you sure?",
-                            text: "You will remove this friend.",
-                            confirmButtonText: "Yes, unfriend",
-                            icon: "warning",
-                          });
-                          if (ok) dispatch(unfriend(id));
-                        }}
-                      />
-                    );
-                  })
-                ) : (
-                  <div className="text-sm text-gray-600">No members yet.</div>
-                )}
-              </div>
-            </div>
+            <MembersTab
+              members={room.members}
+              users={usersData}
+              currentUser={currentUser}
+              onAccept={(id: string) => dispatch(acceptFriendRequest(id))}
+              onDecline={(id: string) => dispatch(declineFriendRequest(id))}
+              onAddFriend={(id: string) => dispatch(sendFriendRequest(id))}
+              onCancelRequest={(id: string) =>
+                dispatch(cancelFriendRequest(id))
+              }
+              onUnfriend={async (id: string) => {
+                const ok = await confirm({
+                  title: "Are you sure?",
+                  text: "You will remove this friend.",
+                  confirmButtonText: "Yes, unfriend",
+                  icon: "warning",
+                });
+                if (ok) dispatch(unfriend(id));
+              }}
+            />
           )}
 
-          {activeTab === "media" && (
-            <div className="grid grid-cols-3 gap-4">
-              {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div
-                  key={i}
-                  className="aspect-square rounded-xl bg-gradient-to-br from-purple-400 to-pink-400"
-                />
-              ))}
-            </div>
-          )}
+          {activeTab === "media" && <MediaTab />}
 
           {activeTab === "about" && (
-            <div className="space-y-4">
-              <div>
-                <h3 className="mb-2 font-bold text-gray-900">Details</h3>
-                <p className="text-gray-700">
-                  Status: <span className="font-medium">{room.status}</span>
-                </p>
-                {creator && (
-                  <p className="text-gray-700">
-                    Created by:{" "}
-                    <Link
-                      to={`/profile/${creator.id}`}
-                      className="text-blue-600 hover:underline"
-                    >
-                      {creator.name}
-                    </Link>
-                  </p>
-                )}
-                {room.createdAt && (
-                  <p className="text-gray-700">
-                    Created: {new Date(room.createdAt).toLocaleString()}
-                  </p>
-                )}
-                {room.lastActivityAt && (
-                  <p className="text-gray-700">
-                    Last activity:{" "}
-                    {new Date(room.lastActivityAt).toLocaleString()}
-                  </p>
-                )}
-              </div>
-            </div>
+            <AboutTab
+              status={room.status}
+              creator={
+                creator ? { id: creator.id, name: creator.name } : undefined
+              }
+              createdAt={room.createdAt}
+              lastActivityAt={room.lastActivityAt}
+            />
           )}
         </div>
       </div>
