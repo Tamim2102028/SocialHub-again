@@ -92,8 +92,7 @@ const Rooms: React.FC<{
             ))}
         </div>
       )}
-      {/* Hidden rooms section (rooms with status 'hide') */}
-      {/** Use sampleRooms/displayRooms that include richer shape when available */}
+
       {hiddenRooms.filter((rr) => (rr as SampleRoom).status === "hide").length >
         0 && (
         <div className="space-y-3">
