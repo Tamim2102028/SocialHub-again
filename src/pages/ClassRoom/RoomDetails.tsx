@@ -5,6 +5,7 @@ import { BsPostcard } from "react-icons/bs";
 import sampleRooms, { type Room } from "../../data/rooms-data/roomsData";
 import { usersData } from "../../data/profile-data/userData";
 import { roomPosts } from "../../data/rooms-data/roomPostData";
+import CreatePostForm from "../../components/ClassRoom/CreatePostForm";
 import PostsTab from "../../components/ClassRoom/detailsPageTabs/PostsTab";
 import PinnedTab from "../../components/ClassRoom/detailsPageTabs/PinnedTab";
 import MembersTab from "../../components/ClassRoom/detailsPageTabs/MembersTab";
@@ -39,7 +40,7 @@ const RoomDetails: React.FC = () => {
     { id: "posts", label: "Posts", icon: BsPostcard },
     { id: "pinned", label: "Pinned", icon: FaThumbtack },
     { id: "members", label: "Members", icon: FaUsers },
-    { id: "media", label: "Media", icon: FaImage },
+  { id: "media", label: "Files", icon: FaImage },
     { id: "about", label: "About", icon: FaInfoCircle },
   ];
 
@@ -48,6 +49,7 @@ const RoomDetails: React.FC = () => {
 
   const [showReplyFor, setShowReplyFor] = useState<Record<string, boolean>>({});
   const [replyText, setReplyText] = useState<Record<string, string>>({});
+  const [showCreatePost, setShowCreatePost] = useState(false);
   const postsFromStore = useAppSelector((s) => s.roomPosts?.posts || roomPosts);
 
   const toggleReply = (postId: string) =>
@@ -90,8 +92,9 @@ const RoomDetails: React.FC = () => {
 
   return (
     <div className="space-y-3">
+      {/* Header section */}
       <div className="rounded-lg border border-gray-300 bg-white p-3 shadow-sm">
-        <div className="flex items-start gap-4">
+        <div className="grid grid-cols-[auto_1fr_auto] gap-3">
           <img
             src={
               room.coverImage || `https://picsum.photos/seed/${room.id}/600/300`
@@ -99,7 +102,7 @@ const RoomDetails: React.FC = () => {
             alt={room.name}
             className="h-36 w-64 rounded object-cover"
           />
-          <div className="flex-1">
+          <div>
             <h1 className="text-2xl font-bold text-gray-900">{room.name}</h1>
             {creator && (
               <div className="mt-1">
@@ -120,9 +123,33 @@ const RoomDetails: React.FC = () => {
               </span>
             </p>
           </div>
+          <div className="flex items-end justify-end">
+            <button
+              onClick={() => {
+                setActiveTab("posts");
+                setShowCreatePost(true);
+              }}
+              className="rounded bg-blue-600 px-3 py-1 text-sm font-medium text-white hover:bg-blue-700"
+            >
+              Create post
+            </button>
+          </div>
         </div>
       </div>
 
+      <div />
+      {/* post create form if clicked on create post button */}
+      {showCreatePost && (
+        <div className="mt-3">
+          <CreatePostForm
+            roomId={room.id}
+            currentUserId={currentUser?.id}
+            onClose={() => setShowCreatePost(false)}
+          />
+        </div>
+      )}
+
+      {/* Tabs container & content */}
       <div className="mx-auto max-w-5xl rounded-lg bg-white shadow">
         <div className="border-b border-gray-200 bg-white">
           <div className="flex justify-between px-3">
@@ -183,7 +210,7 @@ const RoomDetails: React.FC = () => {
             />
           )}
 
-          {activeTab === "media" && <MediaTab />}
+          {activeTab === "media" && <MediaTab roomId={room.id} />}
 
           {activeTab === "about" && (
             <AboutTab

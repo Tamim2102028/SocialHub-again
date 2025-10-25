@@ -13,7 +13,6 @@ import Swal from "sweetalert2";
 import { formatPostDate, formatPostClock } from "../../../utils/dateUtils";
 import { type RoomPost } from "../../../data/rooms-data/roomPostData";
 import { type UserData } from "../../../data/profile-data/userData";
-import EmptyState from "../EmptyState";
 
 interface Props {
   roomId: string;
@@ -135,12 +134,14 @@ const PostsTab: React.FC<Props> = ({
 
   if (roomPosts.length === 0)
     return (
-      <EmptyState
-        title="No posts yet"
-        message="This room doesn't have any posts yet. Be the first to start a conversation — share an announcement, question, or resource with your classmates."
-        actionLabel="Create post"
-        onAction={() => toggleReply(roomId)}
-      />
+      <div className="flex items-center justify-center rounded-lg border border-gray-200 bg-white p-8">
+        <div className="max-w-md text-center">
+          <h3 className="text-lg font-semibold text-gray-900">No posts yet</h3>
+          <p className="mt-2 text-sm text-gray-500">
+            This room doesn't have any posts yet.
+          </p>
+        </div>
+      </div>
     );
 
   return (
@@ -231,6 +232,24 @@ const PostsTab: React.FC<Props> = ({
                   <p className="mt-2 text-justify break-words whitespace-pre-wrap text-gray-700">
                     {p.content}
                   </p>
+                )}
+
+                {p.attachments && p.attachments.length > 0 && (
+                  <div className="mt-3 space-y-2">
+                    {p.attachments.map((a) => (
+                      <div key={a.id} className="flex items-center justify-between rounded border border-gray-100 bg-gray-50 p-2 text-sm">
+                        <div className="text-gray-800">{a.fileName}</div>
+                        <div className="flex items-center gap-3">
+                          {a.url ? (
+                            <a href={a.url} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">View</a>
+                          ) : null}
+                          {a.url ? (
+                            <a download={a.fileName} href={a.url} className="text-gray-600 hover:text-gray-800">Download</a>
+                          ) : null}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 )}
 
                 <div className="mt-3 flex items-center gap-3">

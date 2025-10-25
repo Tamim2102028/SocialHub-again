@@ -11,6 +11,13 @@ export interface RoomPost {
     content: string;
     createdAt: string;
   }>;
+  attachments?: Array<{
+    id: string;
+    fileName: string;
+    url?: string;
+    mimeType?: string;
+    sizeKb?: number;
+  }>;
 }
 
 export const roomPosts: RoomPost[] = [

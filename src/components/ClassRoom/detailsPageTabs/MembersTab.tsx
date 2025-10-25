@@ -1,6 +1,5 @@
 import React from "react";
 import FriendCard from "../../Friends/FriendCard";
-import EmptyState from "../EmptyState";
 import { type UserData } from "../../../data/profile-data/userData";
 
 interface Props {
@@ -70,14 +69,15 @@ const MembersTab: React.FC<Props> = ({
             );
           })
         ) : (
-          <EmptyState
-            title="No members yet"
-            message="This room doesn't have members yet. Invite classmates to join the room so you can collaborate and share resources together."
-            actionLabel="Invite members"
-            onAction={() => {
-              /* placeholder: can wire to invite flow */
-            }}
-          />
+          <div className="text-center">
+            <h3 className="text-lg font-semibold text-gray-900">
+              No members yet
+            </h3>
+            <p className="mt-1 text-sm text-gray-600">
+              This room doesn't have members yet. Invite classmates to join the
+              room so you can collaborate and share resources together.
+            </p>
+          </div>
         )}
       </div>
     </div>
