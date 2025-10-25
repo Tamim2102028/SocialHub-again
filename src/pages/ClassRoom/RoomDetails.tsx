@@ -102,18 +102,22 @@ const RoomDetails: React.FC = () => {
           <div className="flex-1">
             <h1 className="text-2xl font-bold text-gray-900">{room.name}</h1>
             {creator && (
-              <p className="mt-1 text-sm text-gray-600">
-                <Link
-                  to={`/profile/${creator.id}`}
-                  className="text-blue-600 hover:underline"
-                >
-                  {creator.name}
-                </Link>
-              </p>
+              <div className="mt-1">
+                <div className="font-semibold text-gray-900">
+                  <Link
+                    to={`/profile/${creator.id}`}
+                    className="cursor-pointer transition-colors hover:text-blue-600 hover:underline"
+                  >
+                    {creator.name}
+                  </Link>
+                </div>
+              </div>
             )}
             <p className="mt-2 flex items-center gap-2 text-sm text-gray-700">
               <FaUsers className="h-4 w-4 text-gray-500" />
-              <span className="font-medium">{room.members?.length ?? 0} members</span>
+              <span className="font-medium">
+                {room.members?.length ?? 0} members
+              </span>
             </p>
           </div>
         </div>
