@@ -1,28 +1,23 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { formatPostDate, formatPostClock } from "../../../utils/dateUtils";
 
 interface Props {
   status?: string;
   creator?: { id?: string; name?: string } | undefined;
   createdAt?: string | undefined;
-  lastActivityAt?: string | undefined;
 }
 
-const AboutTab: React.FC<Props> = ({
-  status,
-  creator,
-  createdAt,
-  lastActivityAt,
-}) => {
+const AboutTab: React.FC<Props> = ({ status, creator, createdAt }) => {
   return (
     <div className="space-y-4">
       <div>
         <h3 className="mb-2 font-bold text-gray-900">Details</h3>
-        <p className="text-gray-700">
-          Status: <span className="font-medium">{status}</span>
+        <p className="font-medium text-gray-500">
+          Status: <span className="">{status}</span>
         </p>
         {creator && (
-          <p className="text-gray-700">
+          <p className="font-medium text-gray-500">
             Created by:{" "}
             <Link
               to={`/profile/${creator.id}`}
@@ -33,13 +28,13 @@ const AboutTab: React.FC<Props> = ({
           </p>
         )}
         {createdAt && (
-          <p className="text-gray-700">
-            Created: {new Date(createdAt).toLocaleString()}
-          </p>
-        )}
-        {lastActivityAt && (
-          <p className="text-gray-700">
-            Last activity: {new Date(lastActivityAt).toLocaleString()}
+          <p className="mt-1 text-sm text-gray-500">
+            <span className="font-medium">Created:</span>
+            <span className="ml-2 inline-flex items-center gap-2">
+              <span>{formatPostDate(createdAt)}</span>
+              <span className="h-1 w-1 rounded-full bg-gray-400" aria-hidden />
+              <span>{formatPostClock(createdAt)}</span>
+            </span>
           </p>
         )}
       </div>

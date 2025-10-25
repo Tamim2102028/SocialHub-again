@@ -6,7 +6,7 @@ import sampleRooms, { type Room } from "../../data/rooms-data/roomsData";
 import { usersData } from "../../data/profile-data/userData";
 import { roomPosts } from "../../data/rooms-data/roomPostData";
 import PostsTab from "../../components/ClassRoom/detailsPageTabs/PostsTab";
-// PinnedTab replaced by rendering PostsTab with pinned posts
+import PinnedTab from "../../components/ClassRoom/detailsPageTabs/PinnedTab";
 import MembersTab from "../../components/ClassRoom/detailsPageTabs/MembersTab";
 import MediaTab from "../../components/ClassRoom/detailsPageTabs/MediaTab";
 import AboutTab from "../../components/ClassRoom/detailsPageTabs/AboutTab";
@@ -111,14 +111,10 @@ const RoomDetails: React.FC = () => {
                 </Link>
               </p>
             )}
-            <p className="mt-2 text-sm text-gray-700">
-              Status: <span className="font-medium">{room.status}</span>
+            <p className="mt-2 flex items-center gap-2 text-sm text-gray-700">
+              <FaUsers className="h-4 w-4 text-gray-500" />
+              <span className="font-medium">{room.members?.length ?? 0} members</span>
             </p>
-            {room.createdAt && (
-              <p className="mt-1 text-xs text-gray-500">
-                Created: {new Date(room.createdAt).toLocaleString()}
-              </p>
-            )}
           </div>
         </div>
       </div>
@@ -157,19 +153,7 @@ const RoomDetails: React.FC = () => {
           )}
 
           {activeTab === "pinned" && (
-            <div className="space-y-3">
-              <PostsTab
-                roomId={room.id}
-                posts={postsFromStore.filter((p) => p.pinned)}
-                users={usersData}
-                showReplyFor={showReplyFor}
-                replyText={replyText}
-                toggleReply={toggleReply}
-                setReplyText={setReplyText}
-                submitReply={submitReply}
-                currentUserId={currentUser?.id}
-              />
-            </div>
+            <PinnedTab roomId={room.id} users={usersData} />
           )}
 
           {activeTab === "members" && (
@@ -204,7 +188,6 @@ const RoomDetails: React.FC = () => {
                 creator ? { id: creator.id, name: creator.name } : undefined
               }
               createdAt={room.createdAt}
-              lastActivityAt={room.lastActivityAt}
             />
           )}
         </div>

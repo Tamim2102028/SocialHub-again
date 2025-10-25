@@ -1,5 +1,4 @@
 import React from "react";
-import EmptyState from "../EmptyState";
 import { useAppSelector } from "../../../store/hooks";
 import { selectPostsForRoom } from "../../../store/slices/classRoom/roomPostsSlice";
 import { type UserData } from "../../../data/profile-data/userData";
@@ -16,10 +15,16 @@ const PinnedTab: React.FC<Props> = ({ roomId, users }) => {
 
   if (pinned.length === 0)
     return (
-      <EmptyState
-        title="No pinned items"
-        message="You haven't pinned any posts yet. Pin important posts to keep them at the top for quick access."
-      />
+      <div className="flex items-center justify-center rounded-lg border border-gray-200 bg-white p-8">
+        <div className="max-w-md text-center">
+          <h3 className="text-lg font-semibold text-gray-900">
+            No pinned posts
+          </h3>
+          <p className="mt-2 text-sm text-gray-500">
+            There are currently no posts pinned in this room.
+          </p>
+        </div>
+      </div>
     );
 
   return (
