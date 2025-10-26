@@ -30,7 +30,8 @@ const roomPostsSlice = createSlice({
       const post = state.posts.find((p) => p.id === postId);
       if (post) {
         if (!post.replies) post.replies = [];
-        post.replies.push(reply);
+        // add new replies at the start so newest replies show first
+        post.replies.unshift(reply);
       }
     },
 
@@ -38,7 +39,10 @@ const roomPostsSlice = createSlice({
     addPost: (state, action: PayloadAction<RoomPost>) => {
       state.posts.unshift(action.payload);
     },
-    editPost: (state, action: PayloadAction<{ postId: string; content: string }>) => {
+    editPost: (
+      state,
+      action: PayloadAction<{ postId: string; content: string }>
+    ) => {
       const { postId, content } = action.payload;
       const post = state.posts.find((p) => p.id === postId);
       if (post) post.content = content;
@@ -48,7 +52,11 @@ const roomPostsSlice = createSlice({
     },
     editReply: (
       state,
-      action: PayloadAction<{ postId: string; replyId: string; content: string }>
+      action: PayloadAction<{
+        postId: string;
+        replyId: string;
+        content: string;
+      }>
     ) => {
       const { postId, replyId, content } = action.payload;
       const post = state.posts.find((p) => p.id === postId);
@@ -74,7 +82,15 @@ const roomPostsSlice = createSlice({
   },
 });
 
-export const { addReply, addPost, editPost, deletePost, editReply, deleteReply, togglePinPost } = roomPostsSlice.actions;
+export const {
+  addReply,
+  addPost,
+  editPost,
+  deletePost,
+  editReply,
+  deleteReply,
+  togglePinPost,
+} = roomPostsSlice.actions;
 export default roomPostsSlice.reducer;
 
 // selectors
