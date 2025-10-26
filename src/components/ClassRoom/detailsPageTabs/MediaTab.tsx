@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { roomFiles } from "../../../data/rooms-data/roomFilesData";
+import type { RoomFile } from "../../../data/rooms-data/roomFilesData";
 import { usersData } from "../../../data/profile-data/userData";
 import { formatPostDate } from "../../../utils/dateUtils";
 import { FaEye, FaDownload } from "react-icons/fa";
@@ -94,6 +95,30 @@ const MediaTab: React.FC<Props> = ({ roomId }) => {
       },
     });
   };
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleUploadChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    const newFile: RoomFile = {
+      id: `f-${roomId}-${Date.now()}`,
+      roomId,
+      fileName: file.name,
+      url,
+      uploadedBy: usersData[0]?.id ?? "1",
+      createdAt: new Date().toISOString(),
+      sizeKb: Math.round(file.size / 1024),
+      mimeType: file.type,
+      isGeneral: active === "general",
+      isCT: active === "ct",
+      isAssignment: active === "assignments",
+    };
+    setLocalFiles((s) => [newFile, ...s]);
+    // reset input so same file can be picked again
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
   return (
     <div>
       <div className="flex items-center gap-3 border-b border-gray-200 pb-2">
@@ -127,6 +152,21 @@ const MediaTab: React.FC<Props> = ({ roomId }) => {
         >
           Assignments ({counts.assignments})
         </button>
+        <div className="ml-auto">
+          <input
+            ref={fileInputRef}
+            type="file"
+            className="hidden"
+            onChange={handleUploadChange}
+            aria-hidden
+          />
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="rounded-md border border-blue-100 bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700 hover:bg-blue-100"
+          >
+            Upload
+          </button>
+        </div>
       </div>
 
       <div className="mt-4 space-y-3">
