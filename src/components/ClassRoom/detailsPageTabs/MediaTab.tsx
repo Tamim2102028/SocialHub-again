@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { roomFiles } from "../../../data/rooms-data/roomFilesData";
 import { usersData } from "../../../data/profile-data/userData";
 import { formatPostDate } from "../../../utils/dateUtils";
+import { FaEye, FaDownload } from "react-icons/fa";
+import { BsThreeDots } from "react-icons/bs";
+import Swal from "sweetalert2";
 
 interface Props {
   roomId: string;
@@ -12,9 +15,12 @@ const MediaTab: React.FC<Props> = ({ roomId }) => {
     "general"
   );
 
-  const filesForRoom = roomFiles.filter((f) => f.roomId === roomId);
+  // keep a local copy so we can rename/delete locally in the demo
+  const [localFiles, setLocalFiles] = useState(() =>
+    roomFiles.filter((f) => f.roomId === roomId)
+  );
 
-  const filtered = filesForRoom.filter((f) =>
+  const filtered = localFiles.filter((f) =>
     active === "general"
       ? !!f.isGeneral
       : active === "ct"
@@ -23,11 +29,71 @@ const MediaTab: React.FC<Props> = ({ roomId }) => {
   );
 
   const counts = {
-    general: filesForRoom.filter((f) => f.isGeneral).length,
-    ct: filesForRoom.filter((f) => f.isCT).length,
-    assignments: filesForRoom.filter((f) => f.isAssignment).length,
+    general: localFiles.filter((f) => f.isGeneral).length,
+    ct: localFiles.filter((f) => f.isCT).length,
+    assignments: localFiles.filter((f) => f.isAssignment).length,
   };
 
+  const handleFileMenu = async (file: (typeof roomFiles)[number]) => {
+    await Swal.fire({
+      title: "File options",
+      html: `
+        <div class="flex flex-col items-center gap-2 min-w-[160px]">
+          <button id="swal-rename" class="w-50 px-3 py-2 rounded border border-gray-200 bg-white text-gray-700 hover:bg-gray-50">Rename</button>
+          <button id="swal-del" class="w-50 px-3 py-2 rounded border border-red-100 bg-white text-red-600 hover:bg-red-50">Delete</button>
+        </div>
+      `,
+      showConfirmButton: false,
+      showCloseButton: true,
+      didOpen: () => {
+        const popup = Swal.getPopup();
+        if (!popup) return;
+        const renameBtn = popup.querySelector(
+          "#swal-rename"
+        ) as HTMLButtonElement | null;
+        const delBtn = popup.querySelector(
+          "#swal-del"
+        ) as HTMLButtonElement | null;
+
+        const onRename = async () => {
+          Swal.close();
+          const { value } = await Swal.fire({
+            title: "Rename file",
+            input: "text",
+            inputValue: file.fileName,
+            showCancelButton: true,
+            confirmButtonText: "Save",
+          });
+          if (value) {
+            setLocalFiles((s) =>
+              s.map((x) => (x.id === file.id ? { ...x, fileName: value } : x))
+            );
+          }
+        };
+
+        const onDel = () => {
+          setLocalFiles((s) => s.filter((x) => x.id !== file.id));
+          Swal.close();
+        };
+
+        renameBtn?.addEventListener("click", onRename);
+        delBtn?.addEventListener("click", onDel);
+
+        const removeListeners = () => {
+          renameBtn?.removeEventListener("click", onRename);
+          delBtn?.removeEventListener("click", onDel);
+        };
+
+        const observer = new MutationObserver(() => {
+          if (!document.contains(popup)) {
+            removeListeners();
+            observer.disconnect();
+          }
+        });
+        observer.observe(document, { childList: true, subtree: true });
+      },
+    });
+  };
   return (
     <div>
       <div className="flex items-center gap-3 border-b border-gray-200 pb-2">
@@ -74,37 +140,64 @@ const MediaTab: React.FC<Props> = ({ roomId }) => {
         ) : (
           filtered.map((f) => {
             const user = usersData.find((u) => u.id === f.uploadedBy);
+            const extMatch = f.fileName.match(/\.([0-9a-zA-Z]+)$/);
+            const ext = extMatch ? extMatch[1].toUpperCase() : "FILE";
             return (
               <div
                 key={f.id}
                 className="flex items-center justify-between rounded-lg border border-gray-200 bg-white p-3"
               >
-                <div>
-                  <div className="font-semibold text-gray-900">
-                    {f.fileName}
+                <div className="flex min-w-0 items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded bg-blue-50 font-semibold text-blue-700">
+                    {ext}
                   </div>
-                  <div className="text-xs text-gray-500">
-                    <span>{user?.name ?? "Unknown"}</span>
-                    <span className="mx-2">•</span>
-                    <span>{formatPostDate(f.createdAt)}</span>
+                  <div className="min-w-0">
+                    <div
+                      className="truncate font-medium text-gray-900"
+                      style={{ maxWidth: 420 }}
+                    >
+                      {f.fileName}
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      <span>{user?.name ?? "Unknown"}</span>
+                      <span className="mx-2">•</span>
+                      <span>{formatPostDate(f.createdAt)}</span>
+                      {f.sizeKb ? <span className="mx-2">•</span> : null}
+                      {f.sizeKb ? <span>{f.sizeKb} KB</span> : null}
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <a
-                    href={f.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-sm text-blue-600 hover:underline"
+                <div className="flex items-center gap-2">
+                  {f.url && (
+                    <a
+                      href={f.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-2 rounded-md border border-blue-100 bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700 transition hover:bg-blue-100"
+                    >
+                      <FaEye className="h-3 w-3" />
+                      View
+                    </a>
+                  )}
+
+                  {f.url && (
+                    <a
+                      download={f.fileName}
+                      href={f.url}
+                      className="inline-flex items-center gap-2 rounded-md border border-gray-100 bg-gray-50 px-3 py-1 text-sm font-medium text-gray-700 transition hover:bg-gray-100"
+                    >
+                      <FaDownload className="h-3 w-3" />
+                      Download
+                    </a>
+                  )}
+
+                  <button
+                    onClick={() => handleFileMenu(f)}
+                    className="p-1 text-gray-500 hover:text-gray-800"
+                    aria-label="File menu"
                   >
-                    View
-                  </a>
-                  <a
-                    download={f.fileName}
-                    href={f.url}
-                    className="text-sm text-gray-600 hover:text-gray-800"
-                  >
-                    Download
-                  </a>
+                    <BsThreeDots className="h-5 w-5" />
+                  </button>
                 </div>
               </div>
             );
