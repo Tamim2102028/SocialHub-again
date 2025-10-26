@@ -169,36 +169,76 @@ const PinnedTab: React.FC<Props> = ({ roomId, users }) => {
                 </p>
 
                 {p.attachments && p.attachments.length > 0 && (
-                  <div className="mt-3 space-y-2">
-                    {p.attachments.map((a) => (
-                      <div
-                        key={a.id}
-                        className="flex items-center justify-between rounded border border-gray-100 bg-gray-50 p-2 text-sm"
-                      >
-                        <div className="text-gray-800">{a.fileName}</div>
-                        <div className="flex items-center gap-3">
-                          {a.url ? (
-                            <a
-                              href={a.url}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="text-blue-600 hover:underline"
+                  <div className="mt-3">
+                    {(() => {
+                      const images = p.attachments.filter((a) =>
+                        (a.mimeType || "").startsWith("image/")
+                      );
+                      const others = p.attachments.filter(
+                        (a) => !(a.mimeType || "").startsWith("image/")
+                      );
+                      return (
+                        <div className="space-y-2">
+                          {images.length > 0 && (
+                            <div
+                              className={`grid gap-2 ${images.length === 1 ? "grid-cols-1" : images.length === 2 ? "grid-cols-2" : "grid-cols-3"}`}
                             >
-                              View
-                            </a>
-                          ) : null}
-                          {a.url ? (
-                            <a
-                              download={a.fileName}
-                              href={a.url}
-                              className="text-gray-600 hover:text-gray-800"
-                            >
-                              Download
-                            </a>
-                          ) : null}
+                              {images.map((a) => (
+                                <a
+                                  key={a.id}
+                                  href={a.url}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="overflow-hidden rounded bg-gray-100"
+                                >
+                                  <img
+                                    src={a.url}
+                                    alt={a.fileName}
+                                    className="h-36 w-full object-cover"
+                                  />
+                                </a>
+                              ))}
+                            </div>
+                          )}
+
+                          {others.length > 0 && (
+                            <div className="space-y-2">
+                              {others.map((a) => (
+                                <div
+                                  key={a.id}
+                                  className="flex items-center justify-between rounded border border-gray-100 bg-gray-50 p-2 text-sm"
+                                >
+                                  <div className="truncate text-gray-800">
+                                    {a.fileName}
+                                  </div>
+                                  <div className="flex items-center gap-3">
+                                    {a.url ? (
+                                      <a
+                                        href={a.url}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="text-blue-600 hover:underline"
+                                      >
+                                        View
+                                      </a>
+                                    ) : null}
+                                    {a.url ? (
+                                      <a
+                                        download={a.fileName}
+                                        href={a.url}
+                                        className="text-gray-600 hover:text-gray-800"
+                                      >
+                                        Download
+                                      </a>
+                                    ) : null}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })()}
                   </div>
                 )}
 
