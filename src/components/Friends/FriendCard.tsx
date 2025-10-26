@@ -15,6 +15,8 @@ interface FriendCardProps {
   onCancelRequest?: (id: string) => void;
   // called when removing an existing friend
   onUnfriend?: (id: string) => void;
+  // optional custom element to render on the right (e.g., a menu button)
+  menuElement?: React.ReactNode;
 }
 
 const FriendCard: React.FC<FriendCardProps> = ({
@@ -28,6 +30,7 @@ const FriendCard: React.FC<FriendCardProps> = ({
   onAddFriend,
   onCancelRequest,
   onUnfriend,
+  menuElement,
 }) => {
   const renderActions = () => {
     if (type === "friend") {
@@ -117,7 +120,10 @@ const FriendCard: React.FC<FriendCardProps> = ({
         </h3>
         {university && <p className="text-sm text-gray-500">{university}</p>}
       </div>
-      {renderActions()}
+      <div className="flex items-center gap-2">
+        {renderActions()}
+        {menuElement && <div>{menuElement}</div>}
+      </div>
     </div>
   );
 };

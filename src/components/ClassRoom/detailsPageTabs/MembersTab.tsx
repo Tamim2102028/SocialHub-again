@@ -1,6 +1,8 @@
 import React from "react";
 import FriendCard from "../../Friends/FriendCard";
 import { type UserData } from "../../../data/profile-data/userData";
+import { BsThreeDots } from "react-icons/bs";
+import Swal from "sweetalert2";
 
 interface Props {
   members: string[] | undefined;
@@ -12,6 +14,8 @@ interface Props {
   onCancelRequest: (id: string) => void;
   onUnfriend: (id: string) => void;
   currentUser?: UserData | null;
+  onRemoveMember?: (id: string) => void;
+  onMakeAdmin?: (id: string) => void;
 }
 
 const MembersTab: React.FC<Props> = ({
@@ -23,7 +27,58 @@ const MembersTab: React.FC<Props> = ({
   onCancelRequest,
   onUnfriend,
   currentUser,
+  onRemoveMember,
+  onMakeAdmin,
 }) => {
+  const handleMemberMenu = async (userId: string, userName?: string) => {
+    await Swal.fire({
+      title: `${userName ?? "Member"} options`,
+      html: `
+        <div class="flex flex-col items-center gap-2 min-w-[180px]">
+          <button id="swal-remove" class="w-50 px-3 py-2 rounded border border-red-100 bg-white text-red-600 hover:bg-red-50">Remove from room</button>
+          <button id="swal-admin" class="w-50 px-3 py-2 rounded border border-gray-200 bg-white text-gray-700 hover:bg-gray-50">Make admin</button>
+        </div>
+      `,
+      showConfirmButton: false,
+      showCloseButton: true,
+      didOpen: () => {
+        const popup = Swal.getPopup();
+        if (!popup) return;
+        const removeBtn = popup.querySelector(
+          "#swal-remove"
+        ) as HTMLButtonElement | null;
+        const adminBtn = popup.querySelector(
+          "#swal-admin"
+        ) as HTMLButtonElement | null;
+
+        const onRemove = () => {
+          if (onRemoveMember) onRemoveMember(userId);
+          Swal.close();
+        };
+
+        const onMakeAdmin = () => {
+          if (onMakeAdmin) onMakeAdmin(userId);
+          Swal.close();
+        };
+
+        removeBtn?.addEventListener("click", onRemove);
+        adminBtn?.addEventListener("click", onMakeAdmin);
+
+        const removeListeners = () => {
+          removeBtn?.removeEventListener("click", onRemove);
+          adminBtn?.removeEventListener("click", onMakeAdmin);
+        };
+
+        const observer = new MutationObserver(() => {
+          if (!document.contains(popup)) {
+            removeListeners();
+            observer.disconnect();
+          }
+        });
+        observer.observe(document, { childList: true, subtree: true });
+      },
+    });
+  };
   return (
     <div>
       <h2 className="text-lg font-semibold text-gray-900">
@@ -67,6 +122,15 @@ const MembersTab: React.FC<Props> = ({
                   onAddFriend={onAddFriend}
                   onCancelRequest={onCancelRequest}
                   onUnfriend={onUnfriend}
+                  menuElement={
+                    <button
+                      onClick={() => handleMemberMenu(user.id, user.name)}
+                      className="p-1 text-gray-500 hover:text-gray-800"
+                      aria-label="Member menu"
+                    >
+                      <BsThreeDots className="h-5 w-5" />
+                    </button>
+                  }
                 />
               );
             })
