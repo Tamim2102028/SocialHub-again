@@ -22,6 +22,7 @@ import {
   unfriend,
 } from "../../store/slices/profileSlice";
 import confirm from "../../utils/confirm";
+import { updateRoom } from "../../store/slices/classRoom/classRoomSlice";
 
 const RoomDetails: React.FC = () => {
   const { roomId } = useParams<{ roomId: string }>();
@@ -268,6 +269,16 @@ const RoomDetails: React.FC = () => {
                 creator ? { id: creator.id, name: creator.name } : undefined
               }
               createdAt={room.createdAt}
+              currentUserId={currentUser?.id}
+              roomId={room.id}
+              onDeleteRoom={() => {
+                // mark room as deleted in local state & store then navigate back
+                if (roomState) setRoomState({ ...roomState, status: "delete" });
+                dispatch(
+                  updateRoom({ ...(roomState || room), status: "delete" })
+                );
+                window.location.href = "/classroom";
+              }}
             />
           )}
         </div>

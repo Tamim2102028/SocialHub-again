@@ -1,7 +1,7 @@
 export interface Room {
   id: string;
   name: string;
-  status: "open" | "hide";
+  status: "open" | "hide" | "delete";
   members: string[]; // list of member names or ids
   coverImage?: string; // optional url/path to an image
   createdBy?: string; // user id or name of creator
@@ -85,7 +85,7 @@ export const sampleRooms: Room[] = [
   {
     id: "r8",
     name: "Alumni Network",
-    status: "hide",
+    status: "delete",
     members: ["2", "1"],
     coverImage: "https://picsum.photos/seed/r8/800/450",
     createdBy: "2",

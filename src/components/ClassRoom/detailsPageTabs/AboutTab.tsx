@@ -1,14 +1,40 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { formatPostDate, formatPostClock } from "../../../utils/dateUtils";
+import confirm from "../../../utils/confirm";
 
 interface Props {
   status?: string;
   creator?: { id?: string; name?: string } | undefined;
   createdAt?: string | undefined;
+  currentUserId?: string | undefined;
+  roomId?: string | undefined;
+  onDeleteRoom?: (id: string) => void;
 }
 
-const AboutTab: React.FC<Props> = ({ status, creator, createdAt }) => {
+const AboutTab: React.FC<Props> = ({
+  status,
+  creator,
+  createdAt,
+  currentUserId,
+  roomId,
+  onDeleteRoom,
+}) => {
+  const handleDelete = async () => {
+    if (!roomId || !onDeleteRoom) return;
+    const ok = await confirm({
+      title: "Delete room?",
+      text: "This will mark the room as deleted and remove it from lists.",
+      confirmButtonText: "Delete",
+      icon: "warning",
+    });
+    if (!ok) return;
+    onDeleteRoom(roomId);
+  };
+
+  const isCreator =
+    !!creator?.id && !!currentUserId && creator.id === currentUserId;
+
   return (
     <div className="space-y-4">
       <div>
@@ -36,6 +62,17 @@ const AboutTab: React.FC<Props> = ({ status, creator, createdAt }) => {
               <span>{formatPostClock(createdAt)}</span>
             </span>
           </p>
+        )}
+
+        {isCreator && onDeleteRoom && (
+          <div className="mt-4">
+            <button
+              onClick={handleDelete}
+              className="rounded bg-red-600 px-3 py-1 text-sm font-medium text-white hover:bg-red-700"
+            >
+              Delete room
+            </button>
+          </div>
         )}
       </div>
     </div>

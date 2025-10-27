@@ -47,6 +47,8 @@ export default classRoomSlice.reducer;
 export const selectAllRooms = (state: { classRoom: ClassRoomState }) =>
   state.classRoom.rooms;
 export const selectOpenRooms = (state: { classRoom: ClassRoomState }) =>
-  state.classRoom.rooms.filter((r) => r.status !== "hide");
+  state.classRoom.rooms.filter((r) => r.status === "open");
 export const selectHiddenRooms = (state: { classRoom: ClassRoomState }) =>
   state.classRoom.rooms.filter((r) => r.status === "hide");
+export const selectDeletedRooms = (state: { classRoom: ClassRoomState }) =>
+  state.classRoom.rooms.filter((r) => r.status === "delete");
