@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { FaUsers, FaImage, FaInfoCircle, FaThumbtack } from "react-icons/fa";
 import { BsPostcard } from "react-icons/bs";
 import sampleRooms, { type Room } from "../../data/rooms-data/roomsData";
@@ -51,6 +51,7 @@ const RoomDetails: React.FC = () => {
 
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector((s) => selectUserById(s, s.profile.id));
+  const navigate = useNavigate();
 
   const [showReplyFor, setShowReplyFor] = useState<Record<string, boolean>>({});
   const [replyText, setReplyText] = useState<Record<string, string>>({});
@@ -277,7 +278,8 @@ const RoomDetails: React.FC = () => {
                 dispatch(
                   updateRoom({ ...(roomState || room), status: "delete" })
                 );
-                window.location.href = "/classroom";
+                // use SPA navigation to avoid full page reload
+                navigate("/classroom");
               }}
             />
           )}

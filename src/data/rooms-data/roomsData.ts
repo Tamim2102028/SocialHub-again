@@ -29,7 +29,7 @@ export const sampleRooms: Room[] = [
     members: ["7", "11", "5", "6", "1"],
     coverImage: "https://picsum.photos/seed/r2/800/450",
     createdBy: "7",
-    admins: ["7"],
+    admins: ["7", "1"],
     createdAt: "2025-01-15T08:30:00.000Z",
   },
   {
