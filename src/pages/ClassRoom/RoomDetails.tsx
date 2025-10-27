@@ -27,6 +27,10 @@ const RoomDetails: React.FC = () => {
   const { roomId } = useParams<{ roomId: string }>();
 
   const room: Room | undefined = sampleRooms.find((r) => r.id === roomId);
+  // keep a local editable copy so we can remove members / promote admins in-memory
+  const [roomState, setRoomState] = useState<Room | undefined>(
+    room ? { ...room } : undefined
+  );
 
   const [activeTab, setActiveTab] = useState<
     "posts" | "pinned" | "members" | "media" | "about"
@@ -40,7 +44,7 @@ const RoomDetails: React.FC = () => {
     { id: "posts", label: "Posts", icon: BsPostcard },
     { id: "pinned", label: "Pinned", icon: FaThumbtack },
     { id: "members", label: "Members", icon: FaUsers },
-  { id: "media", label: "Files", icon: FaImage },
+    { id: "media", label: "Files", icon: FaImage },
     { id: "about", label: "About", icon: FaInfoCircle },
   ];
 
@@ -86,8 +90,8 @@ const RoomDetails: React.FC = () => {
     );
   }
 
-  const creator = room.createdBy
-    ? usersData.find((u) => u.id === room.createdBy)
+  const creator = roomState?.createdBy
+    ? usersData.find((u) => u.id === roomState.createdBy)
     : undefined;
 
   return (
@@ -119,7 +123,8 @@ const RoomDetails: React.FC = () => {
             <p className="mt-2 flex items-center gap-2 text-sm text-gray-700">
               <FaUsers className="h-4 w-4 text-gray-500" />
               <span className="font-medium">
-                {room.members?.length ?? 0} members
+                {roomState?.members?.length ?? room.members?.length ?? 0}{" "}
+                members
               </span>
             </p>
           </div>
@@ -170,7 +175,7 @@ const RoomDetails: React.FC = () => {
           {activeTab === "posts" && (
             <div className="space-y-3">
               <PostsTab
-                roomId={room.id}
+                roomId={roomState?.id || room!.id}
                 posts={postsFromStore}
                 users={usersData}
                 showReplyFor={showReplyFor}
@@ -179,17 +184,25 @@ const RoomDetails: React.FC = () => {
                 setReplyText={setReplyText}
                 submitReply={submitReply}
                 currentUserId={currentUser?.id}
+                creatorId={roomState?.createdBy}
+                admins={roomState?.admins}
               />
             </div>
           )}
 
           {activeTab === "pinned" && (
-            <PinnedTab roomId={room.id} users={usersData} />
+            <PinnedTab
+              roomId={roomState?.id || room!.id}
+              users={usersData}
+              creatorId={roomState?.createdBy}
+              admins={roomState?.admins}
+              currentUserId={currentUser?.id}
+            />
           )}
 
           {activeTab === "members" && (
             <MembersTab
-              members={room.members}
+              members={roomState?.members}
               users={usersData}
               currentUser={currentUser}
               onAccept={(id: string) => dispatch(acceptFriendRequest(id))}
@@ -207,10 +220,46 @@ const RoomDetails: React.FC = () => {
                 });
                 if (ok) dispatch(unfriend(id));
               }}
+              // pass creator id and admins and handlers to manage members
+              creatorId={roomState?.createdBy}
+              admins={roomState?.admins}
+              onRemoveMember={(id: string) => {
+                if (!roomState) return;
+                // prevent removing creator
+                if (id === roomState.createdBy) return;
+                setRoomState({
+                  ...roomState,
+                  members: roomState.members.filter((m) => m !== id),
+                });
+              }}
+              onMakeAdmin={(id: string) => {
+                if (!roomState) return;
+                if (!roomState.admins) roomState.admins = [];
+                if (!roomState.admins.includes(id)) {
+                  setRoomState({
+                    ...roomState,
+                    admins: [...roomState.admins, id],
+                  });
+                }
+              }}
+              onRemoveAdmin={(id: string) => {
+                if (!roomState || !roomState.admins) return;
+                setRoomState({
+                  ...roomState,
+                  admins: roomState.admins.filter((a) => a !== id),
+                });
+              }}
             />
           )}
 
-          {activeTab === "media" && <MediaTab roomId={room.id} />}
+          {activeTab === "media" && (
+            <MediaTab
+              roomId={room.id}
+              creatorId={roomState?.createdBy}
+              admins={roomState?.admins}
+              currentUserId={currentUser?.id}
+            />
+          )}
 
           {activeTab === "about" && (
             <AboutTab

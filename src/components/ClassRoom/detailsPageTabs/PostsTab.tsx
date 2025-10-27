@@ -26,6 +26,8 @@ interface Props {
   ) => void;
   submitReply: (postId: string) => void;
   currentUserId?: string;
+  creatorId?: string;
+  admins?: string[];
 }
 
 const PostsTab: React.FC<Props> = ({
@@ -38,6 +40,8 @@ const PostsTab: React.FC<Props> = ({
   setReplyText,
   submitReply,
   currentUserId,
+  creatorId,
+  admins,
 }) => {
   const [postEditingId, setPostEditingId] = useState<string | null>(null);
   const [replyEditing, setReplyEditing] = useState<{
@@ -62,14 +66,35 @@ const PostsTab: React.FC<Props> = ({
 
   const handlePostMenu = async (post: RoomPost) => {
     const pinLabel = post.pinned ? "Unpin" : "Pin";
+    const isManager =
+      !!currentUserId &&
+      (currentUserId === creatorId || !!admins?.includes(currentUserId));
+    const isAuthor = !!currentUserId && currentUserId === post.authorId;
+    const canEdit = isAuthor;
+    const canPin = isManager;
+    const canDelete = isAuthor || isManager;
+
+    const editHtml = canEdit
+      ? `<button id="swal-edit" class="w-50 px-3 py-2 rounded border border-gray-200 bg-white text-gray-700 hover:bg-gray-50">Edit</button>`
+      : "";
+    const pinHtml = canPin
+      ? `<button id="swal-pin" class="w-50 px-3 py-2 rounded border border-gray-200 bg-white text-gray-700 hover:bg-gray-50">${pinLabel}</button>`
+      : "";
+    const delHtml = canDelete
+      ? `<button id="swal-del" class="w-50 px-3 py-2 rounded border border-red-100 bg-white text-red-600 hover:bg-red-50">Delete</button>`
+      : "";
+
+    // if no actions are available, show a simple message
+    const actionsHtml =
+      editHtml || pinHtml || delHtml
+        ? `${editHtml}${pinHtml}${delHtml}`
+        : `<div class="text-sm text-gray-600">No actions available</div>`;
 
     await Swal.fire({
       title: "Post options",
       html: `
         <div class="flex flex-col items-center gap-2 min-w-[160px]">
-          <button id="swal-edit" class="w-50 px-3 py-2 rounded border border-gray-200 bg-white text-gray-700 hover:bg-gray-50">Edit</button>
-          <button id="swal-pin" class="w-50 px-3 py-2 rounded border border-gray-200 bg-white text-gray-700 hover:bg-gray-50">${pinLabel}</button>
-          <button id="swal-del" class="w-50 px-3 py-2 rounded border border-red-100 bg-white text-red-600 hover:bg-red-50">Delete</button>
+          ${actionsHtml}
         </div>
       `,
       showConfirmButton: false,
@@ -103,15 +128,15 @@ const PostsTab: React.FC<Props> = ({
           Swal.close();
         };
 
-        editBtn?.addEventListener("click", onEdit);
-        pinBtn?.addEventListener("click", onPin);
-        delBtn?.addEventListener("click", onDel);
+        if (editBtn) editBtn.addEventListener("click", onEdit);
+        if (pinBtn) pinBtn.addEventListener("click", onPin);
+        if (delBtn) delBtn.addEventListener("click", onDel);
 
         // cleanup listeners when swal closes
         const removeListeners = () => {
-          editBtn?.removeEventListener("click", onEdit);
-          pinBtn?.removeEventListener("click", onPin);
-          delBtn?.removeEventListener("click", onDel);
+          if (editBtn) editBtn.removeEventListener("click", onEdit);
+          if (pinBtn) pinBtn.removeEventListener("click", onPin);
+          if (delBtn) delBtn.removeEventListener("click", onDel);
         };
 
         const observer = new MutationObserver(() => {
@@ -148,6 +173,9 @@ const PostsTab: React.FC<Props> = ({
     <div className="space-y-4">
       {roomPosts.map((p) => {
         const author = users.find((u) => u.id === p.authorId);
+        const isManager =
+          !!currentUserId &&
+          (currentUserId === creatorId || !!admins?.includes(currentUserId));
         return (
           <div
             key={p.id}
@@ -442,34 +470,50 @@ const PostsTab: React.FC<Props> = ({
                                       {r.content}
                                     </p>
                                     <div className="mt-2 flex gap-3">
-                                      <button
-                                        onClick={() => {
-                                          setReplyEditing({
-                                            postId: p.id,
-                                            replyId: r.id,
-                                          });
-                                          setReplyEditText((s) => ({
-                                            ...s,
-                                            [r.id]: r.content,
-                                          }));
-                                        }}
-                                        className="cursor-pointer text-sm font-medium text-blue-600 hover:underline"
-                                      >
-                                        Edit
-                                      </button>
-                                      <button
-                                        onClick={() => {
-                                          dispatch(
-                                            deleteReply({
-                                              postId: p.id,
-                                              replyId: r.id,
-                                            })
-                                          );
-                                        }}
-                                        className="cursor-pointer text-sm font-medium text-red-600 hover:underline"
-                                      >
-                                        Delete
-                                      </button>
+                                      {(() => {
+                                        const isReplyAuthor =
+                                          !!currentUserId &&
+                                          currentUserId === r.authorId;
+                                        const canManageReply =
+                                          isReplyAuthor || isManager;
+                                        return (
+                                          <>
+                                            {canManageReply ? (
+                                              <button
+                                                onClick={() => {
+                                                  setReplyEditing({
+                                                    postId: p.id,
+                                                    replyId: r.id,
+                                                  });
+                                                  setReplyEditText((s) => ({
+                                                    ...s,
+                                                    [r.id]: r.content,
+                                                  }));
+                                                }}
+                                                className="cursor-pointer text-sm font-medium text-blue-600 hover:underline"
+                                              >
+                                                Edit
+                                              </button>
+                                            ) : null}
+
+                                            {canManageReply ? (
+                                              <button
+                                                onClick={() => {
+                                                  dispatch(
+                                                    deleteReply({
+                                                      postId: p.id,
+                                                      replyId: r.id,
+                                                    })
+                                                  );
+                                                }}
+                                                className="cursor-pointer text-sm font-medium text-red-600 hover:underline"
+                                              >
+                                                Delete
+                                              </button>
+                                            ) : null}
+                                          </>
+                                        );
+                                      })()}
                                     </div>
                                   </div>
                                 )}

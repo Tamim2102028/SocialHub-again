@@ -14,8 +14,13 @@ interface Props {
   onCancelRequest: (id: string) => void;
   onUnfriend: (id: string) => void;
   currentUser?: UserData | null;
+  // admin and member management callbacks (optional)
   onRemoveMember?: (id: string) => void;
   onMakeAdmin?: (id: string) => void;
+  onRemoveAdmin?: (id: string) => void;
+  // room metadata
+  creatorId?: string | undefined;
+  admins?: string[] | undefined;
 }
 
 const MembersTab: React.FC<Props> = ({
@@ -29,14 +34,29 @@ const MembersTab: React.FC<Props> = ({
   currentUser,
   onRemoveMember,
   onMakeAdmin,
+  onRemoveAdmin,
+  creatorId,
+  admins,
 }) => {
-  const handleMemberMenu = async (userId: string, userName?: string) => {
+  const handleMemberMenu = async (
+    userId: string,
+    userName?: string,
+    isAdmin?: boolean
+  ) => {
+    const adminLabel = isAdmin ? "Remove admin" : "Make admin";
+    const showAdminBtn =
+      !!currentUser && !!creatorId && currentUser.id === creatorId;
+
+    const adminHtml = showAdminBtn
+      ? `<button id="swal-admin" class="w-50 px-3 py-2 rounded border border-gray-200 bg-white text-gray-700 hover:bg-gray-50">${adminLabel}</button>`
+      : "";
+
     await Swal.fire({
       title: `${userName ?? "Member"} options`,
       html: `
-        <div class="flex flex-col items-center gap-2 min-w-[180px]">
+        <div class="flex flex-col items-center gap-2 min-w-[200px]">
           <button id="swal-remove" class="w-50 px-3 py-2 rounded border border-red-100 bg-white text-red-600 hover:bg-red-50">Remove from room</button>
-          <button id="swal-admin" class="w-50 px-3 py-2 rounded border border-gray-200 bg-white text-gray-700 hover:bg-gray-50">Make admin</button>
+          ${adminHtml}
         </div>
       `,
       showConfirmButton: false,
@@ -51,22 +71,35 @@ const MembersTab: React.FC<Props> = ({
           "#swal-admin"
         ) as HTMLButtonElement | null;
 
-        const onRemove = () => {
+        const onRemoveClick = () => {
           if (onRemoveMember) onRemoveMember(userId);
           Swal.close();
         };
 
-        const onMakeAdmin = () => {
-          if (onMakeAdmin) onMakeAdmin(userId);
+        const onMakeAdminClick = () => {
+          // only creator can make/remove admins
+          if (!currentUser || currentUser.id !== creatorId) {
+            Swal.fire({
+              title: "Not allowed",
+              text: "Only the room creator can change admin status.",
+              icon: "error",
+            });
+            return;
+          }
+          if (isAdmin) {
+            if (onRemoveAdmin) onRemoveAdmin(userId);
+          } else {
+            if (onMakeAdmin) onMakeAdmin(userId);
+          }
           Swal.close();
         };
 
-        removeBtn?.addEventListener("click", onRemove);
-        adminBtn?.addEventListener("click", onMakeAdmin);
+        removeBtn?.addEventListener("click", onRemoveClick);
+        if (adminBtn) adminBtn.addEventListener("click", onMakeAdminClick);
 
         const removeListeners = () => {
-          removeBtn?.removeEventListener("click", onRemove);
-          adminBtn?.removeEventListener("click", onMakeAdmin);
+          removeBtn?.removeEventListener("click", onRemoveClick);
+          if (adminBtn) adminBtn.removeEventListener("click", onMakeAdminClick);
         };
 
         const observer = new MutationObserver(() => {
@@ -79,6 +112,7 @@ const MembersTab: React.FC<Props> = ({
       },
     });
   };
+
   return (
     <div>
       <h2 className="text-lg font-semibold text-gray-900">
@@ -109,13 +143,26 @@ const MembersTab: React.FC<Props> = ({
                   ? user.university?.name
                   : user.college?.name;
 
+              const isAdmin = !!admins && admins.includes(user.id);
+
+              const isCurrentUserCreator =
+                !!currentUser && !!creatorId && currentUser.id === creatorId;
+              const isCurrentUserAdmin =
+                !!currentUser && !!admins && admins.includes(currentUser.id);
+              const canShowMenu =
+                (isCurrentUserCreator || isCurrentUserAdmin) &&
+                user.id !== creatorId;
+
               return (
                 <FriendCard
                   key={user.id}
                   id={user.id}
                   name={user.name}
                   avatar={user.avatar}
-                  university={institutionName || "Unknown Institution"}
+                  university={
+                    (institutionName || "Unknown Institution") +
+                    (isAdmin ? " • Admin" : "")
+                  }
                   type={type}
                   onAccept={onAccept}
                   onDecline={onDecline}
@@ -123,13 +170,17 @@ const MembersTab: React.FC<Props> = ({
                   onCancelRequest={onCancelRequest}
                   onUnfriend={onUnfriend}
                   menuElement={
-                    <button
-                      onClick={() => handleMemberMenu(user.id, user.name)}
-                      className="p-1 text-gray-500 hover:text-gray-800"
-                      aria-label="Member menu"
-                    >
-                      <BsThreeDots className="h-5 w-5" />
-                    </button>
+                    canShowMenu ? (
+                      <button
+                        onClick={() =>
+                          handleMemberMenu(user.id, user.name, isAdmin)
+                        }
+                        className="p-1 text-gray-500 hover:text-gray-800"
+                        aria-label="Member menu"
+                      >
+                        <BsThreeDots className="h-5 w-5" />
+                      </button>
+                    ) : undefined
                   }
                 />
               );

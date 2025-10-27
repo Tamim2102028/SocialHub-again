@@ -9,9 +9,17 @@ import Swal from "sweetalert2";
 
 interface Props {
   roomId: string;
+  creatorId?: string;
+  admins?: string[];
+  currentUserId?: string;
 }
 
-const MediaTab: React.FC<Props> = ({ roomId }) => {
+const MediaTab: React.FC<Props> = ({
+  roomId,
+  creatorId,
+  admins,
+  currentUserId,
+}) => {
   const [active, setActive] = useState<"general" | "ct" | "assignments">(
     "general"
   );
@@ -97,6 +105,10 @@ const MediaTab: React.FC<Props> = ({ roomId }) => {
   };
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+  const isManager =
+    !!currentUserId &&
+    (currentUserId === creatorId || !!admins?.includes(currentUserId));
+
   const handleUploadChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -160,12 +172,16 @@ const MediaTab: React.FC<Props> = ({ roomId }) => {
             onChange={handleUploadChange}
             aria-hidden
           />
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            className="rounded-md border border-blue-100 bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700 hover:bg-blue-100"
-          >
-            Upload
-          </button>
+          {isManager ? (
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="rounded-md border border-blue-100 bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700 hover:bg-blue-100"
+            >
+              Upload
+            </button>
+          ) : (
+            <div className="text-sm text-gray-500">Only admins can upload</div>
+          )}
         </div>
       </div>
 
@@ -231,13 +247,15 @@ const MediaTab: React.FC<Props> = ({ roomId }) => {
                     </a>
                   )}
 
-                  <button
-                    onClick={() => handleFileMenu(f)}
-                    className="p-1 text-gray-500 hover:text-gray-800"
-                    aria-label="File menu"
-                  >
-                    <BsThreeDots className="h-5 w-5" />
-                  </button>
+                  {isManager && (
+                    <button
+                      onClick={() => handleFileMenu(f)}
+                      className="p-1 text-gray-500 hover:text-gray-800"
+                      aria-label="File menu"
+                    >
+                      <BsThreeDots className="h-5 w-5" />
+                    </button>
+                  )}
                 </div>
               </div>
             );

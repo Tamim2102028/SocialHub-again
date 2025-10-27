@@ -16,9 +16,18 @@ import type { RoomPost } from "../../../data/rooms-data/roomPostData";
 interface Props {
   roomId: string;
   users: UserData[];
+  creatorId?: string;
+  admins?: string[];
+  currentUserId?: string;
 }
 
-const PinnedTab: React.FC<Props> = ({ roomId, users }) => {
+const PinnedTab: React.FC<Props> = ({
+  roomId,
+  users,
+  creatorId,
+  admins,
+  currentUserId,
+}) => {
   const dispatch = useAppDispatch();
   const posts = useAppSelector(selectPostsForRoom(roomId));
   const pinned = posts
@@ -29,13 +38,34 @@ const PinnedTab: React.FC<Props> = ({ roomId, users }) => {
     );
 
   const handlePostMenu = async (post: RoomPost) => {
+    const isManager =
+      !!currentUserId &&
+      (currentUserId === creatorId || !!admins?.includes(currentUserId));
+    const isAuthor = !!currentUserId && currentUserId === post.authorId;
+
+    const canEdit = isAuthor || isManager;
+    const canDelete = isAuthor || isManager;
+    const unpinHtml = isManager
+      ? `<button id="swal-unpin" class="w-50 px-3 py-2 rounded border border-gray-200 bg-white text-gray-700 hover:bg-gray-50">Unpin</button>`
+      : "";
+
+    const editHtml = canEdit
+      ? `<button id="swal-edit" class="w-50 px-3 py-2 rounded border border-gray-200 bg-white text-gray-700 hover:bg-gray-50">Edit</button>`
+      : "";
+    const delHtml = canDelete
+      ? `<button id="swal-del" class="w-50 px-3 py-2 rounded border border-red-100 bg-white text-red-600 hover:bg-red-50">Delete</button>`
+      : "";
+
+    const actionsHtml =
+      editHtml || unpinHtml || delHtml
+        ? `${editHtml}${unpinHtml}${delHtml}`
+        : `<div class="text-sm text-gray-600">No actions available</div>`;
+
     await Swal.fire({
       title: "Post options",
       html: `
         <div class="flex flex-col items-center gap-2 min-w-[160px]">
-          <button id="swal-edit" class="w-50 px-3 py-2 rounded border border-gray-200 bg-white text-gray-700 hover:bg-gray-50">Edit</button>
-          <button id="swal-unpin" class="w-50 px-3 py-2 rounded border border-gray-200 bg-white text-gray-700 hover:bg-gray-50">Unpin</button>
-          <button id="swal-del" class="w-50 px-3 py-2 rounded border border-red-100 bg-white text-red-600 hover:bg-red-50">Delete</button>
+          ${actionsHtml}
         </div>
       `,
       showConfirmButton: false,
@@ -77,14 +107,14 @@ const PinnedTab: React.FC<Props> = ({ roomId, users }) => {
           Swal.close();
         };
 
-        editBtn?.addEventListener("click", onEdit);
-        unpinBtn?.addEventListener("click", onUnpin);
-        delBtn?.addEventListener("click", onDel);
+        if (editBtn) editBtn.addEventListener("click", onEdit);
+        if (unpinBtn) unpinBtn.addEventListener("click", onUnpin);
+        if (delBtn) delBtn.addEventListener("click", onDel);
 
         const removeListeners = () => {
-          editBtn?.removeEventListener("click", onEdit);
-          unpinBtn?.removeEventListener("click", onUnpin);
-          delBtn?.removeEventListener("click", onDel);
+          if (editBtn) editBtn.removeEventListener("click", onEdit);
+          if (unpinBtn) unpinBtn.removeEventListener("click", onUnpin);
+          if (delBtn) delBtn.removeEventListener("click", onDel);
         };
 
         const observer = new MutationObserver(() => {
