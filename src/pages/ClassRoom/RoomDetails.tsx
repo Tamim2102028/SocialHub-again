@@ -130,13 +130,23 @@ const RoomDetails: React.FC = () => {
               </span>
             </p>
           </div>
-          <div className="flex items-end justify-end">
+          <div className="flex flex-col items-end justify-end gap-2">
+            {/* Go Live button shown to teachers */}
+            {currentUser?.role?.includes("teacher") ? (
+              <button
+                onClick={() => navigate(`/classroom/rooms/${room.id}/live`)}
+                className="w-full rounded bg-green-600 px-3 py-1 text-sm font-medium text-white hover:bg-green-700"
+              >
+                Go live
+              </button>
+            ) : null}
+
             <button
               onClick={() => {
                 setActiveTab("posts");
                 setShowCreatePost(true);
               }}
-              className="rounded bg-blue-600 px-3 py-1 text-sm font-medium text-white hover:bg-blue-700"
+              className="w-full rounded bg-blue-600 px-3 py-1 text-sm font-medium text-white hover:bg-blue-700"
             >
               Create post
             </button>
@@ -201,6 +211,8 @@ const RoomDetails: React.FC = () => {
               currentUserId={currentUser?.id}
             />
           )}
+
+          {/* live is a dedicated page now; we navigate to /classroom/rooms/:roomId/live */}
 
           {activeTab === "members" && (
             <MembersTab

@@ -144,6 +144,7 @@ const MembersTab: React.FC<Props> = ({
                   : user.college?.name;
 
               const isAdmin = !!admins && admins.includes(user.id);
+              const isOwner = !!creatorId && user.id === creatorId;
 
               const isCurrentUserCreator =
                 !!currentUser && !!creatorId && currentUser.id === creatorId;
@@ -153,6 +154,15 @@ const MembersTab: React.FC<Props> = ({
                 (isCurrentUserCreator || isCurrentUserAdmin) &&
                 user.id !== creatorId;
 
+              let roleLabel = "";
+              if (isOwner && isAdmin) {
+                roleLabel = " • Owner • Admin";
+              } else if (isOwner) {
+                roleLabel = " • Owner";
+              } else if (isAdmin) {
+                roleLabel = " • Admin";
+              }
+
               return (
                 <FriendCard
                   key={user.id}
@@ -160,8 +170,7 @@ const MembersTab: React.FC<Props> = ({
                   name={user.name}
                   avatar={user.avatar}
                   university={
-                    (institutionName || "Unknown Institution") +
-                    (isAdmin ? " • Admin" : "")
+                    (institutionName || "Unknown Institution") + roleLabel
                   }
                   type={type}
                   onAccept={onAccept}
