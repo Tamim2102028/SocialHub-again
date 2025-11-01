@@ -44,18 +44,32 @@ const MembersTab: React.FC<Props> = ({
     isAdmin?: boolean
   ) => {
     const adminLabel = isAdmin ? "Remove admin" : "Make admin";
-    const showAdminBtn =
+    const isCreator =
       !!currentUser && !!creatorId && currentUser.id === creatorId;
+
+    // Only creator can manage admin status
+    const showAdminBtn = isCreator;
+
+    // Determine who can remove this member:
+    // - Creator can remove anyone (except themselves, but that's already filtered)
+    // - Regular admin can only remove non-admin members
+    const isCurrentUserAdmin =
+      !!currentUser && !!admins && admins.includes(currentUser.id);
+    const canRemove = isCreator || (isCurrentUserAdmin && !isAdmin);
 
     const adminHtml = showAdminBtn
       ? `<button id="swal-admin" class="w-50 px-3 py-2 rounded border border-gray-200 bg-white text-gray-700 hover:bg-gray-50">${adminLabel}</button>`
+      : "";
+
+    const removeHtml = canRemove
+      ? `<button id="swal-remove" class="w-50 px-3 py-2 rounded border border-red-100 bg-white text-red-600 hover:bg-red-50">Remove from room</button>`
       : "";
 
     await Swal.fire({
       title: `${userName ?? "Member"} options`,
       html: `
         <div class="flex flex-col items-center gap-2 min-w-[200px]">
-          <button id="swal-remove" class="w-50 px-3 py-2 rounded border border-red-100 bg-white text-red-600 hover:bg-red-50">Remove from room</button>
+          ${removeHtml}
           ${adminHtml}
         </div>
       `,
@@ -72,6 +86,11 @@ const MembersTab: React.FC<Props> = ({
         ) as HTMLButtonElement | null;
 
         const onRemoveClick = () => {
+          // If removing an admin, first remove their admin status
+          if (isAdmin && onRemoveAdmin) {
+            onRemoveAdmin(userId);
+          }
+          // Then remove them from the room
           if (onRemoveMember) onRemoveMember(userId);
           Swal.close();
         };
@@ -94,11 +113,11 @@ const MembersTab: React.FC<Props> = ({
           Swal.close();
         };
 
-        removeBtn?.addEventListener("click", onRemoveClick);
+        if (removeBtn) removeBtn.addEventListener("click", onRemoveClick);
         if (adminBtn) adminBtn.addEventListener("click", onMakeAdminClick);
 
         const removeListeners = () => {
-          removeBtn?.removeEventListener("click", onRemoveClick);
+          if (removeBtn) removeBtn.removeEventListener("click", onRemoveClick);
           if (adminBtn) adminBtn.removeEventListener("click", onMakeAdminClick);
         };
 
@@ -150,9 +169,15 @@ const MembersTab: React.FC<Props> = ({
                 !!currentUser && !!creatorId && currentUser.id === creatorId;
               const isCurrentUserAdmin =
                 !!currentUser && !!admins && admins.includes(currentUser.id);
+
+              // Show menu if:
+              // - Current user is creator/admin AND
+              // - Target user is not the creator (creator can't be removed) AND
+              // - Target user is not the current user themselves (can't manage yourself)
               const canShowMenu =
                 (isCurrentUserCreator || isCurrentUserAdmin) &&
-                user.id !== creatorId;
+                user.id !== creatorId &&
+                user.id !== currentUser?.id;
 
               let roleLabel = "";
               if (isOwner && isAdmin) {
