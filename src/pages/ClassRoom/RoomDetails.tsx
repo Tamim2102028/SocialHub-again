@@ -212,6 +212,11 @@ const RoomDetails: React.FC = () => {
               creatorId={roomState?.createdBy}
               admins={roomState?.admins}
               currentUserId={currentUser?.id}
+              showReplyFor={showReplyFor}
+              replyText={replyText}
+              toggleReply={toggleReply}
+              setReplyText={setReplyText}
+              submitReply={submitReply}
             />
           )}
 

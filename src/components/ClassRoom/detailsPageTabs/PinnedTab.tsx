@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { useAppSelector, useAppDispatch } from "../../../store/hooks";
 import {
   selectPostsForRoom,
   editPost,
   deletePost,
   togglePinPost,
+  editReply,
+  deleteReply,
 } from "../../../store/slices/classRoom/roomPostsSlice";
 import { type UserData } from "../../../data/profile-data/userData";
 import { Link } from "react-router-dom";
@@ -19,6 +21,13 @@ interface Props {
   creatorId?: string;
   admins?: string[];
   currentUserId?: string;
+  showReplyFor: Record<string, boolean>;
+  replyText: Record<string, string>;
+  toggleReply: (postId: string) => void;
+  setReplyText: (
+    updater: (r: Record<string, string>) => Record<string, string>
+  ) => void;
+  submitReply: (postId: string) => void;
 }
 
 const PinnedTab: React.FC<Props> = ({
@@ -27,6 +36,11 @@ const PinnedTab: React.FC<Props> = ({
   creatorId,
   admins,
   currentUserId,
+  showReplyFor,
+  replyText,
+  toggleReply,
+  setReplyText,
+  submitReply,
 }) => {
   const dispatch = useAppDispatch();
   const posts = useAppSelector(selectPostsForRoom(roomId));
@@ -37,15 +51,35 @@ const PinnedTab: React.FC<Props> = ({
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
 
+  const [postEditingId, setPostEditingId] = useState<string | null>(null);
+  const [replyEditing, setReplyEditing] = useState<{
+    postId: string;
+    replyId: string;
+  } | null>(null);
+  const [postEditText, setPostEditText] = useState<Record<string, string>>({});
+  const [replyEditText, setReplyEditText] = useState<Record<string, string>>(
+    {}
+  );
+
+  const [expandedPosts, setExpandedPosts] = useState<Record<string, boolean>>(
+    {}
+  );
+
+  const REPLIES_SHOWN = 3;
+
+  const toggleExpand = (postId: string) =>
+    setExpandedPosts((s) => ({ ...s, [postId]: !s[postId] }));
+
   const handlePostMenu = async (post: RoomPost) => {
-    const isManager =
-      !!currentUserId &&
-      (currentUserId === creatorId || !!admins?.includes(currentUserId));
+    const isCreator = !!currentUserId && currentUserId === creatorId;
+    const isAdmin = !!currentUserId && !!admins?.includes(currentUserId);
     const isAuthor = !!currentUserId && currentUserId === post.authorId;
 
-    const canEdit = isAuthor || isManager;
-    const canDelete = isAuthor || isManager;
-    const unpinHtml = isManager
+    const canEdit = isAuthor;
+    const canUnpin = isCreator || isAdmin; // Only admins/creator can unpin
+    const canDelete = isAuthor || isCreator; // Only author or creator can delete
+    
+    const unpinHtml = canUnpin
       ? `<button id="swal-unpin" class="w-50 px-3 py-2 rounded border border-gray-200 bg-white text-gray-700 hover:bg-gray-50">Unpin</button>`
       : "";
 
@@ -83,18 +117,10 @@ const PinnedTab: React.FC<Props> = ({
           "#swal-del"
         ) as HTMLButtonElement | null;
 
-        const onEdit = async () => {
+        const onEdit = () => {
+          setPostEditingId(post.id);
+          setPostEditText((s) => ({ ...s, [post.id]: post.content }));
           Swal.close();
-          const { value } = await Swal.fire({
-            title: "Edit post",
-            input: "textarea",
-            inputValue: post.content,
-            showCancelButton: true,
-            confirmButtonText: "Save",
-          });
-          if (value) {
-            dispatch(editPost({ postId: post.id, content: value }));
-          }
         };
 
         const onUnpin = () => {
@@ -193,10 +219,44 @@ const PinnedTab: React.FC<Props> = ({
                     </button>
                   </div>
                 </div>
-
-                <p className="mt-2 text-justify break-words whitespace-pre-wrap text-gray-700">
-                  {p.content}
-                </p>
+                {postEditingId === p.id ? (
+                  <div className="mt-2">
+                    <textarea
+                      className="w-full rounded border border-gray-200 p-2 text-sm"
+                      rows={4}
+                      value={postEditText[p.id] ?? p.content}
+                      onChange={(e) =>
+                        setPostEditText((s) => ({
+                          ...s,
+                          [p.id]: e.target.value,
+                        }))
+                      }
+                    />
+                    <div className="mt-2 flex gap-2">
+                      <button
+                        onClick={() => {
+                          const text = (postEditText[p.id] ?? p.content).trim();
+                          if (text)
+                            dispatch(editPost({ postId: p.id, content: text }));
+                          setPostEditingId(null);
+                        }}
+                        className="rounded bg-blue-600 px-3 py-1 text-sm font-medium text-white"
+                      >
+                        Save
+                      </button>
+                      <button
+                        onClick={() => setPostEditingId(null)}
+                        className="rounded border border-gray-300 px-3 py-1 text-sm"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="mt-2 text-justify break-words whitespace-pre-wrap text-gray-700">
+                    {p.content}
+                  </p>
+                )}
 
                 {p.attachments && p.attachments.length > 0 && (
                   <div className="mt-3">
@@ -272,58 +332,217 @@ const PinnedTab: React.FC<Props> = ({
                   </div>
                 )}
 
-                <div className="mt-3">
+                <div className="mt-3 flex items-center gap-3">
                   <button
-                    disabled
-                    aria-disabled="true"
-                    className="cursor-not-allowed text-sm font-medium text-gray-400"
+                    onClick={() => toggleReply(p.id)}
+                    className="cursor-pointer text-sm font-medium text-blue-600 hover:underline"
                   >
                     Reply
                   </button>
                 </div>
 
-                {p.replies && p.replies.length > 0 && (
-                  <div className="mt-4 space-y-3">
-                    {p.replies.map((r) => {
-                      const rauthor = users.find((u) => u.id === r.authorId);
-                      return (
-                        <div key={r.id} className="flex items-start gap-3">
-                          <img
-                            src={rauthor?.avatar}
-                            alt={rauthor?.name}
-                            className="h-8 w-8 rounded-full object-cover"
-                          />
-                          <div className="flex-1">
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <div className="font-semibold text-gray-900">
-                                  {rauthor ? (
-                                    <Link
-                                      to={`/profile/${rauthor.id}`}
-                                      className="cursor-pointer transition-colors hover:text-blue-600 hover:underline"
-                                    >
-                                      {rauthor.name}
-                                    </Link>
-                                  ) : (
-                                    "Unknown"
-                                  )}
-                                </div>
-                                <div className="text-xs text-gray-500">
-                                  <span>{formatPostDate(r.createdAt)}</span>
-                                  <span className="mx-2">•</span>
-                                  <span>{formatPostClock(r.createdAt)}</span>
-                                </div>
-                              </div>
-                            </div>
-                            <p className="mt-1 text-justify text-sm break-words whitespace-pre-wrap text-gray-700">
-                              {r.content}
-                            </p>
-                          </div>
-                        </div>
-                      );
-                    })}
+                {showReplyFor[p.id] && (
+                  <div className="mt-2">
+                    <textarea
+                      value={replyText[p.id] || ""}
+                      onChange={(e) =>
+                        setReplyText((r) => ({ ...r, [p.id]: e.target.value }))
+                      }
+                      className="w-full rounded border border-gray-200 p-2 text-sm"
+                      rows={3}
+                    />
+                    <div className="mt-2 flex gap-2">
+                      <button
+                        onClick={() => submitReply(p.id)}
+                        className="rounded bg-blue-600 px-3 py-1 text-sm font-medium text-white"
+                      >
+                        Reply
+                      </button>
+                      <button
+                        onClick={() => toggleReply(p.id)}
+                        className="rounded border border-gray-300 px-3 py-1 text-sm"
+                      >
+                        Cancel
+                      </button>
+                    </div>
                   </div>
                 )}
+
+                {(p.replies?.length ?? 0) > 0 &&
+                  (() => {
+                    const replies = p.replies || [];
+                    const total = replies.length;
+                    const isExpanded = !!expandedPosts[p.id];
+                    const visible = isExpanded
+                      ? replies
+                      : replies.slice(0, REPLIES_SHOWN);
+
+                    return (
+                      <div className="mt-4 space-y-3">
+                        {visible.map((r) => {
+                          const rauthor = users.find(
+                            (u) => u.id === r.authorId
+                          );
+                          return (
+                            <div key={r.id} className="flex items-start gap-3">
+                              <img
+                                src={rauthor?.avatar}
+                                alt={rauthor?.name}
+                                className="h-8 w-8 rounded-full object-cover"
+                              />
+                              <div className="relative flex-1">
+                                <div className="flex items-center justify-between">
+                                  <div>
+                                    <div className="font-semibold text-gray-900">
+                                      {rauthor ? (
+                                        <Link
+                                          to={`/profile/${rauthor.id}`}
+                                          className="cursor-pointer transition-colors hover:text-blue-600 hover:underline"
+                                        >
+                                          {rauthor.name}
+                                        </Link>
+                                      ) : r.authorId === currentUserId ? (
+                                        "You"
+                                      ) : (
+                                        "Unknown"
+                                      )}
+                                    </div>
+                                    <div className="text-xs text-gray-500">
+                                      <span>{formatPostDate(r.createdAt)}</span>
+                                      <span className="mx-2">•</span>
+                                      <span>
+                                        {formatPostClock(r.createdAt)}
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+                                {replyEditing &&
+                                replyEditing.postId === p.id &&
+                                replyEditing.replyId === r.id ? (
+                                  <div className="mt-1">
+                                    <textarea
+                                      className="w-full rounded border border-gray-200 p-2 text-sm"
+                                      rows={3}
+                                      value={replyEditText[r.id] ?? r.content}
+                                      onChange={(e) =>
+                                        setReplyEditText((s) => ({
+                                          ...s,
+                                          [r.id]: e.target.value,
+                                        }))
+                                      }
+                                    />
+                                    <div className="mt-2 flex gap-2">
+                                      <button
+                                        onClick={() => {
+                                          const text = (
+                                            replyEditText[r.id] ?? r.content
+                                          ).trim();
+                                          if (text)
+                                            dispatch(
+                                              editReply({
+                                                postId: p.id,
+                                                replyId: r.id,
+                                                content: text,
+                                              })
+                                            );
+                                          setReplyEditing(null);
+                                        }}
+                                        className="rounded bg-blue-600 px-3 py-1 text-sm font-medium text-white"
+                                      >
+                                        Save
+                                      </button>
+                                      <button
+                                        onClick={() => setReplyEditing(null)}
+                                        className="rounded border border-gray-300 px-3 py-1 text-sm"
+                                      >
+                                        Cancel
+                                      </button>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div>
+                                    <p className="mt-1 text-justify text-sm break-words whitespace-pre-wrap text-gray-700">
+                                      {r.content}
+                                    </p>
+                                    <div className="mt-2 flex gap-3">
+                                      {(() => {
+                                        const isReplyAuthor =
+                                          !!currentUserId &&
+                                          currentUserId === r.authorId;
+                                        const isCreator =
+                                          !!currentUserId &&
+                                          currentUserId === creatorId;
+                                        const canEditReply = isReplyAuthor; // Only author can edit
+                                        const canDeleteReply = isReplyAuthor || isCreator; // Author or creator can delete
+                                        return (
+                                          <>
+                                            {canEditReply ? (
+                                              <button
+                                                onClick={() => {
+                                                  setReplyEditing({
+                                                    postId: p.id,
+                                                    replyId: r.id,
+                                                  });
+                                                  setReplyEditText((s) => ({
+                                                    ...s,
+                                                    [r.id]: r.content,
+                                                  }));
+                                                }}
+                                                className="cursor-pointer text-sm font-medium text-blue-600 hover:underline"
+                                              >
+                                                Edit
+                                              </button>
+                                            ) : null}
+
+                                            {canDeleteReply ? (
+                                              <button
+                                                onClick={() => {
+                                                  dispatch(
+                                                    deleteReply({
+                                                      postId: p.id,
+                                                      replyId: r.id,
+                                                    })
+                                                  );
+                                                }}
+                                                className="cursor-pointer text-sm font-medium text-red-600 hover:underline"
+                                              >
+                                                Delete
+                                              </button>
+                                            ) : null}
+                                          </>
+                                        );
+                                      })()}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+
+                        {total > REPLIES_SHOWN && (
+                          <div className="mt-1">
+                            {!isExpanded ? (
+                              <button
+                                onClick={() => toggleExpand(p.id)}
+                                className="text-sm font-medium text-gray-600 hover:underline"
+                              >
+                                View {total - REPLIES_SHOWN} more repl
+                                {total - REPLIES_SHOWN === 1 ? "y" : "ies"}
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => toggleExpand(p.id)}
+                                className="text-sm font-medium text-gray-600 hover:underline"
+                              >
+                                Hide replies
+                              </button>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
               </div>
             </div>
           </div>

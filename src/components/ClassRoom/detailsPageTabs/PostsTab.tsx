@@ -66,13 +66,13 @@ const PostsTab: React.FC<Props> = ({
 
   const handlePostMenu = async (post: RoomPost) => {
     const pinLabel = post.pinned ? "Unpin" : "Pin";
-    const isManager =
-      !!currentUserId &&
-      (currentUserId === creatorId || !!admins?.includes(currentUserId));
+    const isCreator = !!currentUserId && currentUserId === creatorId;
+    const isAdmin = !!currentUserId && !!admins?.includes(currentUserId);
     const isAuthor = !!currentUserId && currentUserId === post.authorId;
+    
     const canEdit = isAuthor;
-    const canPin = isManager;
-    const canDelete = isAuthor || isManager;
+    const canPin = isCreator || isAdmin;
+    const canDelete = isAuthor || isCreator; // Only author or creator can delete
 
     const editHtml = canEdit
       ? `<button id="swal-edit" class="w-50 px-3 py-2 rounded border border-gray-200 bg-white text-gray-700 hover:bg-gray-50">Edit</button>`
@@ -173,9 +173,6 @@ const PostsTab: React.FC<Props> = ({
     <div className="space-y-4">
       {roomPosts.map((p) => {
         const author = users.find((u) => u.id === p.authorId);
-        const isManager =
-          !!currentUserId &&
-          (currentUserId === creatorId || !!admins?.includes(currentUserId));
         return (
           <div
             key={p.id}
@@ -474,11 +471,14 @@ const PostsTab: React.FC<Props> = ({
                                         const isReplyAuthor =
                                           !!currentUserId &&
                                           currentUserId === r.authorId;
-                                        const canManageReply =
-                                          isReplyAuthor || isManager;
+                                        const isCreator =
+                                          !!currentUserId &&
+                                          currentUserId === creatorId;
+                                        const canEditReply = isReplyAuthor; // Only author can edit
+                                        const canDeleteReply = isReplyAuthor || isCreator; // Author or creator can delete
                                         return (
                                           <>
-                                            {canManageReply ? (
+                                            {canEditReply ? (
                                               <button
                                                 onClick={() => {
                                                   setReplyEditing({
@@ -496,7 +496,7 @@ const PostsTab: React.FC<Props> = ({
                                               </button>
                                             ) : null}
 
-                                            {canManageReply ? (
+                                            {canDeleteReply ? (
                                               <button
                                                 onClick={() => {
                                                   dispatch(
