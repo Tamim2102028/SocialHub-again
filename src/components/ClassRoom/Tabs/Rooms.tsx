@@ -10,6 +10,8 @@ import {
   selectOpenRooms,
   selectHiddenRooms,
 } from "../../../store/slices/classRoom/classRoomSlice";
+import { selectUserById } from "../../../store/slices/profileSlice";
+
 type CreatePayload = {
   university: string;
   department: string;
@@ -25,13 +27,28 @@ const Rooms: React.FC<{
   // read rooms from redux slice exclusively
   const openRooms = useAppSelector((s: RootState) => selectOpenRooms(s));
   const hiddenRooms = useAppSelector((s: RootState) => selectHiddenRooms(s));
+
+  // Get current user ID
+  const currentUser = useAppSelector((s: RootState) =>
+    selectUserById(s, s.profile.id)
+  );
+  const currentUserId = currentUser?.id;
+
+  // Filter rooms where current user is a member
+  const userOpenRooms = openRooms.filter(
+    (r) => currentUserId && r.members && r.members.includes(currentUserId)
+  );
+  const userHiddenRooms = hiddenRooms.filter(
+    (r) => currentUserId && r.members && r.members.includes(currentUserId)
+  );
+
   // keep menu state locally
   const [menuOpenFor, setMenuOpenFor] = useState<string | null>(null);
 
   useEffect(() => {
     // clear any open menu when room lists change
     setMenuOpenFor(null);
-  }, [openRooms.length, hiddenRooms.length]);
+  }, [userOpenRooms.length, userHiddenRooms.length]);
 
   useEffect(() => {
     const onDocClick = () => setMenuOpenFor(null);
@@ -71,7 +88,7 @@ const Rooms: React.FC<{
       )}
 
       {/* no rooms message */}
-      {openRooms.length + hiddenRooms.length === 0 ? (
+      {userOpenRooms.length + userHiddenRooms.length === 0 ? (
         <div className="rounded-xl border border-gray-300 bg-white p-6 shadow">
           <p className="text-sm text-gray-600">
             No rooms yet. Create one to get started.
@@ -79,7 +96,7 @@ const Rooms: React.FC<{
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {openRooms
+          {userOpenRooms
             .filter((rr) => (rr as SampleRoom).status !== "hide")
             .map((r) => (
               <RoomCard
@@ -93,12 +110,12 @@ const Rooms: React.FC<{
         </div>
       )}
 
-      {hiddenRooms.filter((rr) => (rr as SampleRoom).status === "hide").length >
-        0 && (
+      {userHiddenRooms.filter((rr) => (rr as SampleRoom).status === "hide")
+        .length > 0 && (
         <div className="space-y-3">
           <h3 className="text-xl font-semibold text-gray-900">Hidden Rooms</h3>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {hiddenRooms
+            {userHiddenRooms
               .filter((rr) => (rr as SampleRoom).status === "hide")
               .map((r) => (
                 <RoomCard
