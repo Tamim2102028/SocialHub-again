@@ -60,8 +60,28 @@ const RoomLive: React.FC = () => {
   }
 
   const isCreator = !!currentUser && room.createdBy === currentUser.id;
-  const isTeacher = !!currentUser && currentUser.role?.includes("teacher");
-  const isJoined = !!currentUser && participants.includes(currentUser.id);
+  const isAdmin =
+    !!currentUser && !!room.admins && room.admins.includes(currentUser.id);
+
+  // Only admins (including creator) can access live
+  if (!isCreator && !isAdmin) {
+    return (
+      <div className="rounded-lg border border-gray-200 bg-white p-8 text-center shadow-sm">
+        <h2 className="text-2xl font-bold text-gray-900">Access Denied</h2>
+        <p className="mt-2 text-gray-600">
+          Only room admins can access the live session.
+        </p>
+        <div className="mt-4">
+          <Link
+            to={`/classroom/rooms/${room.id}`}
+            className="text-blue-600 hover:underline"
+          >
+            Back to Room
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   const handleStartEnd = () => {
     setIsLive((v) => !v);
@@ -70,23 +90,6 @@ const RoomLive: React.FC = () => {
       {
         id: `sys-${Date.now()}`,
         content: `${!isLive ? "Live started" : "Live ended"} by ${currentUser?.name ?? "host"}`,
-        createdAt: new Date().toISOString(),
-      },
-    ]);
-  };
-
-  const handleJoinLeave = () => {
-    if (!currentUser) return;
-    setParticipants((p) =>
-      p.includes(currentUser.id)
-        ? p.filter((id) => id !== currentUser.id)
-        : [...p, currentUser.id]
-    );
-    setMessages((m) => [
-      ...m,
-      {
-        id: `sys-${Date.now()}`,
-        content: `${currentUser.name} ${isJoined ? "left" : "joined"} the live`,
         createdAt: new Date().toISOString(),
       },
     ]);
@@ -126,22 +129,13 @@ const RoomLive: React.FC = () => {
               {isLive ? "Live" : "Offline"}
             </div>
 
-            {isTeacher && isCreator ? (
+            {/* Only creator can start/end live */}
+            {isCreator ? (
               <button
                 onClick={handleStartEnd}
                 className={`rounded px-3 py-1 text-sm font-medium text-white ${isLive ? "bg-gray-600 hover:bg-gray-700" : "bg-red-600 hover:bg-red-700"}`}
               >
                 {isLive ? "End live" : "Start live"}
-              </button>
-            ) : null}
-
-            {/* Join/Leave moved to header actions */}
-            {!isTeacher ? (
-              <button
-                onClick={handleJoinLeave}
-                className={`rounded px-3 py-1 text-sm font-medium text-white ${isJoined ? "bg-gray-600 hover:bg-gray-700" : "bg-blue-600 hover:bg-blue-700"}`}
-              >
-                {isJoined ? "Leave" : "Join"}
               </button>
             ) : null}
           </div>
@@ -230,16 +224,11 @@ const RoomLive: React.FC = () => {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
               className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
-              placeholder={
-                isJoined
-                  ? "Type a message..."
-                  : "Join the live to send messages"
-              }
-              disabled={!isJoined}
+              placeholder="Type a message..."
             />
             <button
               onClick={handleSendMessage}
-              disabled={!isJoined || !input.trim()}
+              disabled={!input.trim()}
               className="rounded bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
             >
               Send

@@ -131,8 +131,11 @@ const RoomDetails: React.FC = () => {
             </p>
           </div>
           <div className="flex flex-col items-end justify-end gap-2">
-            {/* Go Live button shown to teachers */}
-            {currentUser?.role?.includes("teacher") ? (
+            {/* Go Live button shown to admins and creator only */}
+            {currentUser?.id === roomState?.createdBy ||
+            (roomState?.admins &&
+              currentUser?.id &&
+              roomState.admins.includes(currentUser.id)) ? (
               <button
                 onClick={() => navigate(`/classroom/rooms/${room.id}/live`)}
                 className="w-full rounded bg-green-600 px-3 py-1 text-sm font-medium text-white hover:bg-green-700"
