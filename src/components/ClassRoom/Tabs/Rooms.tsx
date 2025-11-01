@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-// RoomCard contains the visual markup and needed imports
-import type { Room as SampleRoom } from "../../../data/rooms-data/roomsData";
 import RoomForm from "../RoomForm";
 import RoomCard from "../RoomCard";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
@@ -8,7 +6,8 @@ import type { RootState } from "../../../store/store";
 import {
   toggleRoomStatus,
   selectOpenRooms,
-  selectHiddenRooms,
+  selectVisibleRoomIds,
+  selectHiddenRoomIds,
 } from "../../../store/slices/classRoom/classRoomSlice";
 import { selectUserById } from "../../../store/slices/profileSlice";
 
@@ -18,29 +17,34 @@ type CreatePayload = {
   section: string;
   subsection: string;
 };
+
 const Rooms: React.FC<{
   showCreateForm?: boolean;
   onCreate?: (data: CreatePayload) => void;
   onCancelCreate?: () => void;
 }> = ({ showCreateForm = false, onCreate, onCancelCreate }) => {
   const dispatch = useAppDispatch();
-  // read rooms from redux slice exclusively
-  const openRooms = useAppSelector((s: RootState) => selectOpenRooms(s));
-  const hiddenRooms = useAppSelector((s: RootState) => selectHiddenRooms(s));
 
   // Get current user ID
   const currentUser = useAppSelector((s: RootState) =>
     selectUserById(s, s.profile.id)
   );
-  const currentUserId = currentUser?.id;
+  const currentUserId = currentUser?.id || "";
 
-  // Filter rooms where current user is a member
-  const userOpenRooms = openRooms.filter(
-    (r) => currentUserId && r.members && r.members.includes(currentUserId)
+  // Get all non-deleted rooms from Redux
+  const allRooms = useAppSelector((s: RootState) => selectOpenRooms(s));
+
+  // Get visible and hidden room IDs from Redux (automatically updates!)
+  const visibleRoomIds = useAppSelector((s: RootState) =>
+    selectVisibleRoomIds(s, currentUserId)
   );
-  const userHiddenRooms = hiddenRooms.filter(
-    (r) => currentUserId && r.members && r.members.includes(currentUserId)
+  const hiddenRoomIds = useAppSelector((s: RootState) =>
+    selectHiddenRoomIds(s, currentUserId)
   );
+
+  // Filter rooms based on membership status
+  const userOpenRooms = allRooms.filter((r) => visibleRoomIds.includes(r.id));
+  const userHiddenRooms = allRooms.filter((r) => hiddenRoomIds.includes(r.id));
 
   // keep menu state locally
   const [menuOpenFor, setMenuOpenFor] = useState<string | null>(null);
@@ -63,8 +67,10 @@ const Rooms: React.FC<{
   };
 
   const toggleRoomStatusLocal = (id: string) => {
-    // dispatch redux action to toggle status
-    dispatch(toggleRoomStatus(id));
+    if (!currentUserId) return;
+
+    // Just dispatch the Redux action - selectors will automatically update!
+    dispatch(toggleRoomStatus({ userId: currentUserId, roomId: id }));
     setMenuOpenFor(null);
   };
 
@@ -96,9 +102,23 @@ const Rooms: React.FC<{
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {userOpenRooms
-            .filter((rr) => (rr as SampleRoom).status !== "hide")
-            .map((r) => (
+          {userOpenRooms.map((r) => (
+            <RoomCard
+              key={r.id}
+              room={r}
+              menuOpenFor={menuOpenFor}
+              toggleMenu={toggleMenu}
+              onToggleStatus={toggleRoomStatusLocal}
+            />
+          ))}
+        </div>
+      )}
+
+      {userHiddenRooms.length > 0 && (
+        <div className="space-y-3">
+          <h3 className="text-xl font-semibold text-gray-900">Hidden Rooms</h3>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {userHiddenRooms.map((r) => (
               <RoomCard
                 key={r.id}
                 room={r}
@@ -107,25 +127,6 @@ const Rooms: React.FC<{
                 onToggleStatus={toggleRoomStatusLocal}
               />
             ))}
-        </div>
-      )}
-
-      {userHiddenRooms.filter((rr) => (rr as SampleRoom).status === "hide")
-        .length > 0 && (
-        <div className="space-y-3">
-          <h3 className="text-xl font-semibold text-gray-900">Hidden Rooms</h3>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {userHiddenRooms
-              .filter((rr) => (rr as SampleRoom).status === "hide")
-              .map((r) => (
-                <RoomCard
-                  key={r.id}
-                  room={r}
-                  menuOpenFor={menuOpenFor}
-                  toggleMenu={toggleMenu}
-                  onToggleStatus={toggleRoomStatusLocal}
-                />
-              ))}
           </div>
         </div>
       )}

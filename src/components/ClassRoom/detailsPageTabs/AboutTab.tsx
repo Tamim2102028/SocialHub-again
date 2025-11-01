@@ -4,7 +4,6 @@ import { formatPostDate, formatPostClock } from "../../../utils/dateUtils";
 import confirm from "../../../utils/confirm";
 
 interface Props {
-  status?: string;
   creator?: { id?: string; name?: string } | undefined;
   createdAt?: string | undefined;
   currentUserId?: string | undefined;
@@ -13,7 +12,6 @@ interface Props {
 }
 
 const AboutTab: React.FC<Props> = ({
-  status,
   creator,
   createdAt,
   currentUserId,
@@ -39,9 +37,6 @@ const AboutTab: React.FC<Props> = ({
     <div className="space-y-4">
       <div>
         <h3 className="mb-2 font-bold text-gray-900">Details</h3>
-        <p className="font-medium text-gray-500">
-          Status: <span className="">{status}</span>
-        </p>
         {creator && (
           <p className="font-medium text-gray-500">
             Created by:{" "}

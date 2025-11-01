@@ -3,6 +3,11 @@ import { useParams, Link } from "react-router-dom";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import sampleRooms from "../../data/rooms-data/roomsData";
+import { 
+  getRoomCreator, 
+  isAdminOrCreator,
+  getMembersForRoom 
+} from "../../data/rooms-data/roomMembers";
 import { usersData } from "../../data/profile-data/userData";
 import { useAppSelector } from "../../store/hooks";
 import { selectUserById } from "../../store/slices/profileSlice";
@@ -19,25 +24,25 @@ const RoomLive: React.FC = () => {
   const room = sampleRooms.find((r) => r.id === roomId);
   const currentUser = useAppSelector((s) => selectUserById(s, s.profile.id));
 
+  const creatorId = room ? getRoomCreator(room.id) : undefined;
   const creator = useMemo(() => {
-    if (!room?.createdBy) return undefined;
-    return usersData.find((u) => u.id === room.createdBy);
-  }, [room]);
+    if (!creatorId) return undefined;
+    return usersData.find((u) => u.id === creatorId);
+  }, [creatorId]);
 
   // Local in-memory state for demo live features
   const [isLive, setIsLive] = useState<boolean>(false);
   const [participants, setParticipants] = useState<string[]>(() =>
-    room?.createdBy ? [room.createdBy] : []
+    room ? getMembersForRoom(room.id) : []
   );
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
 
   useEffect(() => {
-    // ensure creator is listed
-    if (!room?.createdBy) return;
-    setParticipants((p) =>
-      p.includes(room.createdBy!) ? p : [...p, room.createdBy!]
-    );
+    // ensure all members are listed
+    if (!room) return;
+    const members = getMembersForRoom(room.id);
+    setParticipants(members);
   }, [room]);
 
   // initialize dayjs relativeTime plugin (for human-friendly timestamps)
@@ -59,12 +64,10 @@ const RoomLive: React.FC = () => {
     );
   }
 
-  const isCreator = !!currentUser && room.createdBy === currentUser.id;
-  const isAdmin =
-    !!currentUser && !!room.admins && room.admins.includes(currentUser.id);
-
   // Only admins (including creator) can access live
-  if (!isCreator && !isAdmin) {
+  const hasAccess = currentUser?.id && isAdminOrCreator(currentUser.id, room.id);
+  
+  if (!hasAccess) {
     return (
       <div className="rounded-lg border border-gray-200 bg-white p-8 text-center shadow-sm">
         <h2 className="text-2xl font-bold text-gray-900">Access Denied</h2>
@@ -130,7 +133,7 @@ const RoomLive: React.FC = () => {
             </div>
 
             {/* Only creator can start/end live */}
-            {isCreator ? (
+            {currentUser?.id === creatorId ? (
               <button
                 onClick={handleStartEnd}
                 className={`rounded px-3 py-1 text-sm font-medium text-white ${isLive ? "bg-gray-600 hover:bg-gray-700" : "bg-red-600 hover:bg-red-700"}`}

@@ -3,6 +3,11 @@ import { Link } from "react-router-dom";
 import { FaEllipsisV } from "react-icons/fa";
 import type { Room as SampleRoom } from "../../data/rooms-data/roomsData";
 import { usersData } from "../../data/profile-data/userData";
+import { getRoomCreator } from "../../data/rooms-data/roomMembers";
+import { useAppSelector } from "../../store/hooks";
+import { selectUserById } from "../../store/slices/profileSlice";
+import { selectHiddenRoomIds } from "../../store/slices/classRoom/classRoomSlice";
+import type { RootState } from "../../store/store";
 
 type Props = {
   room: SampleRoom;
@@ -17,17 +22,25 @@ const RoomCard: React.FC<Props> = ({
   toggleMenu,
   onToggleStatus,
 }) => {
+  const currentUser = useAppSelector((s) => selectUserById(s, s.profile.id));
+  
+  // Check if this room is hidden using Redux selector
+  const hiddenRoomIds = useAppSelector((s: RootState) =>
+    selectHiddenRoomIds(s, currentUser?.id || "")
+  );
+  const isHidden = hiddenRoomIds.includes(room.id);
+
   const cover =
     (room as SampleRoom & { coverImage?: string }).coverImage ||
     `https://picsum.photos/seed/${room.id}/400/225`;
 
-  const createdById = (room as SampleRoom & { createdBy?: string }).createdBy;
+  const creatorId = getRoomCreator(room.id);
   const getCreatorName = (cid?: string) => {
     if (!cid) return undefined;
     const user = usersData.find((u) => u.id === cid);
     return user?.name;
   };
-  const creatorName = getCreatorName(createdById);
+  const creatorName = getCreatorName(creatorId);
 
   return (
     <div className="overflow-hidden rounded-lg shadow-sm">
@@ -63,7 +76,7 @@ const RoomCard: React.FC<Props> = ({
                   onToggleStatus(room.id);
                 }}
               >
-                {room.status === "hide" ? "Unhide" : "Hide"}
+                {isHidden ? "Unhide" : "Hide"}
               </button>
             </div>
           )}
@@ -75,7 +88,7 @@ const RoomCard: React.FC<Props> = ({
             <p className="mt-0.5 truncate text-xs text-gray-200">
               <Link
                 onClick={(e) => e.stopPropagation()}
-                to={`/profile/${createdById}`}
+                to={`/profile/${creatorId}`}
                 className="text-gray-200 hover:underline"
               >
                 {creatorName}

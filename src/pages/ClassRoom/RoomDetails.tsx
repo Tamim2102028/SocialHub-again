@@ -3,6 +3,13 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { FaUsers, FaImage, FaInfoCircle, FaThumbtack } from "react-icons/fa";
 import { BsPostcard } from "react-icons/bs";
 import sampleRooms, { type Room } from "../../data/rooms-data/roomsData";
+import { 
+  getMembersForRoom, 
+  getMemberCount,
+  getRoomCreator,
+  getAllAdmins,
+  isAdminOrCreator
+} from "../../data/rooms-data/roomMembers";
 import { usersData } from "../../data/profile-data/userData";
 import { roomPosts } from "../../data/rooms-data/roomPostData";
 import CreatePostForm from "../../components/ClassRoom/CreatePostForm";
@@ -92,8 +99,9 @@ const RoomDetails: React.FC = () => {
     );
   }
 
-  const creator = roomState?.createdBy
-    ? usersData.find((u) => u.id === roomState.createdBy)
+  const creatorId = getRoomCreator(room.id);
+  const creator = creatorId 
+    ? usersData.find((u) => u.id === creatorId)
     : undefined;
 
   return (
@@ -125,17 +133,14 @@ const RoomDetails: React.FC = () => {
             <p className="mt-2 flex items-center gap-2 text-sm text-gray-700">
               <FaUsers className="h-4 w-4 text-gray-500" />
               <span className="font-medium">
-                {roomState?.members?.length ?? room.members?.length ?? 0}{" "}
+                {getMemberCount(room.id)}{" "}
                 members
               </span>
             </p>
           </div>
           <div className="flex flex-col items-end justify-end gap-2">
             {/* Go Live button shown to admins and creator only */}
-            {currentUser?.id === roomState?.createdBy ||
-            (roomState?.admins &&
-              currentUser?.id &&
-              roomState.admins.includes(currentUser.id)) ? (
+            {currentUser?.id && isAdminOrCreator(currentUser.id, room.id) ? (
               <button
                 onClick={() => navigate(`/classroom/rooms/${room.id}/live`)}
                 className="w-full rounded bg-green-600 px-3 py-1 text-sm font-medium text-white hover:bg-green-700"
@@ -199,8 +204,8 @@ const RoomDetails: React.FC = () => {
                 setReplyText={setReplyText}
                 submitReply={submitReply}
                 currentUserId={currentUser?.id}
-                creatorId={roomState?.createdBy}
-                admins={roomState?.admins}
+                creatorId={creatorId}
+                admins={getAllAdmins(room.id)}
               />
             </div>
           )}
@@ -209,8 +214,8 @@ const RoomDetails: React.FC = () => {
             <PinnedTab
               roomId={roomState?.id || room!.id}
               users={usersData}
-              creatorId={roomState?.createdBy}
-              admins={roomState?.admins}
+              creatorId={creatorId}
+              admins={getAllAdmins(room.id)}
               currentUserId={currentUser?.id}
               showReplyFor={showReplyFor}
               replyText={replyText}
@@ -224,7 +229,7 @@ const RoomDetails: React.FC = () => {
 
           {activeTab === "members" && (
             <MembersTab
-              members={roomState?.members}
+              members={getMembersForRoom(room.id)}
               users={usersData}
               currentUser={currentUser}
               onAccept={(id: string) => dispatch(acceptFriendRequest(id))}
@@ -243,33 +248,20 @@ const RoomDetails: React.FC = () => {
                 if (ok) dispatch(unfriend(id));
               }}
               // pass creator id and admins and handlers to manage members
-              creatorId={roomState?.createdBy}
-              admins={roomState?.admins}
+              creatorId={creatorId}
+              admins={getAllAdmins(room.id)}
               onRemoveMember={(id: string) => {
-                if (!roomState) return;
-                // prevent removing creator
-                if (id === roomState.createdBy) return;
-                setRoomState({
-                  ...roomState,
-                  members: roomState.members.filter((m) => m !== id),
-                });
+                // TODO: Implement Redux action for removing member from room
+                // For now, this will be handled when we integrate membership management
+                console.log("Remove member:", id, "from room:", room.id);
               }}
               onMakeAdmin={(id: string) => {
-                if (!roomState) return;
-                if (!roomState.admins) roomState.admins = [];
-                if (!roomState.admins.includes(id)) {
-                  setRoomState({
-                    ...roomState,
-                    admins: [...roomState.admins, id],
-                  });
-                }
+                // TODO: Implement Redux action for promoting member to admin
+                console.log("Make admin:", id, "in room:", room.id);
               }}
               onRemoveAdmin={(id: string) => {
-                if (!roomState || !roomState.admins) return;
-                setRoomState({
-                  ...roomState,
-                  admins: roomState.admins.filter((a) => a !== id),
-                });
+                // TODO: Implement Redux action for removing admin role
+                console.log("Remove admin:", id, "from room:", room.id);
               }}
             />
           )}
@@ -277,15 +269,14 @@ const RoomDetails: React.FC = () => {
           {activeTab === "media" && (
             <MediaTab
               roomId={room.id}
-              creatorId={roomState?.createdBy}
-              admins={roomState?.admins}
+              creatorId={creatorId}
+              admins={getAllAdmins(room.id)}
               currentUserId={currentUser?.id}
             />
           )}
 
           {activeTab === "about" && (
             <AboutTab
-              status={room.status}
               creator={
                 creator ? { id: creator.id, name: creator.name } : undefined
               }
@@ -294,9 +285,9 @@ const RoomDetails: React.FC = () => {
               roomId={room.id}
               onDeleteRoom={() => {
                 // mark room as deleted in local state & store then navigate back
-                if (roomState) setRoomState({ ...roomState, status: "delete" });
+                if (roomState) setRoomState({ ...roomState, isDeleted: true });
                 dispatch(
-                  updateRoom({ ...(roomState || room), status: "delete" })
+                  updateRoom({ ...(roomState || room), isDeleted: true })
                 );
                 // use SPA navigation to avoid full page reload
                 navigate("/classroom");
