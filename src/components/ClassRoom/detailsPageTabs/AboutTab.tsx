@@ -1,19 +1,31 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { formatPostDate, formatPostClock } from "../../../utils/dateUtils";
 import confirm from "../../../utils/confirm";
+import type { Room } from "../../../data/rooms-data/roomsData";
+import type { UserData } from "../../../data/profile-data/userData";
 
 interface Props {
-  creator?: { id?: string; name?: string } | undefined;
-  createdAt?: string | undefined;
-  currentUserId?: string | undefined;
-  roomId?: string | undefined;
+  room: Room;
+  creator?: {
+    id?: string;
+    name?: string;
+    username?: string;
+    avatar?: string;
+  };
+  admins?: string[];
+  memberCount?: number;
+  users: UserData[];
+  currentUserId?: string;
+  roomId?: string;
   onDeleteRoom?: (id: string) => void;
 }
 
 const AboutTab: React.FC<Props> = ({
+  room,
   creator,
-  createdAt,
+  admins = [],
+  memberCount = 0,
+  users,
   currentUserId,
   roomId,
   onDeleteRoom,
@@ -34,42 +46,197 @@ const AboutTab: React.FC<Props> = ({
     !!creator?.id && !!currentUserId && creator.id === currentUserId;
 
   return (
-    <div className="space-y-4">
-      <div>
-        <h3 className="mb-2 font-bold text-gray-900">Details</h3>
-        {creator && (
-          <p className="font-medium text-gray-500">
-            Created by:{" "}
-            <Link
-              to={`/profile/${creator.id}`}
-              className="text-blue-600 hover:underline"
-            >
-              {creator.name}
-            </Link>
-          </p>
-        )}
-        {createdAt && (
-          <p className="mt-1 text-sm text-gray-500">
-            <span className="font-medium">Created:</span>
-            <span className="ml-2 inline-flex items-center gap-2">
-              <span>{formatPostDate(createdAt)}</span>
-              <span className="h-1 w-1 rounded-full bg-gray-400" aria-hidden />
-              <span>{formatPostClock(createdAt)}</span>
+    <div className="space-y-6">
+      {/* Creator/Owner Section */}
+      {creator && (
+        <div>
+          <h3 className="mb-3 font-bold text-gray-900">Creator</h3>
+          <div className="flex items-center gap-3 rounded-lg border border-gray-200 bg-gray-50 p-3">
+            <img
+              src={creator.avatar || "https://via.placeholder.com/48"}
+              alt={creator.name}
+              className="h-12 w-12 rounded-full object-cover"
+            />
+            <div className="flex-1">
+              <Link
+                to={`/profile/${creator.id}`}
+                className="font-semibold text-gray-900 hover:text-blue-600 hover:underline"
+              >
+                {creator.name}
+              </Link>
+              {creator.username && (
+                <p className="text-sm text-gray-500">@{creator.username}</p>
+              )}
+            </div>
+            <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-700">
+              Creator
             </span>
-          </p>
-        )}
-
-        {isCreator && onDeleteRoom && (
-          <div className="mt-4">
-            <button
-              onClick={handleDelete}
-              className="rounded bg-red-600 px-3 py-1 text-sm font-medium text-white hover:bg-red-700"
-            >
-              Delete room
-            </button>
           </div>
-        )}
+        </div>
+      )}
+
+      {/* Admins Section */}
+      {admins.length > 0 && (
+        <div>
+          <h3 className="mb-3 font-bold text-gray-900">
+            Admins ({admins.length})
+          </h3>
+          <div className="space-y-2">
+            {admins.map((adminId) => {
+              const admin = users.find((u) => u.id === adminId);
+              if (!admin) return null;
+
+              const isCreatorAdmin = adminId === creator?.id;
+
+              return (
+                <div
+                  key={adminId}
+                  className="flex items-center gap-3 rounded-lg border border-gray-200 bg-gray-50 p-3"
+                >
+                  <img
+                    src={admin.avatar}
+                    alt={admin.name}
+                    className="h-12 w-12 rounded-full object-cover"
+                  />
+                  <div className="flex-1">
+                    <Link
+                      to={`/profile/${admin.id}`}
+                      className="font-semibold text-gray-900 hover:text-blue-600 hover:underline"
+                    >
+                      {admin.name}
+                    </Link>
+                    <p className="text-sm text-gray-500">@{admin.username}</p>
+                  </div>
+                  <div className="flex gap-2">
+                    {isCreatorAdmin && (
+                      <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-700">
+                        Creator
+                      </span>
+                    )}
+                    <span className="rounded-full bg-purple-100 px-3 py-1 text-xs font-medium text-purple-700">
+                      Admin
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Room Stats */}
+      <div>
+        <h3 className="mb-3 font-bold text-gray-900">Room Stats</h3>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+            <p className="text-2xl font-bold text-gray-900">{memberCount}</p>
+            <p className="text-sm text-gray-600">Members</p>
+          </div>
+          <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+            <p className="text-2xl font-bold text-gray-900">{admins.length}</p>
+            <p className="text-sm text-gray-600">Admins</p>
+          </div>
+        </div>
       </div>
+
+      {/* Room Details */}
+      {(room.university || room.department || room.year || room.semester) && (
+        <div>
+          <h3 className="mb-3 font-bold text-gray-900">Room Details</h3>
+          <div className="space-y-2 rounded-lg border border-gray-200 bg-gray-50 p-4">
+            {room.university && (
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-600">
+                  University:
+                </span>
+                <span className="text-sm text-gray-900">{room.university}</span>
+              </div>
+            )}
+            {room.department && (
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-600">
+                  Department:
+                </span>
+                <span className="text-sm text-gray-900">{room.department}</span>
+              </div>
+            )}
+            {room.year && (
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-600">Year:</span>
+                <span className="text-sm text-gray-900">{room.year}</span>
+              </div>
+            )}
+            {room.semester && (
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-600">
+                  Semester:
+                </span>
+                <span className="text-sm text-gray-900">{room.semester}</span>
+              </div>
+            )}
+            {room.section && (
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-600">
+                  Section:
+                </span>
+                <span className="text-sm text-gray-900">{room.section}</span>
+              </div>
+            )}
+            {room.subsection && (
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-600">
+                  Subsection:
+                </span>
+                <span className="text-sm text-gray-900">{room.subsection}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Created Date */}
+      {room.createdAt && (
+        <div>
+          <h3 className="mb-2 font-bold text-gray-900">Created</h3>
+          <p className="text-gray-700">
+            {new Date(room.createdAt).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+          </p>
+        </div>
+      )}
+
+      {/* Last Activity */}
+      {room.lastActivityAt && (
+        <div>
+          <h3 className="mb-2 font-bold text-gray-900">Last Activity</h3>
+          <p className="text-gray-700">
+            {new Date(room.lastActivityAt).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+          </p>
+        </div>
+      )}
+
+      {/* Delete Room Button (Only for creator) */}
+      {isCreator && onDeleteRoom && (
+        <div className="border-t border-gray-200 pt-4">
+          <h3 className="mb-3 font-bold text-red-600">Danger Zone</h3>
+          <button
+            onClick={handleDelete}
+            className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-700"
+          >
+            Delete Room
+          </button>
+          <p className="mt-2 text-xs text-gray-500">
+            This action cannot be undone. The room will be permanently deleted.
+          </p>
+        </div>
+      )}
     </div>
   );
 };

@@ -79,10 +79,14 @@ const RoomDetails: React.FC = () => {
     room ? selectAllAdmins(s, room.id) : []
   );
   const isCurrentUserAdminOrCreator = useAppSelector((s) =>
-    room && currentUser ? selectIsAdminOrCreator(s, currentUser.id, room.id) : false
+    room && currentUser
+      ? selectIsAdminOrCreator(s, currentUser.id, room.id)
+      : false
   );
 
-  const creator = creatorId ? usersData.find((u) => u.id === creatorId) : undefined;
+  const creator = creatorId
+    ? usersData.find((u) => u.id === creatorId)
+    : undefined;
 
   // Update roomState when room changes
   React.useEffect(() => {
@@ -333,10 +337,20 @@ const RoomDetails: React.FC = () => {
 
           {activeTab === "about" && (
             <AboutTab
+              room={roomState || room}
               creator={
-                creator ? { id: creator.id, name: creator.name } : undefined
+                creator
+                  ? {
+                      id: creator.id,
+                      name: creator.name,
+                      username: creator.username,
+                      avatar: creator.avatar,
+                    }
+                  : undefined
               }
-              createdAt={room.createdAt}
+              admins={allAdmins}
+              memberCount={memberCount}
+              users={usersData}
               currentUserId={currentUser?.id}
               roomId={room.id}
               onDeleteRoom={() => {
