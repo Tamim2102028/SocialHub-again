@@ -9,7 +9,6 @@ import {
   FaImage,
   FaInfoCircle,
   FaThumbtack,
-  FaSearch,
 } from "react-icons/fa";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
@@ -20,11 +19,19 @@ import {
   selectHasRequested,
 } from "../../store/slices/groupSlice";
 import { leaveGroup } from "../../store/slices/groupSlice";
-import { selectUserById } from "../../store/slices/profileSlice";
 import GroupPostList from "./GroupPostList";
 import { BsPostcard } from "react-icons/bs";
 import { findGroupById } from "../../data/group-data/groupResolver";
 import Swal from "sweetalert2";
+import GroupMembersTab from "./group-tabs/GroupMembersTab";
+import { usersData } from "../../data/profile-data/userData";
+import {
+  acceptFriendRequest,
+  rejectFriendRequest,
+  sendFriendRequest,
+  cancelFriendRequest,
+  removeFriendship,
+} from "../../store/slices/friendsSlice";
 
 const GroupDetail: React.FC = () => {
   const { groupId } = useParams<{ groupId: string }>();
@@ -49,11 +56,6 @@ const GroupDetail: React.FC = () => {
     groupId ? selectIsMember(s, groupId) : false
   );
 
-  // load member user objects (avoid calling hooks inside loops)
-  const memberUsers = useAppSelector((s) =>
-    (group?.members || []).map((id) => selectUserById(s, id))
-  );
-
   const [activeTab, setActiveTab] = useState<
     "posts" | "pinned" | "members" | "media" | "about"
   >("posts");
@@ -66,6 +68,60 @@ const GroupDetail: React.FC = () => {
   const handleCancel = () => {
     if (!groupId) return;
     dispatch(cancelJoinRequest(groupId));
+  };
+
+  // Get current user from profile
+  const currentUser = useAppSelector((s) => s.profile);
+
+  // Friend action handlers
+  const handleAcceptFriend = (id: string) => {
+    if (!currentUser?.id) return;
+    dispatch(
+      acceptFriendRequest({
+        senderId: id,
+        receiverId: currentUser.id,
+      })
+    );
+  };
+
+  const handleDeclineFriend = (id: string) => {
+    if (!currentUser?.id) return;
+    dispatch(
+      rejectFriendRequest({
+        senderId: id,
+        receiverId: currentUser.id,
+      })
+    );
+  };
+
+  const handleAddFriend = (id: string) => {
+    if (!currentUser?.id) return;
+    dispatch(
+      sendFriendRequest({
+        senderId: currentUser.id,
+        receiverId: id,
+      })
+    );
+  };
+
+  const handleCancelRequest = (id: string) => {
+    if (!currentUser?.id) return;
+    dispatch(
+      cancelFriendRequest({
+        senderId: currentUser.id,
+        receiverId: id,
+      })
+    );
+  };
+
+  const handleUnfriend = (id: string) => {
+    if (!currentUser?.id) return;
+    dispatch(
+      removeFriendship({
+        user1Id: currentUser.id,
+        user2Id: id,
+      })
+    );
   };
 
   // cancel handler removed (not used in this layout)
@@ -275,42 +331,17 @@ const GroupDetail: React.FC = () => {
             )}
 
             {activeTab === "members" && (
-              <div>
-                <div className="mb-6 flex items-center justify-between">
-                  <h2 className="text-xl font-bold text-gray-900">
-                    Members ({group.members?.length || 0})
-                  </h2>
-                  <div className="relative">
-                    <FaSearch className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400" />
-                    <input
-                      type="text"
-                      placeholder="Search members..."
-                      className="rounded-lg border border-gray-200 py-2 pr-4 pl-10 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  {memberUsers.map((member, idx) => (
-                    <div
-                      key={idx}
-                      className="flex items-center gap-3 rounded-xl bg-gray-50 p-4 transition-colors hover:bg-gray-100"
-                    >
-                      <img
-                        src={member?.avatar}
-                        alt={member?.name}
-                        className="h-12 w-12 rounded-full bg-gray-200 object-cover"
-                      />
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-gray-900">
-                          {member?.name || "Member"}
-                        </h3>
-                        <p className="text-sm text-gray-500">Member</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <GroupMembersTab
+                groupId={group.id}
+                users={usersData}
+                currentUserId={currentUser?.id}
+                currentUser={currentUser}
+                onAccept={handleAcceptFriend}
+                onDecline={handleDeclineFriend}
+                onAddFriend={handleAddFriend}
+                onCancelRequest={handleCancelRequest}
+                onUnfriend={handleUnfriend}
+              />
             )}
 
             {activeTab === "media" && (
