@@ -17,6 +17,9 @@ import {
   selectGroupById,
   selectIsMember,
   selectHasRequested,
+  makeAdmin,
+  removeAdmin,
+  removeMember,
 } from "../../store/slices/groupSlice";
 import { leaveGroup } from "../../store/slices/groupSlice";
 import GroupPostList from "./GroupPostList";
@@ -122,6 +125,42 @@ const GroupDetail: React.FC = () => {
         user2Id: id,
       })
     );
+  };
+
+  // Group member management handlers
+  const handleMakeAdmin = (userId: string) => {
+    if (!groupId) return;
+    dispatch(makeAdmin({ groupId, userId }));
+  };
+
+  const handleRemoveAdmin = (userId: string) => {
+    if (!groupId) return;
+    dispatch(removeAdmin({ groupId, userId }));
+  };
+
+  const handleRemoveMember = (userId: string) => {
+    if (!groupId) return;
+    
+    Swal.fire({
+      title: "Are you sure?",
+      text: "This member will be removed from the group.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, remove member!",
+    }).then((result) => {
+      if (result.isConfirmed && groupId) {
+        dispatch(removeMember({ groupId, userId }));
+        Swal.fire({
+          title: "Removed!",
+          text: "Member has been removed from the group.",
+          icon: "success",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+      }
+    });
   };
 
   // cancel handler removed (not used in this layout)
@@ -341,6 +380,9 @@ const GroupDetail: React.FC = () => {
                 onAddFriend={handleAddFriend}
                 onCancelRequest={handleCancelRequest}
                 onUnfriend={handleUnfriend}
+                onMakeAdmin={handleMakeAdmin}
+                onRemoveAdmin={handleRemoveAdmin}
+                onRemoveMember={handleRemoveMember}
               />
             )}
 

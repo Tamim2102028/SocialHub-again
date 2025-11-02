@@ -107,6 +107,51 @@ export const leaveGroup = createAsyncThunk(
   }
 );
 
+/**
+ * makeAdmin thunk
+ * - Responsibility: Add a member to the admins list of a group
+ * - Only the owner can make someone admin
+ */
+export const makeAdmin = createAsyncThunk(
+  "groups/makeAdmin",
+  async ({ groupId, userId }: { groupId: string; userId: string }) => {
+    return { success: true, groupId, userId };
+  }
+);
+
+/**
+ * removeAdmin thunk
+ * - Responsibility: Remove a member from the admins list of a group
+ * - Only the owner can remove admin
+ */
+export const removeAdmin = createAsyncThunk(
+  "groups/removeAdmin",
+  async ({ groupId, userId }: { groupId: string; userId: string }) => {
+    return { success: true, groupId, userId };
+  }
+);
+
+/**
+ * removeMember thunk
+ * - Responsibility: Remove a member from the group
+ * - Owner can remove anyone, Admin can remove normal members only
+ */
+export const removeMember = createAsyncThunk(
+  "groups/removeMember",
+  async ({ groupId, userId }: { groupId: string; userId: string }) => {
+    // Remove from user's joinedGroup list
+    const user = getUserById(userId);
+    if (user) {
+      const updated = (user.joinedGroup || []).filter(
+        (g: string) => g !== groupId
+      );
+      updateUserById(userId, { joinedGroup: updated });
+    }
+
+    return { success: true, groupId, userId };
+  }
+);
+
 const groupSlice = createSlice({
   name: "groups",
   initialState,
@@ -148,6 +193,32 @@ const groupSlice = createSlice({
       })
       .addCase(leaveGroup.fulfilled, (state) => {
         state.status = "idle";
+      });
+
+    builder
+      .addCase(makeAdmin.fulfilled, (state, action) => {
+        const { groupId, userId } = action.payload;
+        const group = state.groups.find((g) => g.id === groupId);
+        if (group && !group.admins.includes(userId)) {
+          group.admins.push(userId);
+        }
+      })
+      .addCase(removeAdmin.fulfilled, (state, action) => {
+        const { groupId, userId } = action.payload;
+        const group = state.groups.find((g) => g.id === groupId);
+        if (group) {
+          group.admins = group.admins.filter((id) => id !== userId);
+        }
+      })
+      .addCase(removeMember.fulfilled, (state, action) => {
+        const { groupId, userId } = action.payload;
+        const group = state.groups.find((g) => g.id === groupId);
+        if (group) {
+          // Remove from members
+          group.members = group.members.filter((id) => id !== userId);
+          // Also remove from admins if they were admin
+          group.admins = group.admins.filter((id) => id !== userId);
+        }
       });
   },
 });
