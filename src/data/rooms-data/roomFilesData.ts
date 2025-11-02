@@ -16,7 +16,7 @@ export const roomFiles: RoomFile[] = [
   {
     id: "f-r1-1",
     roomId: "r1",
-    fileName: "Calculus_Note_Chapter1.pdf",
+    fileName: "Calculus_Notess_Chapter1.pdf",
     url: "https://example.com/files/calculus-ch1.pdf",
     uploadedBy: "1",
     createdAt: "2025-01-03T09:00:00.000Z",
