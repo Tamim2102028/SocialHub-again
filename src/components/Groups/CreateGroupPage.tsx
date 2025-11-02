@@ -10,10 +10,12 @@ import {
 import Swal from "sweetalert2";
 import type { Group } from "../../data/group-data/preGroupData";
 import { addMemberToGroup } from "../../data/group-data/groupMembers";
-import { useAppSelector } from "../../store/hooks";
+import { useAppSelector, useAppDispatch } from "../../store/hooks";
+import { createGroup } from "../../store/slices/groupSlice";
 
 const CreateGroupPage: React.FC = () => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   // Get current user ID from Redux store
   const currentUserId = useAppSelector((state) => state.profile?.id);
@@ -190,6 +192,9 @@ const CreateGroupPage: React.FC = () => {
     // Add current user as owner in groupMembers
     addMemberToGroup(currentUserId, newGroupId, "owner", "active");
 
+    // Dispatch to Redux store
+    dispatch(createGroup(newGroup as Group));
+
     // Show success message
     Swal.fire({
       icon: "success",
@@ -198,8 +203,6 @@ const CreateGroupPage: React.FC = () => {
       timer: 2000,
       showConfirmButton: false,
     }).then(() => {
-      // In a real app, you would dispatch to Redux store here
-      // dispatch(createGroup(newGroup));
       console.log("New Group:", newGroup);
       console.log("Owner added to groupMembers with ID:", currentUserId);
       navigate("/groups");
