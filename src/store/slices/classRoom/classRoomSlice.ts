@@ -46,6 +46,46 @@ const classRoomSlice = createSlice({
       }
     },
 
+    // Member management actions
+    makeAdmin(
+      state,
+      action: PayloadAction<{ userId: string; roomId: string }>
+    ) {
+      const { userId, roomId } = action.payload;
+      const membership = state.members.find(
+        (m) => m.userId === userId && m.roomId === roomId
+      );
+
+      if (membership && membership.role !== "creator") {
+        membership.role = "admin";
+      }
+    },
+
+    removeAdmin(
+      state,
+      action: PayloadAction<{ userId: string; roomId: string }>
+    ) {
+      const { userId, roomId } = action.payload;
+      const membership = state.members.find(
+        (m) => m.userId === userId && m.roomId === roomId
+      );
+
+      if (membership && membership.role === "admin") {
+        membership.role = "member";
+      }
+    },
+
+    removeMember(
+      state,
+      action: PayloadAction<{ userId: string; roomId: string }>
+    ) {
+      const { userId, roomId } = action.payload;
+      // Remove the membership from the array
+      state.members = state.members.filter(
+        (m) => !(m.userId === userId && m.roomId === roomId)
+      );
+    },
+
     // helpers for future: create/update/delete room
     updateRoom(state, action: PayloadAction<SampleRoom>) {
       const updated = action.payload;
@@ -56,8 +96,15 @@ const classRoomSlice = createSlice({
   },
 });
 
-export const { loadRooms, setCurrentUser, toggleRoomStatus, updateRoom } =
-  classRoomSlice.actions;
+export const {
+  loadRooms,
+  setCurrentUser,
+  toggleRoomStatus,
+  makeAdmin,
+  removeAdmin,
+  removeMember,
+  updateRoom,
+} = classRoomSlice.actions;
 export default classRoomSlice.reducer;
 
 // selectors

@@ -7,7 +7,7 @@ import { useAppSelector } from "../../../store/hooks";
 import type { RootState } from "../../../store/store";
 
 interface Props {
-  members: string[] | undefined;
+  roomId: string; // Changed: Now we take roomId instead of members array
   users: UserData[];
   currentUserId?: string;
   onAccept: (id: string) => void;
@@ -20,13 +20,11 @@ interface Props {
   onRemoveMember?: (id: string) => void;
   onMakeAdmin?: (id: string) => void;
   onRemoveAdmin?: (id: string) => void;
-  // room metadata
-  creatorId?: string | undefined;
-  admins?: string[] | undefined;
+  // No longer need creatorId and admins props - will get from Redux
 }
 
 const MembersTab: React.FC<Props> = ({
-  members,
+  roomId,
   users,
   onAccept,
   onDecline,
@@ -37,8 +35,6 @@ const MembersTab: React.FC<Props> = ({
   onRemoveMember,
   onMakeAdmin,
   onRemoveAdmin,
-  creatorId,
-  admins,
 }) => {
   // Get all friendship data from Redux at component level
   const allFriendships = useAppSelector(
@@ -47,6 +43,18 @@ const MembersTab: React.FC<Props> = ({
   const allFriendRequests = useAppSelector(
     (s: RootState) => s.friends.friendRequests
   );
+
+  // Get room members from Redux
+  const roomMembers = useAppSelector((s: RootState) =>
+    s.classRoom.members.filter((m) => m.roomId === roomId)
+  );
+
+  // Extract creator and admins from room members
+  const creator = roomMembers.find((m) => m.role === "creator");
+  const creatorId = creator?.userId;
+  const admins = roomMembers
+    .filter((m) => m.role === "admin" || m.role === "creator")
+    .map((m) => m.userId);
 
   const handleMemberMenu = async (
     userId: string,
@@ -95,14 +103,13 @@ const MembersTab: React.FC<Props> = ({
           "#swal-admin"
         ) as HTMLButtonElement | null;
 
-        const onRemoveClick = () => {
-          // If removing an admin, first remove their admin status
-          if (isAdmin && onRemoveAdmin) {
-            onRemoveAdmin(userId);
-          }
-          // Then remove them from the room
-          if (onRemoveMember) onRemoveMember(userId);
+        const onRemoveClick = async () => {
           Swal.close();
+          // Call onRemoveMember which handles confirmation
+          // If member is removed successfully, it will also handle admin status
+          if (onRemoveMember) {
+            onRemoveMember(userId);
+          }
         };
 
         const onMakeAdminClick = () => {
@@ -145,12 +152,12 @@ const MembersTab: React.FC<Props> = ({
   return (
     <div>
       <h2 className="text-lg font-semibold text-gray-900">
-        Members ({members?.length || 0})
+        Members ({roomMembers?.length || 0})
       </h2>
       <div className="mt-3 space-y-2.5">
-        {members && members.length > 0
-          ? members.map((m) => {
-              const user = users.find((u) => u.id === m);
+        {roomMembers && roomMembers.length > 0
+          ? roomMembers.map((membership) => {
+              const user = users.find((u) => u.id === membership.userId);
               if (!user) return null;
 
               // Check friendship status from Redux data
@@ -179,7 +186,8 @@ const MembersTab: React.FC<Props> = ({
                 : false;
 
               let type: Parameters<typeof FriendCard>[0]["type"] = "search";
-              const isCurrent = currentUser && m === currentUser.id;
+              const isCurrent =
+                currentUser && membership.userId === currentUser.id;
               if (isCurrent) type = "search";
               else if (isFriend) type = "friend";
               else if (hasPending) type = "request";

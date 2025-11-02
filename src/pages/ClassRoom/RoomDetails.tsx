@@ -4,7 +4,6 @@ import { FaUsers, FaImage, FaInfoCircle, FaThumbtack } from "react-icons/fa";
 import { BsPostcard } from "react-icons/bs";
 import sampleRooms, { type Room } from "../../data/rooms-data/roomsData";
 import { 
-  getMembersForRoom, 
   getMemberCount,
   getRoomCreator,
   getAllAdmins,
@@ -29,7 +28,12 @@ import {
   removeFriendship,
 } from "../../store/slices/friendsSlice";
 import confirm from "../../utils/confirm";
-import { updateRoom } from "../../store/slices/classRoom/classRoomSlice";
+import {
+  updateRoom,
+  makeAdmin,
+  removeAdmin,
+  removeMember,
+} from "../../store/slices/classRoom/classRoomSlice";
 
 const RoomDetails: React.FC = () => {
   const { roomId } = useParams<{ roomId: string }>();
@@ -229,7 +233,7 @@ const RoomDetails: React.FC = () => {
 
           {activeTab === "members" && (
             <MembersTab
-              members={getMembersForRoom(room.id)}
+              roomId={room.id}
               users={usersData}
               currentUser={currentUser}
               onAccept={(id: string) =>
@@ -279,21 +283,22 @@ const RoomDetails: React.FC = () => {
                     })
                   );
               }}
-              // pass creator id and admins and handlers to manage members
-              creatorId={creatorId}
-              admins={getAllAdmins(room.id)}
-              onRemoveMember={(id: string) => {
-                // TODO: Implement Redux action for removing member from room
-                // For now, this will be handled when we integrate membership management
-                console.log("Remove member:", id, "from room:", room.id);
+              onRemoveMember={async (id: string) => {
+                const ok = await confirm({
+                  title: "Remove member?",
+                  text: "This user will be removed from the room.",
+                  confirmButtonText: "Yes, remove",
+                  icon: "warning",
+                });
+                if (ok) {
+                  dispatch(removeMember({ userId: id, roomId: room.id }));
+                }
               }}
               onMakeAdmin={(id: string) => {
-                // TODO: Implement Redux action for promoting member to admin
-                console.log("Make admin:", id, "in room:", room.id);
+                dispatch(makeAdmin({ userId: id, roomId: room.id }));
               }}
               onRemoveAdmin={(id: string) => {
-                // TODO: Implement Redux action for removing admin role
-                console.log("Remove admin:", id, "from room:", room.id);
+                dispatch(removeAdmin({ userId: id, roomId: room.id }));
               }}
             />
           )}
