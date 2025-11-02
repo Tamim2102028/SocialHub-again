@@ -1,6 +1,7 @@
 import GroupCard from "../utils/GroupCard";
 import { useAppSelector } from "../../../store/hooks";
 import { resolveGroupsByIds } from "../../../data/group-data/groupResolver";
+import { getMemberCount } from "../../../data/group-data/groupMembers";
 
 const UniversityGroups = () => {
   const user = useAppSelector((s) => s.profile);
@@ -19,7 +20,7 @@ const UniversityGroups = () => {
     name: g.name,
     description: g.description,
     coverImage: g.coverImage,
-    memberCount: g.members?.length || 0,
+    memberCount: getMemberCount(g.id),
     privacy: g.privacy,
   }));
 

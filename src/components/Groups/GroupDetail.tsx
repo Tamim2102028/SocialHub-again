@@ -29,6 +29,11 @@ import Swal from "sweetalert2";
 import GroupMembersTab from "./group-tabs/GroupMembersTab";
 import { usersData } from "../../data/profile-data/userData";
 import {
+  getMemberCount,
+  getGroupOwner,
+  getGroupAdmins,
+} from "../../data/group-data/groupMembers";
+import {
   acceptFriendRequest,
   rejectFriendRequest,
   sendFriendRequest,
@@ -58,6 +63,11 @@ const GroupDetail: React.FC = () => {
   const isMember = useAppSelector((s) =>
     groupId ? selectIsMember(s, groupId) : false
   );
+
+  // Get member count from the new groupMembers data
+  const memberCount = groupId ? getMemberCount(groupId) : 0;
+  const groupOwner = groupId ? getGroupOwner(groupId) : undefined;
+  const groupAdmins = groupId ? getGroupAdmins(groupId) : [];
 
   const [activeTab, setActiveTab] = useState<
     "posts" | "pinned" | "members" | "media" | "about"
@@ -234,7 +244,7 @@ const GroupDetail: React.FC = () => {
                         {group.name}
                       </h1>
                       <p className="mt-1 text-gray-600">
-                        Public Group · {group.members?.length || 0} members
+                        Public Group · {memberCount} members
                       </p>
                     </div>
                     <button className="text-gray-400 hover:text-gray-600">
@@ -419,7 +429,7 @@ const GroupDetail: React.FC = () => {
                 <div>
                   <h3 className="mb-3 font-bold text-gray-900">Creator</h3>
                   {(() => {
-                    const owner = usersData.find((u) => u.id === group.owner);
+                    const owner = usersData.find((u) => u.id === groupOwner);
                     if (!owner) return <p className="text-gray-500 text-sm">Owner not found</p>;
                     
                     return (
@@ -442,17 +452,17 @@ const GroupDetail: React.FC = () => {
                 </div>
 
                 {/* Admins Section */}
-                {group.admins && group.admins.length > 0 && (
+                {groupAdmins && groupAdmins.length > 0 && (
                   <div>
                     <h3 className="mb-3 font-bold text-gray-900">
-                      Admins ({group.admins.length})
+                      Admins ({groupAdmins.length})
                     </h3>
                     <div className="space-y-2">
-                      {group.admins.map((adminId) => {
+                      {groupAdmins.map((adminId) => {
                         const admin = usersData.find((u) => u.id === adminId);
                         if (!admin) return null;
                         
-                        const isOwner = adminId === group.owner;
+                        const isOwner = adminId === groupOwner;
                         
                         return (
                           <div
@@ -491,7 +501,7 @@ const GroupDetail: React.FC = () => {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
                       <p className="text-2xl font-bold text-gray-900">
-                        {group.members?.length || 0}
+                        {memberCount}
                       </p>
                       <p className="text-sm text-gray-600">Members</p>
                     </div>

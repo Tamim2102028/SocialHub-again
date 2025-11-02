@@ -5,6 +5,14 @@ import { BsThreeDots } from "react-icons/bs";
 import Swal from "sweetalert2";
 import { useAppSelector } from "../../../store/hooks";
 import type { RootState } from "../../../store/store";
+import {
+  getMembersForGroup,
+  getGroupOwner,
+  getGroupAdmins,
+  isOwner as checkIsOwner,
+  isAdmin as checkIsAdmin,
+  getMemberCount,
+} from "../../../data/group-data/groupMembers";
 
 interface Props {
   groupId: string;
@@ -43,15 +51,11 @@ const GroupMembersTab: React.FC<Props> = ({
     (s: RootState) => s.friends.friendRequests
   );
 
-  // Get group from Redux
-  const group = useAppSelector((s: RootState) =>
-    s.groups.groups.find((g) => g.id === groupId)
-  );
-
-  // Extract owner and admins from group
-  const owner = group?.owner;
-  const admins = group?.admins || [];
-  const members = group?.members || [];
+  // Use the new groupMembers data for membership information
+  const members = getMembersForGroup(groupId);
+  const owner = getGroupOwner(groupId);
+  const admins = getGroupAdmins(groupId);
+  const memberCount = getMemberCount(groupId);
 
   const handleMemberMenu = async (
     userId: string,
@@ -148,7 +152,7 @@ const GroupMembersTab: React.FC<Props> = ({
   return (
     <div>
       <h2 className="text-lg font-semibold text-gray-900">
-        Members ({members.length || 0})
+        Members ({memberCount})
       </h2>
       <div className="mt-3 space-y-2.5">
         {members && members.length > 0
@@ -194,8 +198,9 @@ const GroupMembersTab: React.FC<Props> = ({
                   ? user.university?.name
                   : user.college?.name;
 
-              const isAdmin = admins.includes(user.id);
-              const isOwner = owner === user.id;
+              // Use helper functions to check roles
+              const isAdmin = checkIsAdmin(user.id, groupId);
+              const isOwner = checkIsOwner(user.id, groupId);
 
               const isCurrentUserOwner =
                 !!currentUser && !!owner && currentUser.id === owner;

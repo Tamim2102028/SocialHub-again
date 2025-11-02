@@ -9,7 +9,7 @@ export interface UserData {
   bio?: string;
   status?: boolean;
   role: ("student" | "teacher" | "system")[];
-  gender: "male" | "female";
+  gender?: "male" | "female";
   religion?: "Islam" | "Hindu" | "Christian" | "Other";
 
   educationLevel: "UNIVERSITY" | "COLLEGE";

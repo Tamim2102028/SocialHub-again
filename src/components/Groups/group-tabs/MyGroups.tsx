@@ -1,5 +1,6 @@
 import GroupCard from "../utils/GroupCard";
 import { useAppSelector } from "../../../store/hooks";
+import { getMemberCount } from "../../../data/group-data/groupMembers";
 
 const MyGroups = () => {
   const joined = useAppSelector((s) => s.profile.joinedGroup || []);
@@ -14,7 +15,7 @@ const MyGroups = () => {
       name: g!.name,
       description: g!.description,
       coverImage: g!.coverImage,
-      memberCount: g!.members?.length || 0,
+      memberCount: getMemberCount(g!.id),
       privacy: g!.privacy,
     }));
 

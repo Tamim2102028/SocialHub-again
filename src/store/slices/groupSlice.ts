@@ -11,6 +11,11 @@ import {
   updateUserById,
 } from "../../services/userService";
 import { reloadProfile } from "./profileSlice";
+import {
+  removeMemberFromGroup,
+  updateMemberRole,
+  isAdmin,
+} from "../../data/group-data/groupMembers";
 
 interface GroupState {
   // list of groups (seeded from in-repo data)
@@ -199,25 +204,25 @@ const groupSlice = createSlice({
       .addCase(makeAdmin.fulfilled, (state, action) => {
         const { groupId, userId } = action.payload;
         const group = state.groups.find((g) => g.id === groupId);
-        if (group && !group.admins.includes(userId)) {
-          group.admins.push(userId);
+        if (group && !isAdmin(userId, groupId)) {
+          // Update role in groupMembers.ts
+          updateMemberRole(userId, groupId, "admin");
         }
       })
       .addCase(removeAdmin.fulfilled, (state, action) => {
         const { groupId, userId } = action.payload;
         const group = state.groups.find((g) => g.id === groupId);
         if (group) {
-          group.admins = group.admins.filter((id) => id !== userId);
+          // Update role back to member in groupMembers.ts
+          updateMemberRole(userId, groupId, "member");
         }
       })
       .addCase(removeMember.fulfilled, (state, action) => {
         const { groupId, userId } = action.payload;
         const group = state.groups.find((g) => g.id === groupId);
         if (group) {
-          // Remove from members
-          group.members = group.members.filter((id) => id !== userId);
-          // Also remove from admins if they were admin
-          group.admins = group.admins.filter((id) => id !== userId);
+          // Remove member from groupMembers.ts
+          removeMemberFromGroup(userId, groupId);
         }
       });
   },

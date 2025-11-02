@@ -1,6 +1,7 @@
 import React from "react";
 import { useAppSelector } from "../../../store/hooks";
 import GroupCard from "../utils/GroupCard";
+import { getMemberCount } from "../../../data/group-data/groupMembers";
 
 const SentGroupRequests: React.FC = () => {
   const sent = useAppSelector((s) => s.profile.sentRequestGroup || []);
@@ -29,7 +30,7 @@ const SentGroupRequests: React.FC = () => {
       name: g!.name,
       description: g!.description,
       coverImage: g!.coverImage,
-      memberCount: g!.members?.length || 0,
+      memberCount: getMemberCount(g!.id),
       privacy: g!.privacy,
     }));
 

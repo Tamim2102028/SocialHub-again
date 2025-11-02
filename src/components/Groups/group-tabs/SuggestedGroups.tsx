@@ -2,6 +2,7 @@ import React from "react";
 import GroupCard from "../utils/GroupCard";
 // profile data is read from Redux via useAppSelector
 import { useAppSelector } from "../../../store/hooks";
+import { getMemberCount } from "../../../data/group-data/groupMembers";
 
 const SuggestedGroups: React.FC = () => {
   const joined = useAppSelector((s) => s.profile.joinedGroup || []);
@@ -24,7 +25,7 @@ const SuggestedGroups: React.FC = () => {
       name: g.name,
       description: g.description,
       coverImage: g.coverImage,
-      memberCount: g.members?.length || 0,
+      memberCount: getMemberCount(g.id),
       privacy: g.privacy,
     }));
 

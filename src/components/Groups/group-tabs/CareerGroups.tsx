@@ -1,6 +1,7 @@
 import React from "react";
 import GroupCard from "../utils/GroupCard";
 import { useAppSelector } from "../../../store/hooks";
+import { getMemberCount } from "../../../data/group-data/groupMembers";
 
 const pick = ["g21", "g22", "g23"];
 
@@ -31,7 +32,7 @@ const CareerGroups: React.FC = () => {
       name: g!.name,
       description: g!.description,
       coverImage: g!.coverImage,
-      memberCount: g!.members?.length || 0,
+      memberCount: getMemberCount(g!.id),
       privacy: g!.privacy,
     }));
 
