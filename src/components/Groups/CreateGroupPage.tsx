@@ -9,9 +9,14 @@ import {
 } from "react-icons/fa";
 import Swal from "sweetalert2";
 import type { Group } from "../../data/group-data/preGroupData";
+import { addMemberToGroup } from "../../data/group-data/groupMembers";
+import { useAppSelector } from "../../store/hooks";
 
 const CreateGroupPage: React.FC = () => {
   const navigate = useNavigate();
+
+  // Get current user ID from Redux store
+  const currentUserId = useAppSelector((state) => state.profile?.id);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -118,9 +123,19 @@ const CreateGroupPage: React.FC = () => {
       return;
     }
 
+    if (!currentUserId) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "You must be logged in to create a group!",
+      });
+      return;
+    }
+
     // Create new group object
+    const newGroupId = `g${Date.now()}`;
     const newGroup: Partial<Group> = {
-      id: `g${Date.now()}`, // Temporary ID generation
+      id: newGroupId,
       name: formData.name,
       description: formData.description,
       groupFor: formData.groupFor,
@@ -136,7 +151,6 @@ const CreateGroupPage: React.FC = () => {
       rules: formData.rules
         ? formData.rules.split("\n").filter((rule) => rule.trim())
         : undefined,
-      createdBy: "1", // Should be current user ID
       systemCreated: false,
       postCount: 0,
       createdAt: new Date(),
@@ -145,17 +159,18 @@ const CreateGroupPage: React.FC = () => {
     };
 
     // Add university data if applicable
-    if (
-      formData.educationLevel === "UNIVERSITY" &&
-      formData.universityName
-    ) {
+    if (formData.educationLevel === "UNIVERSITY" && formData.universityName) {
       newGroup.university = {
         name: formData.universityName,
         department: formData.department || undefined,
         section: formData.section || undefined,
         subsection: formData.subsection || undefined,
-        year: formData.year ? (parseInt(formData.year) as 1 | 2 | 3 | 4 | 5) : undefined,
-        semester: formData.semester ? (parseInt(formData.semester) as 1 | 2) : undefined,
+        year: formData.year
+          ? (parseInt(formData.year) as 1 | 2 | 3 | 4 | 5)
+          : undefined,
+        semester: formData.semester
+          ? (parseInt(formData.semester) as 1 | 2)
+          : undefined,
       };
     }
 
@@ -172,6 +187,9 @@ const CreateGroupPage: React.FC = () => {
       };
     }
 
+    // Add current user as owner in groupMembers
+    addMemberToGroup(currentUserId, newGroupId, "owner", "active");
+
     // Show success message
     Swal.fire({
       icon: "success",
@@ -183,6 +201,7 @@ const CreateGroupPage: React.FC = () => {
       // In a real app, you would dispatch to Redux store here
       // dispatch(createGroup(newGroup));
       console.log("New Group:", newGroup);
+      console.log("Owner added to groupMembers with ID:", currentUserId);
       navigate("/groups");
     });
   };
@@ -762,7 +781,9 @@ const CreateGroupPage: React.FC = () => {
                   <div className="flex h-40 w-full items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50">
                     <div className="text-center">
                       <FaImage className="mx-auto mb-2 text-4xl text-gray-400" />
-                      <p className="text-sm text-gray-500">Upload cover image</p>
+                      <p className="text-sm text-gray-500">
+                        Upload cover image
+                      </p>
                     </div>
                   </div>
                 )}
