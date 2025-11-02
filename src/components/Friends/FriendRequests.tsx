@@ -2,30 +2,37 @@ import React from "react";
 import FriendCard from "./FriendCard";
 import { getUserById } from "../../services/userService";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { selectUserById } from "../../store/slices/profileSlice";
 import {
-  selectUserById,
+  selectPendingRequestsForUser,
   acceptFriendRequest,
-  declineFriendRequest,
-} from "../../store/slices/profileSlice";
+  rejectFriendRequest,
+} from "../../store/slices/friendsSlice";
+import type { RootState } from "../../store/store";
 
 const FriendRequests: React.FC = () => {
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector((s) => selectUserById(s, s.profile.id));
+  
+  // Get pending requests from Redux friends slice
+  const requesterIds = useAppSelector((s: RootState) =>
+    selectPendingRequestsForUser(s, currentUser?.id || "")
+  );
 
   if (!currentUser) {
     return <div>User not found</div>;
   }
 
   const handleAccept = (requesterId: string) => {
-    dispatch(acceptFriendRequest(requesterId));
+    dispatch(acceptFriendRequest({ senderId: requesterId, receiverId: currentUser.id }));
   };
 
   const handleDecline = (requesterId: string) => {
-    dispatch(declineFriendRequest(requesterId));
+    dispatch(rejectFriendRequest({ senderId: requesterId, receiverId: currentUser.id }));
   };
 
-  // Get pending friend requests data from current user's pendingRequests list
-  const friendRequests = (currentUser.pendingRequests || [])
+  // Get pending friend requests data from requesterIds
+  const friendRequests = requesterIds
     .map((requestId) => {
       const requester = getUserById(requestId);
       if (!requester) return null;

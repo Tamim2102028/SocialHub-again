@@ -31,8 +31,6 @@ const ClassRoom: React.FC = () => {
     const room: SampleRoom = {
       id,
       name: `${data.university} / ${data.department} / ${data.section}${data.subsection ? `-${data.subsection}` : ""}`,
-      status: "open",
-      members: [],
       createdAt: dayjs().toISOString(),
     };
     // dispatch to redux slice (updateRoom will add if not existing)

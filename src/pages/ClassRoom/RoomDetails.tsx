@@ -20,14 +20,14 @@ import MediaTab from "../../components/ClassRoom/detailsPageTabs/MediaTab";
 import AboutTab from "../../components/ClassRoom/detailsPageTabs/AboutTab";
 import { addReply } from "../../store/slices/classRoom/roomPostsSlice";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { selectUserById } from "../../store/slices/profileSlice";
 import {
-  selectUserById,
   sendFriendRequest,
   cancelFriendRequest,
   acceptFriendRequest,
-  declineFriendRequest,
-  unfriend,
-} from "../../store/slices/profileSlice";
+  rejectFriendRequest,
+  removeFriendship,
+} from "../../store/slices/friendsSlice";
 import confirm from "../../utils/confirm";
 import { updateRoom } from "../../store/slices/classRoom/classRoomSlice";
 
@@ -232,11 +232,37 @@ const RoomDetails: React.FC = () => {
               members={getMembersForRoom(room.id)}
               users={usersData}
               currentUser={currentUser}
-              onAccept={(id: string) => dispatch(acceptFriendRequest(id))}
-              onDecline={(id: string) => dispatch(declineFriendRequest(id))}
-              onAddFriend={(id: string) => dispatch(sendFriendRequest(id))}
+              onAccept={(id: string) =>
+                dispatch(
+                  acceptFriendRequest({
+                    senderId: id,
+                    receiverId: currentUser?.id || "",
+                  })
+                )
+              }
+              onDecline={(id: string) =>
+                dispatch(
+                  rejectFriendRequest({
+                    senderId: id,
+                    receiverId: currentUser?.id || "",
+                  })
+                )
+              }
+              onAddFriend={(id: string) =>
+                dispatch(
+                  sendFriendRequest({
+                    senderId: currentUser?.id || "",
+                    receiverId: id,
+                  })
+                )
+              }
               onCancelRequest={(id: string) =>
-                dispatch(cancelFriendRequest(id))
+                dispatch(
+                  cancelFriendRequest({
+                    senderId: currentUser?.id || "",
+                    receiverId: id,
+                  })
+                )
               }
               onUnfriend={async (id: string) => {
                 const ok = await confirm({
@@ -245,7 +271,13 @@ const RoomDetails: React.FC = () => {
                   confirmButtonText: "Yes, unfriend",
                   icon: "warning",
                 });
-                if (ok) dispatch(unfriend(id));
+                if (ok)
+                  dispatch(
+                    removeFriendship({
+                      user1Id: currentUser?.id || "",
+                      user2Id: id,
+                    })
+                  );
               }}
               // pass creator id and admins and handlers to manage members
               creatorId={creatorId}

@@ -51,9 +51,9 @@ export interface UserData {
     medium?: "bangla" | "english";
   };
 
-  friends: string[];
-  pendingRequests?: string[];
-  sentRequests?: string[];
+  // ❌ Removed: friends, pendingRequests, sentRequests
+  // ✅ Now handled by separate friendships.ts and friendRequests.ts files
+  
   saved?: string[];
 
   preJoinedGroup?: string[];
@@ -93,10 +93,7 @@ const rawUsersData: UserData[] = [
         location: "Office 101",
       },
     ],
-    friends: ["2", "4", "5", "9", "11"],
-    pendingRequests: ["6", "7", "8", "10"],
-    sentRequests: ["12", "13", "14", "15"],
-
+    
     saved: [],
 
     preJoinedGroup: ["pg1", "pg2", "pg5"],
@@ -126,9 +123,6 @@ const rawUsersData: UserData[] = [
       medium: "bangla",
     },
     status: true,
-    friends: ["4"],
-    pendingRequests: [],
-    sentRequests: [],
     saved: [],
     preJoinedGroup: [],
     joinedGroup: [],
@@ -157,9 +151,6 @@ const rawUsersData: UserData[] = [
       isCr: true,
     },
     status: true,
-    friends: [],
-    pendingRequests: [],
-    sentRequests: [],
     saved: [],
     preJoinedGroup: [],
     joinedGroup: [],
@@ -188,9 +179,6 @@ const rawUsersData: UserData[] = [
       medium: "bangla",
     },
     status: true,
-    friends: [],
-    pendingRequests: [],
-    sentRequests: [],
     saved: [],
     preJoinedGroup: [],
     joinedGroup: [],
@@ -219,9 +207,6 @@ const rawUsersData: UserData[] = [
       medium: "english",
     },
     status: true,
-    friends: [],
-    pendingRequests: [],
-    sentRequests: [],
     saved: [],
     preJoinedGroup: [],
     joinedGroup: [],
@@ -250,9 +235,6 @@ const rawUsersData: UserData[] = [
       medium: "bangla",
     },
     status: true,
-    friends: [],
-    pendingRequests: [],
-    sentRequests: [],
     saved: [],
     preJoinedGroup: [],
     joinedGroup: [],
@@ -289,9 +271,6 @@ const rawUsersData: UserData[] = [
         location: "Room 12",
       },
     ],
-    friends: [],
-    pendingRequests: [],
-    sentRequests: [],
     saved: [],
     preJoinedGroup: [],
     joinedGroup: [],
@@ -332,9 +311,6 @@ const rawUsersData: UserData[] = [
         location: "Room 301",
       },
     ],
-    friends: [],
-    pendingRequests: [],
-    sentRequests: [],
     saved: [],
     preJoinedGroup: [],
     joinedGroup: [],
@@ -360,9 +336,6 @@ const rawUsersData: UserData[] = [
       semester: 2,
     },
     status: true,
-    friends: ["1"],
-    pendingRequests: [],
-    sentRequests: [],
     saved: [],
     preJoinedGroup: [],
     joinedGroup: [],
@@ -391,9 +364,6 @@ const rawUsersData: UserData[] = [
       medium: "english",
     },
     status: true,
-    friends: ["2"],
-    pendingRequests: [],
-    sentRequests: [],
     saved: [],
     preJoinedGroup: [],
     joinedGroup: [],
@@ -421,7 +391,6 @@ const rawUsersData: UserData[] = [
       semester: 2,
     },
     status: true,
-    friends: ["1", "5"],
     officeHours: [
       {
         id: "oh11-1",
@@ -430,8 +399,6 @@ const rawUsersData: UserData[] = [
         location: "Dept Office",
       },
     ],
-    pendingRequests: [],
-    sentRequests: [],
     saved: [],
     preJoinedGroup: [],
     joinedGroup: [],
@@ -460,9 +427,6 @@ const rawUsersData: UserData[] = [
       medium: "bangla",
     },
     status: true,
-    friends: [],
-    pendingRequests: [],
-    sentRequests: [],
     saved: [],
     preJoinedGroup: [],
     joinedGroup: [],
@@ -499,9 +463,6 @@ const rawUsersData: UserData[] = [
         location: "Office",
       },
     ],
-    friends: [],
-    pendingRequests: [],
-    sentRequests: [],
     saved: [],
     preJoinedGroup: [],
     joinedGroup: [],
@@ -538,9 +499,6 @@ const rawUsersData: UserData[] = [
         location: "Room 5",
       },
     ],
-    friends: [],
-    pendingRequests: [],
-    sentRequests: [],
     saved: [],
     preJoinedGroup: [],
     joinedGroup: [],
@@ -568,9 +526,6 @@ const rawUsersData: UserData[] = [
       semester: 2,
     },
     status: true,
-    friends: [],
-    pendingRequests: [],
-    sentRequests: [],
     saved: [],
     preJoinedGroup: [],
     joinedGroup: [],
@@ -616,3 +571,4 @@ export const usersData: CompatUserData[] = rawUsersData.map((u) => {
 // Note: runtime helper functions (getCurrentUserId, getUserById, updateUserById)
 // live in `userHelpers.ts`. This file exports only seeded data and the
 // `UserData` type so other modules can import `usersData` safely.
+

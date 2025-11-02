@@ -3,6 +3,8 @@ import FriendCard from "../../Friends/FriendCard";
 import { type UserData } from "../../../data/profile-data/userData";
 import { BsThreeDots } from "react-icons/bs";
 import Swal from "sweetalert2";
+import { useAppSelector } from "../../../store/hooks";
+import type { RootState } from "../../../store/store";
 
 interface Props {
   members: string[] | undefined;
@@ -38,6 +40,14 @@ const MembersTab: React.FC<Props> = ({
   creatorId,
   admins,
 }) => {
+  // Get all friendship data from Redux at component level
+  const allFriendships = useAppSelector(
+    (s: RootState) => s.friends.friendships
+  );
+  const allFriendRequests = useAppSelector(
+    (s: RootState) => s.friends.friendRequests
+  );
+
   const handleMemberMenu = async (
     userId: string,
     userName?: string,
@@ -143,11 +153,30 @@ const MembersTab: React.FC<Props> = ({
               const user = users.find((u) => u.id === m);
               if (!user) return null;
 
-              const isFriend = currentUser?.friends?.includes(user.id);
-              const hasPending = currentUser?.pendingRequests?.includes(
-                user.id
-              );
-              const hasSent = currentUser?.sentRequests?.includes(user.id);
+              // Check friendship status from Redux data
+              const isFriend = currentUser
+                ? allFriendships.some(
+                    (f) =>
+                      (f.user1Id === currentUser.id && f.user2Id === user.id) ||
+                      (f.user1Id === user.id && f.user2Id === currentUser.id)
+                  )
+                : false;
+              const hasPending = currentUser
+                ? allFriendRequests.some(
+                    (req) =>
+                      req.status === "pending" &&
+                      req.senderId === user.id &&
+                      req.receiverId === currentUser.id
+                  )
+                : false;
+              const hasSent = currentUser
+                ? allFriendRequests.some(
+                    (req) =>
+                      req.status === "pending" &&
+                      req.senderId === currentUser.id &&
+                      req.receiverId === user.id
+                  )
+                : false;
 
               let type: Parameters<typeof FriendCard>[0]["type"] = "search";
               const isCurrent = currentUser && m === currentUser.id;

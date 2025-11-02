@@ -14,6 +14,7 @@ import achievementSlice from "./slices/achievementSlice";
 import groupSlice from "./slices/groupSlice";
 import classRoomSlice from "./slices/classRoom/classRoomSlice.js";
 import roomPostsSlice from "./slices/classRoom/roomPostsSlice.js";
+import friendsSlice from "./slices/friendsSlice";
 
 export const store = configureStore({
   reducer: {
@@ -32,6 +33,7 @@ export const store = configureStore({
     bloodDonation: bloodDonationSlice,
     tournament: tournamentSlice,
     achievement: achievementSlice,
+    friends: friendsSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

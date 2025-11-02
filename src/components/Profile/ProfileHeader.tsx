@@ -1,5 +1,8 @@
 import React from "react";
 import { FaEdit, FaUserPlus, FaEnvelope } from "react-icons/fa";
+import { useAppSelector } from "../../store/hooks";
+import { selectFriendCount, selectPendingRequestsForUser } from "../../store/slices/friendsSlice";
+import type { RootState } from "../../store/store";
 
 interface UserData {
   id: string;
@@ -9,8 +12,6 @@ interface UserData {
   bio: string;
   university: string;
   gender?: "male" | "female";
-  friends: string[];
-  pendingRequests?: string[];
   saved?: string[];
 }
 
@@ -29,6 +30,14 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   onFollow,
   onMessage,
 }) => {
+  // Get friend count and pending requests from Redux
+  const friendCount = useAppSelector((s: RootState) =>
+    selectFriendCount(s, userData.id)
+  );
+  const pendingRequestCount = useAppSelector((s: RootState) =>
+    selectPendingRequestsForUser(s, userData.id).length
+  );
+
   return (
     <div className="overflow-hidden rounded-lg bg-white shadow">
       {/* Profile Info */}
@@ -95,14 +104,14 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         <div className="mt-6 flex justify-center space-x-8 border-t border-gray-200 pt-6 md:justify-start">
           <div className="text-center">
             <div className="text-2xl font-bold text-gray-900">
-              {userData.friends.length}
+              {friendCount}
             </div>
             <div className="text-sm text-gray-600">Friends</div>
           </div>
-          {userData.pendingRequests && (
+          {pendingRequestCount > 0 && (
             <div className="text-center">
               <div className="text-2xl font-bold text-gray-900">
-                {userData.pendingRequests.length}
+                {pendingRequestCount}
               </div>
               <div className="text-sm text-gray-600">Pending Requests</div>
             </div>

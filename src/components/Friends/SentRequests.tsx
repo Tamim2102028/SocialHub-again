@@ -2,25 +2,32 @@ import React from "react";
 import FriendCard from "./FriendCard";
 import { getUserById } from "../../services/userService";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { selectUserById } from "../../store/slices/profileSlice";
 import {
-  selectUserById,
+  selectSentRequestsByUser,
   cancelFriendRequest,
-} from "../../store/slices/profileSlice";
+} from "../../store/slices/friendsSlice";
+import type { RootState } from "../../store/store";
 
 const SentRequests: React.FC = () => {
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector((s) => selectUserById(s, s.profile.id));
+  
+  // Get sent requests from Redux friends slice
+  const receiverIds = useAppSelector((s: RootState) =>
+    selectSentRequestsByUser(s, currentUser?.id || "")
+  );
 
   if (!currentUser) {
     return <div>User not found</div>;
   }
 
   const handleCancelRequest = (targetId: string) => {
-    dispatch(cancelFriendRequest(targetId));
+    dispatch(cancelFriendRequest({ senderId: currentUser.id, receiverId: targetId }));
   };
 
-  // Get sent requests data from current user's sentRequests list
-  const sentRequests = (currentUser.sentRequests || [])
+  // Get sent requests data from receiverIds
+  const sentRequests = receiverIds
     .map((requestId) => {
       const requestedUser = getUserById(requestId);
       if (!requestedUser) return null;

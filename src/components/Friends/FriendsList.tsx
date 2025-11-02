@@ -2,12 +2,19 @@ import React from "react";
 import FriendCard from "./FriendCard";
 import { getUserById } from "../../services/userService";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { selectUserById, unfriend } from "../../store/slices/profileSlice";
+import { selectUserById } from "../../store/slices/profileSlice";
+import { selectFriendsForUser, removeFriendship } from "../../store/slices/friendsSlice";
+import type { RootState } from "../../store/store";
 import confirm from "../../utils/confirm";
 
 const FriendsList: React.FC = () => {
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector((s) => selectUserById(s, s.profile.id));
+  
+  // Get friends from Redux friends slice
+  const friendIds = useAppSelector((s: RootState) =>
+    selectFriendsForUser(s, currentUser?.id || "")
+  );
 
   if (!currentUser) {
     return <div>User not found</div>;
@@ -21,11 +28,13 @@ const FriendsList: React.FC = () => {
       icon: "warning",
     });
 
-    if (ok) dispatch(unfriend(friendId));
+    if (ok) {
+      dispatch(removeFriendship({ user1Id: currentUser.id, user2Id: friendId }));
+    }
   };
 
-  // Get friends data from current user's friends list
-  const friends = currentUser.friends
+  // Get friends data from friendIds
+  const friends = friendIds
     .map((friendId) => {
       const friend = getUserById(friendId);
       if (!friend) return null;
