@@ -2,22 +2,11 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import {
   FaChalkboard,
-  FaBroadcastTower,
-  FaUsers,
-  FaComments,
   FaEllipsisH,
 } from "react-icons/fa";
 
 const tabs = [
   { id: "classroom", label: "Rooms", to: "/classroom", icon: FaChalkboard },
-  { id: "live", label: "Live", to: "/classroom/live", icon: FaBroadcastTower },
-  { id: "groups", label: "Groups", to: "/classroom/groups", icon: FaUsers },
-  {
-    id: "community",
-    label: "Community",
-    to: "/classroom/community",
-    icon: FaComments,
-  },
   { id: "more", label: "More", to: "/classroom/more", icon: FaEllipsisH },
 ];
 

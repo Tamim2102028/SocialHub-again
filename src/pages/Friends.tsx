@@ -8,6 +8,13 @@ import SentRequests from "../components/Friends/SentRequests";
 import FriendCard from "../components/Friends/FriendCard";
 import { usersData } from "../data/profile-data/userData";
 import { getCurrentUserId } from "../services/userService";
+import { useAppSelector } from "../store/hooks";
+import {
+  selectFriendsForUser,
+  selectPendingRequestsForUser,
+  selectSentRequestsByUser,
+} from "../store/slices/friendsSlice";
+import type { RootState } from "../store/store";
 
 const Friends: React.FC = () => {
   const [activeTab, setActiveTab] = useState<
@@ -17,13 +24,20 @@ const Friends: React.FC = () => {
 
   const currentUserId = getCurrentUserId();
 
+  // Get friend data from Redux
+  const friendIds = useAppSelector((s: RootState) =>
+    selectFriendsForUser(s, currentUserId)
+  );
+  const pendingRequestIds = useAppSelector((s: RootState) =>
+    selectPendingRequestsForUser(s, currentUserId)
+  );
+  const sentRequestIds = useAppSelector((s: RootState) =>
+    selectSentRequestsByUser(s, currentUserId)
+  );
+
   // Tab-specific search results filtering
   const searchResults = useMemo(() => {
     if (!searchQuery.trim()) return [];
-
-    const currentUser = usersData.find((user) => user.id === currentUserId);
-
-    if (!currentUser) return [];
 
     const searchTerm = searchQuery.toLowerCase();
 
@@ -43,31 +57,35 @@ const Friends: React.FC = () => {
     // Then filter based on active tab
     switch (activeTab) {
       case "all":
-        return filteredUsers.filter((user) =>
-          currentUser.friends.includes(user.id)
-        );
+        return filteredUsers.filter((user) => friendIds.includes(user.id));
 
       case "requests":
         return filteredUsers.filter((user) =>
-          currentUser.pendingRequests?.includes(user.id)
+          pendingRequestIds.includes(user.id)
         );
 
       case "suggestions":
         return filteredUsers.filter(
           (user) =>
-            !currentUser.friends.includes(user.id) &&
-            !currentUser.pendingRequests?.includes(user.id)
+            !friendIds.includes(user.id) &&
+            !pendingRequestIds.includes(user.id) &&
+            !sentRequestIds.includes(user.id)
         );
 
       case "sent":
-        return filteredUsers.filter((user) =>
-          currentUser.sentRequests?.includes(user.id)
-        );
+        return filteredUsers.filter((user) => sentRequestIds.includes(user.id));
 
       default:
         return filteredUsers;
     }
-  }, [searchQuery, activeTab, currentUserId]);
+  }, [
+    searchQuery,
+    activeTab,
+    currentUserId,
+    friendIds,
+    pendingRequestIds,
+    sentRequestIds,
+  ]);
 
   const renderSearchResults = () => {
     if (searchResults.length === 0) {

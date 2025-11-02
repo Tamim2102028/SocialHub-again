@@ -1,34 +1,71 @@
-import React from "react";
-import sampleRooms from "../../../data/roomsData";
-import { FaEllipsisV } from "react-icons/fa";
-import { usersData } from "../../../data/profile-data/userData";
-import type { Room as SampleRoom } from "../../../data/roomsData";
-import RoomForm from "../RoomForm";
-
-// Rooms can come from local state (minimal shape) or from sampleRooms (richer shape).
-type LocalRoom = {
-  id: string;
-  name: string;
-  createdAt: string;
-};
-
-type CombinedRoom = LocalRoom | SampleRoom;
-
-type CreatePayload = {
-  university: string;
-  department: string;
-  section: string;
-  subsection: string;
-};
+import React, { useEffect, useState } from "react";
+import RoomForm, { type RoomFormValues } from "../RoomForm";
+import RoomCard from "../RoomCard";
+import { useAppDispatch, useAppSelector } from "../../../store/hooks";
+import type { RootState } from "../../../store/store";
+import {
+  toggleRoomStatus,
+  selectOpenRooms,
+  selectVisibleRoomIds,
+  selectHiddenRoomIds,
+} from "../../../store/slices/classRoom/classRoomSlice";
+import { selectUserById } from "../../../store/slices/profileSlice";
 
 const Rooms: React.FC<{
-  rooms?: CombinedRoom[];
   showCreateForm?: boolean;
-  onCreate?: (data: CreatePayload) => void;
+  onCreate?: (data: RoomFormValues) => void;
   onCancelCreate?: () => void;
-}> = ({ rooms = [], showCreateForm = false, onCreate, onCancelCreate }) => {
-  // use sampleRooms as fallback when no rooms provided from parent state
-  const displayRooms: CombinedRoom[] = rooms.length > 0 ? rooms : sampleRooms;
+}> = ({ showCreateForm = false, onCreate, onCancelCreate }) => {
+  const dispatch = useAppDispatch();
+
+  // Get current user ID
+  const currentUser = useAppSelector((s: RootState) =>
+    selectUserById(s, s.profile.id)
+  );
+  const currentUserId = currentUser?.id || "";
+
+  // Get all non-deleted rooms from Redux
+  const allRooms = useAppSelector((s: RootState) => selectOpenRooms(s));
+
+  // Get visible and hidden room IDs from Redux (automatically updates!)
+  const visibleRoomIds = useAppSelector((s: RootState) =>
+    selectVisibleRoomIds(s, currentUserId)
+  );
+  const hiddenRoomIds = useAppSelector((s: RootState) =>
+    selectHiddenRoomIds(s, currentUserId)
+  );
+
+  // Filter rooms based on membership status
+  const userOpenRooms = allRooms.filter((r) => visibleRoomIds.includes(r.id));
+  const userHiddenRooms = allRooms.filter((r) => hiddenRoomIds.includes(r.id));
+
+  // keep menu state locally
+  const [menuOpenFor, setMenuOpenFor] = useState<string | null>(null);
+
+  useEffect(() => {
+    // clear any open menu when room lists change
+    setMenuOpenFor(null);
+  }, [userOpenRooms.length, userHiddenRooms.length]);
+
+  useEffect(() => {
+    const onDocClick = () => setMenuOpenFor(null);
+    document.addEventListener("click", onDocClick);
+    return () => document.removeEventListener("click", onDocClick);
+  }, []);
+
+  const toggleMenu = (e: React.MouseEvent, id: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setMenuOpenFor((prev) => (prev === id ? null : id));
+  };
+
+  const toggleRoomStatusLocal = (id: string) => {
+    if (!currentUserId) return;
+
+    // Just dispatch the Redux action - selectors will automatically update!
+    dispatch(toggleRoomStatus({ userId: currentUserId, roomId: id }));
+    setMenuOpenFor(null);
+  };
 
   return (
     <div className="space-y-3">
@@ -50,7 +87,7 @@ const Rooms: React.FC<{
       )}
 
       {/* no rooms message */}
-      {displayRooms.length === 0 ? (
+      {userOpenRooms.length + userHiddenRooms.length === 0 ? (
         <div className="rounded-xl border border-gray-300 bg-white p-6 shadow">
           <p className="text-sm text-gray-600">
             No rooms yet. Create one to get started.
@@ -58,55 +95,32 @@ const Rooms: React.FC<{
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {displayRooms.map((r) => {
-            // cover image (use provided coverImage or fallback)
-            const cover =
-              (r as CombinedRoom & { coverImage?: string }).coverImage ||
-              `https://picsum.photos/seed/${r.id}/400/225`;
+          {userOpenRooms.map((r) => (
+            <RoomCard
+              key={r.id}
+              room={r}
+              menuOpenFor={menuOpenFor}
+              toggleMenu={toggleMenu}
+              onToggleStatus={toggleRoomStatusLocal}
+            />
+          ))}
+        </div>
+      )}
 
-            // get creator name from usersData (sample createdBy uses 'u' prefix)
-            const createdById = (r as CombinedRoom & { createdBy?: string })
-              .createdBy;
-            const getCreatorName = (cid?: string) => {
-              if (!cid) return undefined;
-              let id = cid;
-              if (id.startsWith("u")) id = id.slice(1);
-              const user = usersData.find((u) => u.id === id);
-              return user?.name;
-            };
-            const creatorName = getCreatorName(createdById);
-
-            return (
-              <div key={r.id} className="overflow-hidden rounded-lg shadow-sm">
-                <div className="relative h-40 w-full bg-gray-100">
-                  <img
-                    src={cover}
-                    alt={r.name}
-                    className="h-full w-full object-cover"
-                  />
-
-                  {/* three-dot menu button (visual only) */}
-                  <button
-                    aria-label="room options"
-                    className="absolute top-2 right-2 z-10 inline-flex h-8 w-8 items-center justify-center rounded-full bg-black/40 text-white hover:bg-black/50"
-                  >
-                    <FaEllipsisV className="h-4 w-4" />
-                  </button>
-
-                  <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/60 to-transparent p-2">
-                    <p className="truncate text-sm font-medium text-white">
-                      {r.name}
-                    </p>
-                    {creatorName && (
-                      <p className="mt-0.5 truncate text-xs text-gray-200">
-                        by {creatorName}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+      {userHiddenRooms.length > 0 && (
+        <div className="space-y-3">
+          <h3 className="text-xl font-semibold text-gray-900">Hidden Rooms</h3>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {userHiddenRooms.map((r) => (
+              <RoomCard
+                key={r.id}
+                room={r}
+                menuOpenFor={menuOpenFor}
+                toggleMenu={toggleMenu}
+                onToggleStatus={toggleRoomStatusLocal}
+              />
+            ))}
+          </div>
         </div>
       )}
     </div>

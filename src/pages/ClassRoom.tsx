@@ -6,37 +6,55 @@ import ClassroomTabs from "../components/ClassRoom/ClassroomTabs";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useMatch } from "react-router-dom";
 import Rooms from "../components/ClassRoom/Tabs/Rooms";
-import LiveTab from "../components/ClassRoom/Tabs/LiveTab";
-import GroupsTab from "../components/ClassRoom/Tabs/GroupsTab";
-import CommunityTab from "../components/ClassRoom/Tabs/CommunityTab";
 import MoreTab from "../components/ClassRoom/Tabs/MoreTab";
+import RoomDetails from "./ClassRoom/RoomDetails";
+import RoomLive from "./ClassRoom/RoomLive";
 
-type Room = {
-  id: string;
-  name: string;
-  createdAt: string;
-};
+import { useAppDispatch } from "../store/hooks";
+import { updateRoom, addRoomMember } from "../store/slices/classRoom/classRoomSlice";
+import type { Room as SampleRoom } from "../data/rooms-data/roomsData";
+import type { RoomFormValues } from "../components/ClassRoom/RoomForm";
+import { getCurrentUserId } from "../services/userService";
 
 const ClassRoom: React.FC = () => {
-  const [rooms, setRooms] = React.useState<Room[]>([]);
+  const dispatch = useAppDispatch();
   const [showCreateForm, setShowCreateForm] = React.useState<boolean>(false);
 
   const openCreateForm = () => setShowCreateForm(true);
   const closeCreateForm = () => setShowCreateForm(false);
 
-  const handleCreate = (data: {
-    university: string;
-    department: string;
-    section: string;
-    subsection: string;
-  }) => {
+  const handleCreate = (data: RoomFormValues) => {
     const id = `room_${Date.now()}`;
-    const room: Room = {
+    const currentUserId = getCurrentUserId();
+    
+    const room: SampleRoom = {
       id,
-      name: `${data.university} / ${data.department} / ${data.section}${data.subsection ? `-${data.subsection}` : ""}`,
+      name: data.name,
+      university: data.university,
+      department: data.department,
+      year: data.year,
+      semester: data.semester,
+      section: data.section,
+      subsection: data.subsection || undefined,
       createdAt: dayjs().toISOString(),
+      lastActivityAt: dayjs().toISOString(),
     };
-    setRooms((prev) => [room, ...prev]);
+    
+    // dispatch to redux slice (updateRoom will add if not existing)
+    dispatch(updateRoom(room));
+    
+    // Add the creator as a room member with "creator" role
+    dispatch(
+      addRoomMember({
+        id: `member_${Date.now()}`,
+        userId: currentUserId,
+        roomId: id,
+        role: "creator",
+        joinedAt: dayjs().toISOString(),
+        status: "open",
+      })
+    );
+    
     setShowCreateForm(false);
   };
 
@@ -54,17 +72,16 @@ const ClassRoom: React.FC = () => {
               index
               element={
                 <Rooms
-                  rooms={rooms}
                   showCreateForm={showCreateForm}
                   onCreate={handleCreate}
                   onCancelCreate={closeCreateForm}
                 />
               }
             />
-            <Route path="live" element={<LiveTab />} />
-            <Route path="groups" element={<GroupsTab />} />
-            <Route path="community" element={<CommunityTab />} />
             <Route path="more" element={<MoreTab />} />
+            {/* room details route */}
+            <Route path="rooms/:roomId" element={<RoomDetails />} />
+            <Route path="rooms/:roomId/live" element={<RoomLive />} />
             {/* redirect unknown to index */}
             <Route path="*" element={<Navigate to="." replace />} />
           </Routes>

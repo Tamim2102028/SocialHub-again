@@ -2,14 +2,29 @@ import React from "react";
 import FriendCard from "./FriendCard";
 import { usersData } from "../../data/profile-data/userData";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { selectUserById } from "../../store/slices/profileSlice";
 import {
-  selectUserById,
+  selectFriendsForUser,
+  selectPendingRequestsForUser,
+  selectSentRequestsByUser,
   sendFriendRequest,
-} from "../../store/slices/profileSlice";
+} from "../../store/slices/friendsSlice";
+import type { RootState } from "../../store/store";
 
 const FriendSuggestions: React.FC = () => {
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector((s) => selectUserById(s, s.profile.id));
+  
+  // Get friend data from Redux friends slice
+  const friendIds = useAppSelector((s: RootState) =>
+    selectFriendsForUser(s, currentUser?.id || "")
+  );
+  const pendingRequestIds = useAppSelector((s: RootState) =>
+    selectPendingRequestsForUser(s, currentUser?.id || "")
+  );
+  const sentRequestIds = useAppSelector((s: RootState) =>
+    selectSentRequestsByUser(s, currentUser?.id || "")
+  );
 
   if (!currentUser) {
     return <div>User not found</div>;
@@ -20,9 +35,9 @@ const FriendSuggestions: React.FC = () => {
     .filter(
       (user) =>
         user.id !== currentUser.id && // Not current user
-        !currentUser.friends.includes(user.id) && // Not already a friend
-        !(currentUser.pendingRequests || []).includes(user.id) && // Not in pending requests
-        !(currentUser.sentRequests || []).includes(user.id) // Not in sent requests
+        !friendIds.includes(user.id) && // Not already a friend
+        !pendingRequestIds.includes(user.id) && // Not in pending requests
+        !sentRequestIds.includes(user.id) // Not in sent requests
     )
     .map((user) => {
       // Get university/college name based on education level
@@ -39,9 +54,9 @@ const FriendSuggestions: React.FC = () => {
       };
     });
 
-  // Handler for adding a friend (moved out of inline for clarity)
+  // Handler for adding a friend
   const handleAddFriend = (targetId: string) => {
-    dispatch(sendFriendRequest(targetId));
+    dispatch(sendFriendRequest({ senderId: currentUser.id, receiverId: targetId }));
   };
 
   return (

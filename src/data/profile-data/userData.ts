@@ -14,8 +14,21 @@ export interface UserData {
 
   educationLevel: "UNIVERSITY" | "COLLEGE";
 
+  // optional office hours for users who are teachers
+  officeHours?: {
+    id: string;
+    start: string; // ISO
+    end: string; // ISO
+    location?: string;
+  }[];
+
   university?: {
     name: "BUET" | "DU" | "RUET" | "CUET" | "KUET";
+    title?:
+      | "Lecturer"
+      | "Assistant Professor"
+      | "Associate Professor"
+      | "Professor";
     department?: "CSE" | "EEE" | "ME" | "CE" | "CHE";
     section?: "A" | "B" | "C";
     subsection?: "1" | "2";
@@ -38,9 +51,9 @@ export interface UserData {
     medium?: "bangla" | "english";
   };
 
-  friends: string[];
-  pendingRequests?: string[];
-  sentRequests?: string[];
+  // ❌ Removed: friends, pendingRequests, sentRequests
+  // ✅ Now handled by separate friendships.ts and friendRequests.ts files
+  
   saved?: string[];
 
   preJoinedGroup?: string[];
@@ -57,8 +70,8 @@ const rawUsersData: UserData[] = [
     password: "pass3",
     phone: "01710000003",
     avatar: "https://randomuser.me/api/portraits/men/3.jpg",
-    bio: "ektu ektu kore kaj hosse hosse",
-    role: ["student"],
+    bio: "Assistant lecturer in Chemical Engineering. Available for office hours and consultation.",
+    role: ["teacher"],
     gender: "male",
     religion: "Islam",
     educationLevel: "UNIVERSITY",
@@ -72,10 +85,15 @@ const rawUsersData: UserData[] = [
       isCr: true,
     },
     status: true,
-    friends: ["2", "4", "5", "9", "11"],
-    pendingRequests: ["6", "7", "8", "10"],
-    sentRequests: ["12", "13", "14", "15"],
-
+    officeHours: [
+      {
+        id: "oh1-1",
+        start: "2025-10-24T11:00:00.000Z",
+        end: "2025-10-24T12:00:00.000Z",
+        location: "Office 101",
+      },
+    ],
+    
     saved: [],
 
     preJoinedGroup: ["pg1", "pg2", "pg5"],
@@ -105,9 +123,6 @@ const rawUsersData: UserData[] = [
       medium: "bangla",
     },
     status: true,
-    friends: ["4"],
-    pendingRequests: [],
-    sentRequests: [],
     saved: [],
     preJoinedGroup: [],
     joinedGroup: [],
@@ -136,9 +151,6 @@ const rawUsersData: UserData[] = [
       isCr: true,
     },
     status: true,
-    friends: [],
-    pendingRequests: [],
-    sentRequests: [],
     saved: [],
     preJoinedGroup: [],
     joinedGroup: [],
@@ -167,9 +179,6 @@ const rawUsersData: UserData[] = [
       medium: "bangla",
     },
     status: true,
-    friends: [],
-    pendingRequests: [],
-    sentRequests: [],
     saved: [],
     preJoinedGroup: [],
     joinedGroup: [],
@@ -198,9 +207,6 @@ const rawUsersData: UserData[] = [
       medium: "english",
     },
     status: true,
-    friends: [],
-    pendingRequests: [],
-    sentRequests: [],
     saved: [],
     preJoinedGroup: [],
     joinedGroup: [],
@@ -229,9 +235,6 @@ const rawUsersData: UserData[] = [
       medium: "bangla",
     },
     status: true,
-    friends: [],
-    pendingRequests: [],
-    sentRequests: [],
     saved: [],
     preJoinedGroup: [],
     joinedGroup: [],
@@ -260,9 +263,14 @@ const rawUsersData: UserData[] = [
       medium: "english",
     },
     status: true,
-    friends: [],
-    pendingRequests: [],
-    sentRequests: [],
+    officeHours: [
+      {
+        id: "oh7-1",
+        start: "2025-10-23T10:00:00.000Z",
+        end: "2025-10-23T11:00:00.000Z",
+        location: "Room 12",
+      },
+    ],
     saved: [],
     preJoinedGroup: [],
     joinedGroup: [],
@@ -283,16 +291,26 @@ const rawUsersData: UserData[] = [
     educationLevel: "UNIVERSITY",
     university: {
       name: "RUET",
+      title: "Lecturer",
       department: "ME",
-      section: "A",
-      subsection: "1",
       year: 3,
       semester: 2,
     },
     status: true,
-    friends: [],
-    pendingRequests: [],
-    sentRequests: [],
+    officeHours: [
+      {
+        id: "oh8-1",
+        start: "2025-10-24T14:00:00.000Z",
+        end: "2025-10-24T15:00:00.000Z",
+        location: "Zoom",
+      },
+      {
+        id: "oh8-2",
+        start: "2025-10-25T09:00:00.000Z",
+        end: "2025-10-25T10:00:00.000Z",
+        location: "Room 301",
+      },
+    ],
     saved: [],
     preJoinedGroup: [],
     joinedGroup: [],
@@ -313,16 +331,11 @@ const rawUsersData: UserData[] = [
     educationLevel: "UNIVERSITY",
     university: {
       name: "CUET",
-      department: "EEE",
-      section: "B",
-      subsection: "2",
+      department: "ME",
       year: 2,
       semester: 2,
     },
     status: true,
-    friends: ["1"],
-    pendingRequests: [],
-    sentRequests: [],
     saved: [],
     preJoinedGroup: [],
     joinedGroup: [],
@@ -351,9 +364,6 @@ const rawUsersData: UserData[] = [
       medium: "english",
     },
     status: true,
-    friends: ["2"],
-    pendingRequests: [],
-    sentRequests: [],
     saved: [],
     preJoinedGroup: [],
     joinedGroup: [],
@@ -367,8 +377,8 @@ const rawUsersData: UserData[] = [
     password: "pass11",
     phone: "01710000031",
     avatar: "https://randomuser.me/api/portraits/men/31.jpg",
-    bio: "Medical college student",
-    role: ["student"],
+    bio: "Faculty in Mechanical Engineering with interest in thermodynamics and labs.",
+    role: ["teacher"],
     gender: "male",
     religion: "Islam",
     educationLevel: "UNIVERSITY",
@@ -381,9 +391,14 @@ const rawUsersData: UserData[] = [
       semester: 2,
     },
     status: true,
-    friends: ["1", "5"],
-    pendingRequests: [],
-    sentRequests: [],
+    officeHours: [
+      {
+        id: "oh11-1",
+        start: "2025-10-25T14:00:00.000Z",
+        end: "2025-10-25T15:00:00.000Z",
+        location: "Dept Office",
+      },
+    ],
     saved: [],
     preJoinedGroup: [],
     joinedGroup: [],
@@ -412,9 +427,6 @@ const rawUsersData: UserData[] = [
       medium: "bangla",
     },
     status: true,
-    friends: [],
-    pendingRequests: [],
-    sentRequests: [],
     saved: [],
     preJoinedGroup: [],
     joinedGroup: [],
@@ -443,9 +455,14 @@ const rawUsersData: UserData[] = [
       medium: "english",
     },
     status: true,
-    friends: [],
-    pendingRequests: [],
-    sentRequests: [],
+    officeHours: [
+      {
+        id: "oh13-1",
+        start: "2025-10-22T12:00:00.000Z",
+        end: "2025-10-22T13:00:00.000Z",
+        location: "Office",
+      },
+    ],
     saved: [],
     preJoinedGroup: [],
     joinedGroup: [],
@@ -474,9 +491,14 @@ const rawUsersData: UserData[] = [
       medium: "bangla",
     },
     status: true,
-    friends: [],
-    pendingRequests: [],
-    sentRequests: [],
+    officeHours: [
+      {
+        id: "oh14-1",
+        start: "2025-10-23T16:00:00.000Z",
+        end: "2025-10-23T17:00:00.000Z",
+        location: "Room 5",
+      },
+    ],
     saved: [],
     preJoinedGroup: [],
     joinedGroup: [],
@@ -504,9 +526,6 @@ const rawUsersData: UserData[] = [
       semester: 2,
     },
     status: true,
-    friends: [],
-    pendingRequests: [],
-    sentRequests: [],
     saved: [],
     preJoinedGroup: [],
     joinedGroup: [],
@@ -552,3 +571,4 @@ export const usersData: CompatUserData[] = rawUsersData.map((u) => {
 // Note: runtime helper functions (getCurrentUserId, getUserById, updateUserById)
 // live in `userHelpers.ts`. This file exports only seeded data and the
 // `UserData` type so other modules can import `usersData` safely.
+
