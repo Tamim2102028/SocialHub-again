@@ -1,11 +1,10 @@
-// Friend Request Model - For pending and rejected requests
+// Friend Request Model - For pending requests only
 export interface FriendRequest {
   id: string;
   senderId: string;        // যে request পাঠিয়েছে
   receiverId: string;      // যে request পেয়েছে
-  status: "pending" | "rejected";
+  status: "pending";       // Only pending requests are stored
   createdAt: string;       // Request sent time (ISO format)
-  rejectedAt?: string;     // When rejected (if status=rejected)
 }
 
 // Sample friend requests data
@@ -61,16 +60,6 @@ export const friendRequests: FriendRequest[] = [
     receiverId: "1",
     status: "pending",
     createdAt: "2024-01-22T12:00:00Z",
-  },
-
-  // Some rejected requests (for history)
-  {
-    id: "req8",
-    senderId: "10",
-    receiverId: "1",
-    status: "rejected",
-    createdAt: "2024-01-10T10:00:00Z",
-    rejectedAt: "2024-01-11T15:00:00Z",
   },
 ];
 
@@ -173,22 +162,21 @@ export const cancelFriendRequest = (
 };
 
 /**
- * Reject a received friend request
+ * Reject a received friend request (removes it completely)
  */
 export const rejectFriendRequest = (
   senderId: string,
   receiverId: string
 ): boolean => {
-  const request = friendRequests.find(
+  const index = friendRequests.findIndex(
     (req) =>
       req.status === "pending" &&
       req.senderId === senderId &&
       req.receiverId === receiverId
   );
 
-  if (request) {
-    request.status = "rejected";
-    request.rejectedAt = new Date().toISOString();
+  if (index !== -1) {
+    friendRequests.splice(index, 1);
     return true;
   }
   return false;

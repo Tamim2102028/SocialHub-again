@@ -109,7 +109,7 @@ const friendsSlice = createSlice({
     },
 
     /**
-     * Reject a friend request
+     * Reject a friend request (removes it completely)
      */
     rejectFriendRequest: (
       state,
@@ -117,17 +117,15 @@ const friendsSlice = createSlice({
     ) => {
       const { senderId, receiverId } = action.payload;
 
-      const request = state.friendRequests.find(
+      // Remove the request completely (same as cancel)
+      state.friendRequests = state.friendRequests.filter(
         (req) =>
-          req.status === "pending" &&
-          req.senderId === senderId &&
-          req.receiverId === receiverId
+          !(
+            req.status === "pending" &&
+            req.senderId === senderId &&
+            req.receiverId === receiverId
+          )
       );
-
-      if (request) {
-        request.status = "rejected";
-        request.rejectedAt = new Date().toISOString();
-      }
     },
 
     // ==================== FRIENDSHIPS ====================
