@@ -1,204 +1,247 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
-import { usersData } from "../../data/profile-data/userData";
 import { FaUniversity } from "react-icons/fa";
 
-type FormValues = {
+export type RoomFormValues = {
+  name: string;
   university: string;
   department: string;
+  year: string;
+  semester: string;
   section: string;
   subsection: string;
 };
 
-const unique = (arr: Array<string | undefined>) =>
-  Array.from(new Set(arr.filter(Boolean))) as string[];
-
 const RoomForm: React.FC<{
-  onSubmit: (data: FormValues) => void;
+  onSubmit: (data: RoomFormValues) => void;
   onCancel?: () => void;
 }> = ({ onSubmit, onCancel }) => {
-  const { register, handleSubmit, watch, formState } = useForm<FormValues>({
+  const { register, handleSubmit, formState } = useForm<RoomFormValues>({
     defaultValues: {
+      name: "",
       university: "",
       department: "",
+      year: "",
+      semester: "",
       section: "",
       subsection: "",
     },
   });
 
   const { errors } = formState;
-  const selectedUniversity = watch("university");
-  const selectedDepartment = watch("department");
 
-  const universities = useMemo(
-    () => unique(usersData.map((u) => u.university?.name)),
-    []
-  );
+  // Define all possible universities
+  const universities = ["BUET", "DU", "RUET", "CUET", "KUET"];
 
-  const departments = useMemo(() => {
-    if (!selectedUniversity)
-      return unique(usersData.map((u) => u.university?.department));
-    return unique(
-      usersData
-        .filter((u) => u.university?.name === selectedUniversity)
-        .map((u) => u.university?.department)
-    );
-  }, [selectedUniversity]);
+  // Define all possible departments
+  const departments = ["CSE", "EEE", "ME", "CE", "CHE"];
 
-  const sections = useMemo(() => {
-    return unique(
-      usersData
-        .filter((u) =>
-          selectedUniversity ? u.university?.name === selectedUniversity : true
-        )
-        .filter((u) =>
-          selectedDepartment
-            ? u.university?.department === selectedDepartment
-            : true
-        )
-        .map((u) => u.university?.section)
-    );
-  }, [selectedUniversity, selectedDepartment]);
+  // Define all possible years (1-5 for engineering)
+  const years = ["1", "2", "3", "4", "5"];
 
-  const subsections = useMemo(
-    () => unique(usersData.map((u) => u.university?.subsection)),
-    []
-  );
+  // Define all possible semesters
+  const semesters = ["1", "2"];
+
+  // Define all possible sections
+  const sections = ["A", "B", "C"];
+
+  // Define all possible subsections
+  const subsections = ["1", "2"];
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="w-full">
-      <div className="mb-4 flex items-start gap-3">
-        <div className="rounded-md bg-blue-50 p-2 text-blue-600">
-          <FaUniversity />
+      <div className="mb-6 flex items-start gap-3">
+        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg">
+          <FaUniversity className="h-6 w-6" />
         </div>
         <div>
-          <h3 className="text-lg font-semibold text-gray-900">
-            Create a new room
+          <h3 className="text-xl font-bold text-gray-900">
+            Create a New Study Room
           </h3>
+          <p className="mt-1 text-sm text-gray-500">
+            Set up a collaborative space for your class
+          </p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+      {/* Room Name Field */}
+      <div className="mb-5">
+        <label className="mb-2 block text-sm font-semibold text-gray-700">
+          Room Name <span className="text-red-500">*</span>
+        </label>
+        <input
+          type="text"
+          {...register("name", {
+            required: "Room name is required",
+            minLength: {
+              value: 3,
+              message: "Room name must be at least 3 characters",
+            },
+          })}
+          placeholder="e.g., CSE 2-1 Study Group"
+          className="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 shadow-sm transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+        />
+        {errors.name?.message && (
+          <p className="mt-1.5 text-sm text-red-600">{errors.name.message}</p>
+        )}
+      </div>
+
+      {/* University & Department */}
+      <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
         <div>
-          <label className="block text-sm font-medium text-gray-700">
-            University
+          <label className="mb-2 block text-sm font-semibold text-gray-700">
+            University <span className="text-red-500">*</span>
           </label>
-          <div className="relative mt-1">
-            <select
-              {...register("university", {
-                required: "University is required",
-              })}
-              className="block w-full rounded-md border-gray-300 bg-white px-3 py-2 pr-8 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            >
-              <option value="">Select university</option>
-              {universities.map((u) => (
-                <option key={u} value={u}>
-                  {u}
-                </option>
-              ))}
-            </select>
-          </div>
+          <select
+            {...register("university", {
+              required: "University is required",
+            })}
+            className="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          >
+            <option value="">Select university</option>
+            {universities.map((u) => (
+              <option key={u} value={u}>
+                {u}
+              </option>
+            ))}
+          </select>
           {errors.university?.message && (
-            <p className="mt-1 text-xs text-red-600">
-              {errors.university?.message}
+            <p className="mt-1.5 text-sm text-red-600">
+              {errors.university.message}
             </p>
           )}
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Department
+          <label className="mb-2 block text-sm font-semibold text-gray-700">
+            Department <span className="text-red-500">*</span>
           </label>
-          <div className="relative mt-1">
-            <select
-              {...register("department", {
-                required: "Department is required",
-              })}
-              className="block w-full rounded-md border-gray-300 bg-white px-3 py-2 pr-8 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            >
-              <option value="">Select department</option>
-              {departments.map((d) => (
-                <option key={d} value={d}>
-                  {d}
-                </option>
-              ))}
-            </select>
-          </div>
+          <select
+            {...register("department", {
+              required: "Department is required",
+            })}
+            className="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          >
+            <option value="">Select department</option>
+            {departments.map((d) => (
+              <option key={d} value={d}>
+                {d}
+              </option>
+            ))}
+          </select>
           {errors.department?.message && (
-            <p className="mt-1 text-xs text-red-600">
-              {errors.department?.message}
+            <p className="mt-1.5 text-sm text-red-600">
+              {errors.department.message}
             </p>
           )}
         </div>
       </div>
 
-      <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
+      {/* Year & Semester */}
+      <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
         <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Section
+          <label className="mb-2 block text-sm font-semibold text-gray-700">
+            Year <span className="text-red-500">*</span>
           </label>
-          <div className="relative mt-1">
-            <select
-              {...register("section", { required: "Section is required" })}
-              className="block w-full rounded-md border-gray-300 bg-white px-3 py-2 pr-8 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            >
-              <option value="">Select section</option>
-              {sections.map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
-              ))}
-            </select>
-          </div>
+          <select
+            {...register("year", { required: "Year is required" })}
+            className="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          >
+            <option value="">Select year</option>
+            {years.map((y) => (
+              <option key={y} value={y}>
+                Year {y}
+              </option>
+            ))}
+          </select>
+          {errors.year?.message && (
+            <p className="mt-1.5 text-sm text-red-600">{errors.year.message}</p>
+          )}
+        </div>
+
+        <div>
+          <label className="mb-2 block text-sm font-semibold text-gray-700">
+            Semester <span className="text-red-500">*</span>
+          </label>
+          <select
+            {...register("semester", {
+              required: "Semester is required",
+            })}
+            className="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          >
+            <option value="">Select semester</option>
+            {semesters.map((s) => (
+              <option key={s} value={s}>
+                Semester {s}
+              </option>
+            ))}
+          </select>
+          {errors.semester?.message && (
+            <p className="mt-1.5 text-sm text-red-600">
+              {errors.semester.message}
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* Section & Subsection */}
+      <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div>
+          <label className="mb-2 block text-sm font-semibold text-gray-700">
+            Section <span className="text-red-500">*</span>
+          </label>
+          <select
+            {...register("section", { required: "Section is required" })}
+            className="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          >
+            <option value="">Select section</option>
+            {sections.map((s) => (
+              <option key={s} value={s}>
+                Section {s}
+              </option>
+            ))}
+          </select>
           {errors.section?.message && (
-            <p className="mt-1 text-xs text-red-600">
-              {errors.section?.message}
+            <p className="mt-1.5 text-sm text-red-600">
+              {errors.section.message}
             </p>
           )}
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="mb-2 block text-sm font-semibold text-gray-700">
             Subsection
           </label>
-          <div className="relative mt-1">
-            <select
-              {...register("subsection", {
-                required: "Subsection is required",
-              })}
-              className="block w-full rounded-md border-gray-300 bg-white px-3 py-2 pr-8 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            >
-              <option value="">Select subsection</option>
-              {subsections.map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
-              ))}
-            </select>
-          </div>
-          {errors.subsection?.message && (
-            <p className="mt-1 text-xs text-red-600">
-              {errors.subsection?.message}
-            </p>
-          )}
+          <select
+            {...register("subsection")}
+            className="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          >
+            <option value="">Select subsection (optional)</option>
+            {subsections.map((s) => (
+              <option key={s} value={s}>
+                Subsection {s}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 
-      <div className="mt-5 flex items-center justify-end gap-3">
+      {/* Action Buttons */}
+      <div className="flex items-center justify-end gap-3 border-t border-gray-200 pt-5">
         <button
           type="button"
           onClick={onCancel}
-          className="rounded-md border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+          className="rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition-colors hover:bg-gray-50 focus:ring-2 focus:ring-gray-300 focus:outline-none"
         >
           Cancel
         </button>
         <button
           type="submit"
-          className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+          className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-2.5 text-sm font-semibold text-white shadow-lg transition-all hover:from-blue-700 hover:to-blue-800 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4"
+            className="h-5 w-5"
             viewBox="0 0 20 20"
             fill="currentColor"
           >

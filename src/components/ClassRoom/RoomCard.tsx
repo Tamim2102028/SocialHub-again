@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { FaEllipsisV } from "react-icons/fa";
 import type { Room as SampleRoom } from "../../data/rooms-data/roomsData";
 import { usersData } from "../../data/profile-data/userData";
-import { getRoomCreator } from "../../data/rooms-data/roomMembers";
 import { useAppSelector } from "../../store/hooks";
 import { selectUserById } from "../../store/slices/profileSlice";
 import { selectHiddenRoomIds } from "../../store/slices/classRoom/classRoomSlice";
@@ -30,11 +29,17 @@ const RoomCard: React.FC<Props> = ({
   );
   const isHidden = hiddenRoomIds.includes(room.id);
 
+  // Get room creator from Redux state
+  const roomMembers = useAppSelector((s: RootState) => s.classRoom.members);
+  const creatorMembership = roomMembers.find(
+    (m) => m.roomId === room.id && m.role === "creator"
+  );
+  const creatorId = creatorMembership?.userId;
+
   const cover =
     (room as SampleRoom & { coverImage?: string }).coverImage ||
     `https://picsum.photos/seed/${room.id}/400/225`;
 
-  const creatorId = getRoomCreator(room.id);
   const getCreatorName = (cid?: string) => {
     if (!cid) return undefined;
     const user = usersData.find((u) => u.id === cid);

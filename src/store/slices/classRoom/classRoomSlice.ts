@@ -93,6 +93,18 @@ const classRoomSlice = createSlice({
       if (idx >= 0) state.rooms[idx] = { ...updated };
       else state.rooms.push({ ...updated });
     },
+
+    // Add a room member
+    addRoomMember(state, action: PayloadAction<RoomMember>) {
+      const newMember = action.payload;
+      // Check if member already exists
+      const exists = state.members.some(
+        (m) => m.userId === newMember.userId && m.roomId === newMember.roomId
+      );
+      if (!exists) {
+        state.members.push(newMember);
+      }
+    },
   },
 });
 
@@ -104,6 +116,7 @@ export const {
   removeAdmin,
   removeMember,
   updateRoom,
+  addRoomMember,
 } = classRoomSlice.actions;
 export default classRoomSlice.reducer;
 
@@ -139,3 +152,44 @@ export const selectHiddenRoomIds = (
   state.classRoom.members
     .filter((m) => m.userId === userId && m.status === "hide")
     .map((m) => m.roomId);
+
+// Helper selectors (like roomMembers.ts helpers but for Redux)
+export const selectRoomCreator = (
+  state: { classRoom: ClassRoomState },
+  roomId: string
+) =>
+  state.classRoom.members.find(
+    (m) => m.roomId === roomId && m.role === "creator"
+  )?.userId;
+
+export const selectMemberCount = (
+  state: { classRoom: ClassRoomState },
+  roomId: string
+) => state.classRoom.members.filter((m) => m.roomId === roomId).length;
+
+export const selectAllAdmins = (
+  state: { classRoom: ClassRoomState },
+  roomId: string
+) =>
+  state.classRoom.members
+    .filter(
+      (m) => m.roomId === roomId && (m.role === "admin" || m.role === "creator")
+    )
+    .map((m) => m.userId);
+
+export const selectIsAdminOrCreator = (
+  state: { classRoom: ClassRoomState },
+  userId: string,
+  roomId: string
+) =>
+  state.classRoom.members.some(
+    (m) =>
+      m.userId === userId &&
+      m.roomId === roomId &&
+      (m.role === "admin" || m.role === "creator")
+  );
+
+export const selectRoomMembersForRoom = (
+  state: { classRoom: ClassRoomState },
+  roomId: string
+) => state.classRoom.members.filter((m) => m.roomId === roomId);

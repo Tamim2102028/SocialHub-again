@@ -3,12 +3,6 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { FaUsers, FaImage, FaInfoCircle, FaThumbtack } from "react-icons/fa";
 import { BsPostcard } from "react-icons/bs";
 import sampleRooms, { type Room } from "../../data/rooms-data/roomsData";
-import { 
-  getMemberCount,
-  getRoomCreator,
-  getAllAdmins,
-  isAdminOrCreator
-} from "../../data/rooms-data/roomMembers";
 import { usersData } from "../../data/profile-data/userData";
 import { roomPosts } from "../../data/rooms-data/roomPostData";
 import CreatePostForm from "../../components/ClassRoom/CreatePostForm";
@@ -33,12 +27,22 @@ import {
   makeAdmin,
   removeAdmin,
   removeMember,
+  selectRoomCreator,
+  selectMemberCount,
+  selectAllAdmins,
+  selectIsAdminOrCreator,
 } from "../../store/slices/classRoom/classRoomSlice";
 
 const RoomDetails: React.FC = () => {
   const { roomId } = useParams<{ roomId: string }>();
 
-  const room: Room | undefined = sampleRooms.find((r) => r.id === roomId);
+  // Get room from Redux state first, fallback to sample data
+  const roomFromRedux = useAppSelector((s) =>
+    s.classRoom.rooms.find((r) => r.id === roomId)
+  );
+  const roomFromSample = sampleRooms.find((r) => r.id === roomId);
+  const room: Room | undefined = roomFromRedux || roomFromSample;
+
   // keep a local editable copy so we can remove members / promote admins in-memory
   const [roomState, setRoomState] = useState<Room | undefined>(
     room ? { ...room } : undefined
@@ -63,6 +67,29 @@ const RoomDetails: React.FC = () => {
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector((s) => selectUserById(s, s.profile.id));
   const navigate = useNavigate();
+
+  // Use Redux selectors (like helper functions)
+  const creatorId = useAppSelector((s) =>
+    room ? selectRoomCreator(s, room.id) : undefined
+  );
+  const memberCount = useAppSelector((s) =>
+    room ? selectMemberCount(s, room.id) : 0
+  );
+  const allAdmins = useAppSelector((s) =>
+    room ? selectAllAdmins(s, room.id) : []
+  );
+  const isCurrentUserAdminOrCreator = useAppSelector((s) =>
+    room && currentUser ? selectIsAdminOrCreator(s, currentUser.id, room.id) : false
+  );
+
+  const creator = creatorId ? usersData.find((u) => u.id === creatorId) : undefined;
+
+  // Update roomState when room changes
+  React.useEffect(() => {
+    if (room) {
+      setRoomState({ ...room });
+    }
+  }, [room]);
 
   const [showReplyFor, setShowReplyFor] = useState<Record<string, boolean>>({});
   const [replyText, setReplyText] = useState<Record<string, string>>({});
@@ -103,11 +130,6 @@ const RoomDetails: React.FC = () => {
     );
   }
 
-  const creatorId = getRoomCreator(room.id);
-  const creator = creatorId 
-    ? usersData.find((u) => u.id === creatorId)
-    : undefined;
-
   return (
     <div className="space-y-3">
       {/* Header section */}
@@ -136,15 +158,12 @@ const RoomDetails: React.FC = () => {
             )}
             <p className="mt-2 flex items-center gap-2 text-sm text-gray-700">
               <FaUsers className="h-4 w-4 text-gray-500" />
-              <span className="font-medium">
-                {getMemberCount(room.id)}{" "}
-                members
-              </span>
+              <span className="font-medium">{memberCount} members</span>
             </p>
           </div>
           <div className="flex flex-col items-end justify-end gap-2">
             {/* Go Live button shown to admins and creator only */}
-            {currentUser?.id && isAdminOrCreator(currentUser.id, room.id) ? (
+            {currentUser?.id && isCurrentUserAdminOrCreator ? (
               <button
                 onClick={() => navigate(`/classroom/rooms/${room.id}/live`)}
                 className="w-full rounded bg-green-600 px-3 py-1 text-sm font-medium text-white hover:bg-green-700"
@@ -209,7 +228,7 @@ const RoomDetails: React.FC = () => {
                 submitReply={submitReply}
                 currentUserId={currentUser?.id}
                 creatorId={creatorId}
-                admins={getAllAdmins(room.id)}
+                admins={allAdmins}
               />
             </div>
           )}
@@ -219,7 +238,7 @@ const RoomDetails: React.FC = () => {
               roomId={roomState?.id || room!.id}
               users={usersData}
               creatorId={creatorId}
-              admins={getAllAdmins(room.id)}
+              admins={allAdmins}
               currentUserId={currentUser?.id}
               showReplyFor={showReplyFor}
               replyText={replyText}
@@ -307,7 +326,7 @@ const RoomDetails: React.FC = () => {
             <MediaTab
               roomId={room.id}
               creatorId={creatorId}
-              admins={getAllAdmins(room.id)}
+              admins={allAdmins}
               currentUserId={currentUser?.id}
             />
           )}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import RoomForm from "../RoomForm";
+import RoomForm, { type RoomFormValues } from "../RoomForm";
 import RoomCard from "../RoomCard";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import type { RootState } from "../../../store/store";
@@ -11,16 +11,9 @@ import {
 } from "../../../store/slices/classRoom/classRoomSlice";
 import { selectUserById } from "../../../store/slices/profileSlice";
 
-type CreatePayload = {
-  university: string;
-  department: string;
-  section: string;
-  subsection: string;
-};
-
 const Rooms: React.FC<{
   showCreateForm?: boolean;
-  onCreate?: (data: CreatePayload) => void;
+  onCreate?: (data: RoomFormValues) => void;
   onCancelCreate?: () => void;
 }> = ({ showCreateForm = false, onCreate, onCancelCreate }) => {
   const dispatch = useAppDispatch();

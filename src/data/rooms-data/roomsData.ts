@@ -6,6 +6,13 @@ export interface Room {
   lastActivityAt?: string; // ISO date string
   isDeleted?: boolean; // creator can permanently delete (default: false)
   deletedAt?: string; // ISO date string when deleted
+  // Additional room metadata
+  university?: string;
+  department?: string;
+  year?: string;
+  semester?: string;
+  section?: string;
+  subsection?: string;
 }
 
 export const sampleRooms: Room[] = [

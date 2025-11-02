@@ -11,8 +11,10 @@ import RoomDetails from "./ClassRoom/RoomDetails";
 import RoomLive from "./ClassRoom/RoomLive";
 
 import { useAppDispatch } from "../store/hooks";
-import { updateRoom } from "../store/slices/classRoom/classRoomSlice";
+import { updateRoom, addRoomMember } from "../store/slices/classRoom/classRoomSlice";
 import type { Room as SampleRoom } from "../data/rooms-data/roomsData";
+import type { RoomFormValues } from "../components/ClassRoom/RoomForm";
+import { getCurrentUserId } from "../services/userService";
 
 const ClassRoom: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -21,20 +23,38 @@ const ClassRoom: React.FC = () => {
   const openCreateForm = () => setShowCreateForm(true);
   const closeCreateForm = () => setShowCreateForm(false);
 
-  const handleCreate = (data: {
-    university: string;
-    department: string;
-    section: string;
-    subsection: string;
-  }) => {
+  const handleCreate = (data: RoomFormValues) => {
     const id = `room_${Date.now()}`;
+    const currentUserId = getCurrentUserId();
+    
     const room: SampleRoom = {
       id,
-      name: `${data.university} / ${data.department} / ${data.section}${data.subsection ? `-${data.subsection}` : ""}`,
+      name: data.name,
+      university: data.university,
+      department: data.department,
+      year: data.year,
+      semester: data.semester,
+      section: data.section,
+      subsection: data.subsection || undefined,
       createdAt: dayjs().toISOString(),
+      lastActivityAt: dayjs().toISOString(),
     };
+    
     // dispatch to redux slice (updateRoom will add if not existing)
     dispatch(updateRoom(room));
+    
+    // Add the creator as a room member with "creator" role
+    dispatch(
+      addRoomMember({
+        id: `member_${Date.now()}`,
+        userId: currentUserId,
+        roomId: id,
+        role: "creator",
+        joinedAt: dayjs().toISOString(),
+        status: "open",
+      })
+    );
+    
     setShowCreateForm(false);
   };
 
