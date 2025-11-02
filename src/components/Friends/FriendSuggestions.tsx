@@ -1,5 +1,5 @@
 import React from "react";
-import FriendCard from "./FriendCard";
+import FriendCard from "../shared/FriendCard";
 import { usersData } from "../../data/profile-data/userData";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { selectUserById } from "../../store/slices/profileSlice";
@@ -14,7 +14,7 @@ import type { RootState } from "../../store/store";
 const FriendSuggestions: React.FC = () => {
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector((s) => selectUserById(s, s.profile.id));
-  
+
   // Get friend data from Redux friends slice
   const friendIds = useAppSelector((s: RootState) =>
     selectFriendsForUser(s, currentUser?.id || "")
@@ -56,7 +56,9 @@ const FriendSuggestions: React.FC = () => {
 
   // Handler for adding a friend
   const handleAddFriend = (targetId: string) => {
-    dispatch(sendFriendRequest({ senderId: currentUser.id, receiverId: targetId }));
+    dispatch(
+      sendFriendRequest({ senderId: currentUser.id, receiverId: targetId })
+    );
   };
 
   return (

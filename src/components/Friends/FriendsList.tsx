@@ -1,16 +1,19 @@
 import React from "react";
-import FriendCard from "./FriendCard";
+import FriendCard from "../shared/FriendCard";
 import { getUserById } from "../../services/userService";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { selectUserById } from "../../store/slices/profileSlice";
-import { selectFriendsForUser, removeFriendship } from "../../store/slices/friendsSlice";
+import {
+  selectFriendsForUser,
+  removeFriendship,
+} from "../../store/slices/friendsSlice";
 import type { RootState } from "../../store/store";
 import confirm from "../../utils/confirm";
 
 const FriendsList: React.FC = () => {
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector((s) => selectUserById(s, s.profile.id));
-  
+
   // Get friends from Redux friends slice
   const friendIds = useAppSelector((s: RootState) =>
     selectFriendsForUser(s, currentUser?.id || "")
@@ -29,7 +32,9 @@ const FriendsList: React.FC = () => {
     });
 
     if (ok) {
-      dispatch(removeFriendship({ user1Id: currentUser.id, user2Id: friendId }));
+      dispatch(
+        removeFriendship({ user1Id: currentUser.id, user2Id: friendId })
+      );
     }
   };
 
@@ -58,7 +63,10 @@ const FriendsList: React.FC = () => {
     return (
       <div className="rounded-lg border border-gray-200 bg-white p-8 text-center shadow-sm">
         <h3 className="text-lg font-semibold text-gray-900">No friends yet</h3>
-        <p className="mt-2 text-gray-600">You don't have any friends added. Add some friends to connect with them.</p>
+        <p className="mt-2 text-gray-600">
+          You don't have any friends added. Add some friends to connect with
+          them.
+        </p>
       </div>
     );
   }

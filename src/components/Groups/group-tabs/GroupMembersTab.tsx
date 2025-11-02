@@ -1,5 +1,5 @@
 import React from "react";
-import FriendCard from "../../Friends/FriendCard";
+import FriendCard from "../../shared/FriendCard";
 import { type UserData } from "../../../data/profile-data/userData";
 import { BsThreeDots } from "react-icons/bs";
 import Swal from "sweetalert2";

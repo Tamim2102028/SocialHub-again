@@ -1,7 +1,7 @@
 import type { SearchPerson } from "./data/searchData";
 import React from "react";
 import { mockSearchResults } from "./data/searchData";
-import FriendCard from "../Friends/FriendCard";
+import FriendCard from "../shared/FriendCard";
 import type { Friend } from "../Friends/data/friendsData";
 
 interface PeopleResultsProps {

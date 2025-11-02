@@ -1,5 +1,5 @@
 import React from "react";
-import FriendCard from "./FriendCard";
+import FriendCard from "../shared/FriendCard";
 import { getUserById } from "../../services/userService";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { selectUserById } from "../../store/slices/profileSlice";
@@ -12,7 +12,7 @@ import type { RootState } from "../../store/store";
 const SentRequests: React.FC = () => {
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector((s) => selectUserById(s, s.profile.id));
-  
+
   // Get sent requests from Redux friends slice
   const receiverIds = useAppSelector((s: RootState) =>
     selectSentRequestsByUser(s, currentUser?.id || "")
@@ -23,7 +23,9 @@ const SentRequests: React.FC = () => {
   }
 
   const handleCancelRequest = (targetId: string) => {
-    dispatch(cancelFriendRequest({ senderId: currentUser.id, receiverId: targetId }));
+    dispatch(
+      cancelFriendRequest({ senderId: currentUser.id, receiverId: targetId })
+    );
   };
 
   // Get sent requests data from receiverIds
