@@ -403,10 +403,116 @@ const GroupDetail: React.FC = () => {
                   <h3 className="mb-2 font-bold text-gray-900">Description</h3>
                   <p className="text-gray-700">{group.description}</p>
                 </div>
+                
                 <div>
                   <h3 className="mb-2 font-bold text-gray-900">Privacy</h3>
                   <p className="text-gray-700">
-                    Public - Anyone can see posts and members
+                    {group.privacy === "public"
+                      ? "Public - Anyone can see posts and members"
+                      : group.privacy === "private"
+                      ? "Private - Only members can see posts"
+                      : "Closed - Invitation only"}
+                  </p>
+                </div>
+
+                {/* Creator/Owner Section */}
+                <div>
+                  <h3 className="mb-3 font-bold text-gray-900">Creator</h3>
+                  {(() => {
+                    const owner = usersData.find((u) => u.id === group.owner);
+                    if (!owner) return <p className="text-gray-500 text-sm">Owner not found</p>;
+                    
+                    return (
+                      <div className="flex items-center gap-3 rounded-lg border border-gray-200 bg-gray-50 p-3">
+                        <img
+                          src={owner.avatar}
+                          alt={owner.name}
+                          className="h-12 w-12 rounded-full object-cover"
+                        />
+                        <div className="flex-1">
+                          <p className="font-semibold text-gray-900">{owner.name}</p>
+                          <p className="text-sm text-gray-500">@{owner.username}</p>
+                        </div>
+                        <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-700">
+                          Owner
+                        </span>
+                      </div>
+                    );
+                  })()}
+                </div>
+
+                {/* Admins Section */}
+                {group.admins && group.admins.length > 0 && (
+                  <div>
+                    <h3 className="mb-3 font-bold text-gray-900">
+                      Admins ({group.admins.length})
+                    </h3>
+                    <div className="space-y-2">
+                      {group.admins.map((adminId) => {
+                        const admin = usersData.find((u) => u.id === adminId);
+                        if (!admin) return null;
+                        
+                        const isOwner = adminId === group.owner;
+                        
+                        return (
+                          <div
+                            key={adminId}
+                            className="flex items-center gap-3 rounded-lg border border-gray-200 bg-gray-50 p-3"
+                          >
+                            <img
+                              src={admin.avatar}
+                              alt={admin.name}
+                              className="h-12 w-12 rounded-full object-cover"
+                            />
+                            <div className="flex-1">
+                              <p className="font-semibold text-gray-900">{admin.name}</p>
+                              <p className="text-sm text-gray-500">@{admin.username}</p>
+                            </div>
+                            <div className="flex gap-2">
+                              {isOwner && (
+                                <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-700">
+                                  Owner
+                                </span>
+                              )}
+                              <span className="rounded-full bg-purple-100 px-3 py-1 text-xs font-medium text-purple-700">
+                                Admin
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Group Stats */}
+                <div>
+                  <h3 className="mb-3 font-bold text-gray-900">Group Stats</h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                      <p className="text-2xl font-bold text-gray-900">
+                        {group.members?.length || 0}
+                      </p>
+                      <p className="text-sm text-gray-600">Members</p>
+                    </div>
+                    <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                      <p className="text-2xl font-bold text-gray-900">
+                        {group.postCount || 0}
+                      </p>
+                      <p className="text-sm text-gray-600">Posts</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Created Date */}
+                <div>
+                  <h3 className="mb-2 font-bold text-gray-900">Created</h3>
+                  <p className="text-gray-700">
+                    {new Date(group.createdAt).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
                   </p>
                 </div>
               </div>
