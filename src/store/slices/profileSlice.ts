@@ -17,22 +17,22 @@ interface ProfileState {
   avatar: string;
   bio?: string;
   role: ("student" | "teacher" | "system")[];
-  category: "university" | "hsc";
+  educationLevel: "UNIVERSITY" | "COLLEGE";
   university?: {
     name: string;
-    dept: string;
+    department?: string;
     section?: string;
     subsection?: string;
     roll?: string;
   };
   college?: {
     name: string;
-    dept: string;
-    section?: string; // optional for teachers
+    department?: string;
+    section?: string;
     subsection?: string;
-    roll?: string; // optional for teachers
-    sscBatch: string;
-    level?: "1st year" | "2nd year" | "admission"; // optional for teachers
+    roll?: string;
+    sscBatch?: string;
+    level?: "1st year" | "2nd year" | "admission";
   };
   gender?: "male" | "female";
   saved?: string[];
@@ -60,13 +60,11 @@ const getCurrentUserData = (): ProfileState => {
       avatar: userData.avatar,
       bio: userData.bio,
       role: userData.role,
-      // derive category from educationLevel
-      category: userData.educationLevel === "UNIVERSITY" ? "university" : "hsc",
-      // normalize university/college fields to the older shape used across the app
+      educationLevel: userData.educationLevel,
       university: userData.university
         ? {
             name: String(userData.university.name || ""),
-            dept: String(userData.university.department || ""),
+            department: String(userData.university.department || ""),
             section: userData.university.section,
             subsection: userData.university.subsection,
             roll: undefined,
@@ -75,7 +73,7 @@ const getCurrentUserData = (): ProfileState => {
       college: userData.college
         ? {
             name: String(userData.college.name || ""),
-            dept: String(userData.college.department || ""),
+            department: String(userData.college.department || ""),
             section: undefined,
             subsection: undefined,
             roll: undefined,
@@ -98,10 +96,10 @@ const getCurrentUserData = (): ProfileState => {
       avatar: "",
       bio: "",
       role: ["student"],
-      category: "university" as const,
+      educationLevel: "UNIVERSITY" as const,
       university: {
         name: "",
-        dept: "",
+        department: "",
       },
       college: undefined,
       gender: undefined,
@@ -143,17 +141,17 @@ const profileSlice = createSlice({
         avatar: "",
         bio: "",
         role: ["student"],
-        category: "university" as const,
+        educationLevel: "UNIVERSITY" as const,
         university: {
           name: "",
-          dept: "",
+          department: "",
         },
         college: undefined,
         gender: undefined,
-        friends: [],
-        pendingRequests: [],
         saved: [],
+        joinedGroup: [],
         preJoinedGroup: [],
+        sentRequestGroup: [],
       };
     },
   },
