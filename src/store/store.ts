@@ -15,9 +15,14 @@ import groupSlice from "./slices/groupSlice";
 import classRoomSlice from "./slices/classRoom/classRoomSlice.js";
 import roomPostsSlice from "./slices/classRoom/roomPostsSlice.js";
 import friendsSlice from "./slices/friendsSlice";
+import { baseApi } from "./api/baseApi";
 
 export const store = configureStore({
   reducer: {
+    // RTK Query API
+    [baseApi.reducerPath]: baseApi.reducer,
+
+    // Existing slices
     auth: authSlice,
     posts: postsSlice,
     notifications: notificationsSlice,
@@ -40,7 +45,7 @@ export const store = configureStore({
       serializableCheck: {
         ignoredActions: ["persist/PERSIST"],
       },
-    }),
+    }).concat(baseApi.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

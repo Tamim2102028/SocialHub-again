@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   FaImage,
   FaUsers,
@@ -7,11 +9,12 @@ import {
   FaBook,
   FaArrowLeft,
 } from "react-icons/fa";
-import Swal from "sweetalert2";
 import type { Group } from "../../data/group-data/preGroupData";
 import { addMemberToGroup } from "../../data/group-data/groupMembers";
 import { useAppSelector, useAppDispatch } from "../../store/hooks";
 import { createGroup } from "../../store/slices/groupSlice";
+import { groupSchema, type GroupFormData } from "../../schemas/groupSchema";
+import { showToast } from "../../utils/toast";
 
 const CreateGroupPage: React.FC = () => {
   const navigate = useNavigate();
@@ -20,67 +23,40 @@ const CreateGroupPage: React.FC = () => {
   // Get current user ID from Redux store
   const currentUserId = useAppSelector((state) => state.profile?.id);
 
-  // Form state
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    groupFor: "students" as "students" | "teachers" | "both",
-    gender: [] as ("male" | "female")[],
-    type: "academic" as "academic" | "hall" | "jobs" | "others",
-    privacy: "public" as "public" | "private" | "closed",
-    educationLevel: "" as
-      | ""
-      | "UNIVERSITY"
-      | "MEDICAL_COLLEGE"
-      | "NATIONAL_UNIVERSITY"
-      | "COLLEGE"
-      | "POLYTECHNIC"
-      | "SCHOOL",
-    tags: "",
-    rules: "",
-    // University fields
-    universityName: "" as "" | "BUET" | "DU" | "RUET" | "CUET" | "KUET",
-    department: "" as "" | "CSE" | "EEE" | "ME" | "CE" | "CHE",
-    section: "" as "" | "A" | "B" | "C",
-    subsection: "" as "" | "1" | "2",
-    year: "" as "" | "1" | "2" | "3" | "4" | "5",
-    semester: "" as "" | "1" | "2",
-    // College fields
-    collegeName: "" as
-      | ""
-      | "Notre Dame College"
-      | "Holy Cross College"
-      | "Dhaka College"
-      | "Rajuk College",
-    collegeDepartment: "" as "" | "science" | "commerce" | "arts",
-    collegeYear: "" as "" | "1" | "2" | "admission",
-    boardType: "" as "" | "madrasah" | "general",
-    board: "" as "" | "dhaka" | "chittagong",
-    version: "" as "" | "bangla" | "english",
-    medium: "" as "" | "bangla" | "english",
-  });
-
+  // Image previews
   const [coverPreview, setCoverPreview] = useState<string>("");
   const [profilePreview, setProfilePreview] = useState<string>("");
 
-  // Handle input changes
-  const handleInputChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  // React Hook Form setup
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors, isSubmitting },
+  } = useForm<GroupFormData>({
+    resolver: zodResolver(groupSchema),
+    defaultValues: {
+      name: "",
+      description: "",
+      groupFor: "students",
+      gender: [],
+      type: "academic",
+      privacy: "public",
+      tags: "",
+      rules: "",
+    },
+  });
+
+  const educationLevel = watch("educationLevel");
 
   // Handle checkbox for gender
   const handleGenderChange = (gender: "male" | "female") => {
-    setFormData((prev) => ({
-      ...prev,
-      gender: prev.gender.includes(gender)
-        ? prev.gender.filter((g) => g !== gender)
-        : [...prev.gender, gender],
-    }));
+    const currentGender = watch("gender") || [];
+    const newGender = currentGender.includes(gender)
+      ? currentGender.filter((g) => g !== gender)
+      : [...currentGender, gender];
+    setValue("gender", newGender);
   };
 
   // Handle image upload
@@ -90,6 +66,18 @@ const CreateGroupPage: React.FC = () => {
   ) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        showToast.error("Image size must be less than 5MB");
+        return;
+      }
+
+      // Validate file type
+      if (!file.type.startsWith("image/")) {
+        showToast.error("Please upload an image file");
+        return;
+      }
+
       const reader = new FileReader();
       reader.onloadend = () => {
         if (type === "cover") {
@@ -103,110 +91,80 @@ const CreateGroupPage: React.FC = () => {
   };
 
   // Handle form submission
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Validation
-    if (!formData.name.trim()) {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Group name is required!",
-      });
-      return;
-    }
-
-    if (!formData.description.trim()) {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Group description is required!",
-      });
-      return;
-    }
-
+  const onSubmit = async (data: GroupFormData) => {
     if (!currentUserId) {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "You must be logged in to create a group!",
-      });
+      showToast.error("You must be logged in to create a group");
       return;
     }
 
-    // Create new group object
-    const newGroupId = `g${Date.now()}`;
-    const newGroup: Partial<Group> = {
-      id: newGroupId,
-      name: formData.name,
-      description: formData.description,
-      groupFor: formData.groupFor,
-      gender: formData.gender.length > 0 ? formData.gender : undefined,
-      type: formData.type,
-      privacy: formData.privacy,
-      educationLevel: formData.educationLevel || undefined,
-      coverImage: coverPreview || undefined,
-      profileImage: profilePreview || undefined,
-      tags: formData.tags
-        ? formData.tags.split(",").map((tag) => tag.trim())
-        : undefined,
-      rules: formData.rules
-        ? formData.rules.split("\n").filter((rule) => rule.trim())
-        : undefined,
-      systemCreated: false,
-      postCount: 0,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      status: "active",
-    };
-
-    // Add university data if applicable
-    if (formData.educationLevel === "UNIVERSITY" && formData.universityName) {
-      newGroup.university = {
-        name: formData.universityName,
-        department: formData.department || undefined,
-        section: formData.section || undefined,
-        subsection: formData.subsection || undefined,
-        year: formData.year
-          ? (parseInt(formData.year) as 1 | 2 | 3 | 4 | 5)
+    try {
+      // Create new group object
+      const newGroupId = `g${Date.now()}`;
+      const newGroup: Group = {
+        id: newGroupId,
+        name: data.name,
+        description: data.description,
+        groupFor: data.groupFor,
+        gender: data.gender && data.gender.length > 0 ? data.gender : undefined,
+        type: data.type,
+        privacy: data.privacy,
+        educationLevel: data.educationLevel || undefined,
+        coverImage: coverPreview || undefined,
+        profileImage: profilePreview || undefined,
+        tags: data.tags
+          ? data.tags.split(",").map((tag) => tag.trim())
           : undefined,
-        semester: formData.semester
-          ? (parseInt(formData.semester) as 1 | 2)
+        rules: data.rules
+          ? data.rules.split("\n").filter((rule) => rule.trim())
           : undefined,
+        systemCreated: false,
+        postCount: 0,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        status: "active",
       };
-    }
 
-    // Add college data if applicable
-    if (formData.educationLevel === "COLLEGE" && formData.collegeName) {
-      newGroup.college = {
-        name: formData.collegeName,
-        department: formData.collegeDepartment || undefined,
-        year: formData.collegeYear || undefined,
-        boardType: formData.boardType || undefined,
-        board: formData.board || undefined,
-        version: formData.version || undefined,
-        medium: formData.medium || undefined,
-      };
-    }
+      // Add university data if applicable
+      if (data.educationLevel === "UNIVERSITY" && data.universityName) {
+        newGroup.university = {
+          name: data.universityName,
+          department: data.department || undefined,
+          section: data.section || undefined,
+          subsection: data.subsection || undefined,
+          year: data.year
+            ? (parseInt(data.year) as 1 | 2 | 3 | 4 | 5)
+            : undefined,
+          semester: data.semester
+            ? (parseInt(data.semester) as 1 | 2)
+            : undefined,
+        };
+      }
 
-    // Add current user as owner in groupMembers
-    addMemberToGroup(currentUserId, newGroupId, "owner", "active");
+      // Add college data if applicable
+      if (data.educationLevel === "COLLEGE" && data.collegeName) {
+        newGroup.college = {
+          name: data.collegeName,
+          department: data.collegeDepartment || undefined,
+          year: data.collegeYear || undefined,
+          boardType: data.boardType || undefined,
+          board: data.board || undefined,
+          version: data.version || undefined,
+          medium: data.medium || undefined,
+        };
+      }
 
-    // Dispatch to Redux store
-    dispatch(createGroup(newGroup as Group));
+      // Add current user as owner in groupMembers
+      addMemberToGroup(currentUserId, newGroupId, "owner", "active");
 
-    // Show success message
-    Swal.fire({
-      icon: "success",
-      title: "Group Created!",
-      text: `${formData.name} has been created successfully.`,
-      timer: 2000,
-      showConfirmButton: false,
-    }).then(() => {
-      console.log("New Group:", newGroup);
-      console.log("Owner added to groupMembers with ID:", currentUserId);
+      // Dispatch to Redux store
+      dispatch(createGroup(newGroup));
+
+      showToast.success(`${data.name} has been created successfully!`);
       navigate("/groups");
-    });
+    } catch (error) {
+      showToast.error("Failed to create group. Please try again.");
+      console.error("Error creating group:", error);
+    }
   };
 
   return (
@@ -228,7 +186,7 @@ const CreateGroupPage: React.FC = () => {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Basic Information */}
         <div className="rounded-xl bg-white p-6 shadow-md">
           <div className="mb-4 flex items-center gap-2">
@@ -250,13 +208,17 @@ const CreateGroupPage: React.FC = () => {
               <input
                 type="text"
                 id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleInputChange}
+                {...register("name")}
                 placeholder="Enter group name"
-                className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                required
+                className={`w-full rounded-lg border px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none ${
+                  errors.name ? "border-red-500" : "border-gray-300"
+                }`}
               />
+              {errors.name && (
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.name.message}
+                </p>
+              )}
             </div>
 
             {/* Description */}
@@ -269,14 +231,18 @@ const CreateGroupPage: React.FC = () => {
               </label>
               <textarea
                 id="description"
-                name="description"
-                value={formData.description}
-                onChange={handleInputChange}
+                {...register("description")}
                 placeholder="Describe what your group is about"
                 rows={4}
-                className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                required
+                className={`w-full rounded-lg border px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none ${
+                  errors.description ? "border-red-500" : "border-gray-300"
+                }`}
               />
+              {errors.description && (
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.description.message}
+                </p>
+              )}
             </div>
 
             {/* Tags */}
@@ -290,9 +256,7 @@ const CreateGroupPage: React.FC = () => {
               <input
                 type="text"
                 id="tags"
-                name="tags"
-                value={formData.tags}
-                onChange={handleInputChange}
+                {...register("tags")}
                 placeholder="e.g., programming, study, projects"
                 className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
               />
@@ -308,9 +272,7 @@ const CreateGroupPage: React.FC = () => {
               </label>
               <textarea
                 id="rules"
-                name="rules"
-                value={formData.rules}
-                onChange={handleInputChange}
+                {...register("rules")}
                 placeholder="Enter group rules, one per line"
                 rows={4}
                 className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
@@ -337,9 +299,7 @@ const CreateGroupPage: React.FC = () => {
               </label>
               <select
                 id="groupFor"
-                name="groupFor"
-                value={formData.groupFor}
-                onChange={handleInputChange}
+                {...register("groupFor")}
                 className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
               >
                 <option value="students">Students</option>
@@ -358,9 +318,7 @@ const CreateGroupPage: React.FC = () => {
               </label>
               <select
                 id="type"
-                name="type"
-                value={formData.type}
-                onChange={handleInputChange}
+                {...register("type")}
                 className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
               >
                 <option value="academic">Academic</option>
@@ -380,9 +338,7 @@ const CreateGroupPage: React.FC = () => {
               </label>
               <select
                 id="privacy"
-                name="privacy"
-                value={formData.privacy}
-                onChange={handleInputChange}
+                {...register("privacy")}
                 className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
               >
                 <option value="public">Public - Anyone can join</option>
@@ -401,9 +357,7 @@ const CreateGroupPage: React.FC = () => {
               </label>
               <select
                 id="educationLevel"
-                name="educationLevel"
-                value={formData.educationLevel}
-                onChange={handleInputChange}
+                {...register("educationLevel")}
                 className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
               >
                 <option value="">Select level</option>
@@ -426,7 +380,7 @@ const CreateGroupPage: React.FC = () => {
               <label className="flex items-center gap-2">
                 <input
                   type="checkbox"
-                  checked={formData.gender.includes("male")}
+                  checked={(watch("gender") || []).includes("male")}
                   onChange={() => handleGenderChange("male")}
                   className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
@@ -435,7 +389,7 @@ const CreateGroupPage: React.FC = () => {
               <label className="flex items-center gap-2">
                 <input
                   type="checkbox"
-                  checked={formData.gender.includes("female")}
+                  checked={(watch("gender") || []).includes("female")}
                   onChange={() => handleGenderChange("female")}
                   className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
@@ -446,7 +400,7 @@ const CreateGroupPage: React.FC = () => {
         </div>
 
         {/* University Details (Conditional) */}
-        {formData.educationLevel === "UNIVERSITY" && (
+        {educationLevel === "UNIVERSITY" && (
           <div className="rounded-xl bg-white p-6 shadow-md">
             <div className="mb-4 flex items-center gap-2">
               <FaGraduationCap className="text-2xl text-green-600" />
@@ -466,9 +420,7 @@ const CreateGroupPage: React.FC = () => {
                 </label>
                 <select
                   id="universityName"
-                  name="universityName"
-                  value={formData.universityName}
-                  onChange={handleInputChange}
+                  {...register("universityName")}
                   className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 >
                   <option value="">Select university</option>
@@ -490,9 +442,7 @@ const CreateGroupPage: React.FC = () => {
                 </label>
                 <select
                   id="department"
-                  name="department"
-                  value={formData.department}
-                  onChange={handleInputChange}
+                  {...register("department")}
                   className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 >
                   <option value="">Select department</option>
@@ -514,9 +464,7 @@ const CreateGroupPage: React.FC = () => {
                 </label>
                 <select
                   id="section"
-                  name="section"
-                  value={formData.section}
-                  onChange={handleInputChange}
+                  {...register("section")}
                   className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 >
                   <option value="">Select section</option>
@@ -536,9 +484,7 @@ const CreateGroupPage: React.FC = () => {
                 </label>
                 <select
                   id="subsection"
-                  name="subsection"
-                  value={formData.subsection}
-                  onChange={handleInputChange}
+                  {...register("subsection")}
                   className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 >
                   <option value="">Select subsection</option>
@@ -557,9 +503,7 @@ const CreateGroupPage: React.FC = () => {
                 </label>
                 <select
                   id="year"
-                  name="year"
-                  value={formData.year}
-                  onChange={handleInputChange}
+                  {...register("year")}
                   className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 >
                   <option value="">Select year</option>
@@ -581,9 +525,7 @@ const CreateGroupPage: React.FC = () => {
                 </label>
                 <select
                   id="semester"
-                  name="semester"
-                  value={formData.semester}
-                  onChange={handleInputChange}
+                  {...register("semester")}
                   className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 >
                   <option value="">Select semester</option>
@@ -596,7 +538,7 @@ const CreateGroupPage: React.FC = () => {
         )}
 
         {/* College Details (Conditional) */}
-        {formData.educationLevel === "COLLEGE" && (
+        {educationLevel === "COLLEGE" && (
           <div className="rounded-xl bg-white p-6 shadow-md">
             <div className="mb-4 flex items-center gap-2">
               <FaGraduationCap className="text-2xl text-green-600" />
@@ -616,9 +558,7 @@ const CreateGroupPage: React.FC = () => {
                 </label>
                 <select
                   id="collegeName"
-                  name="collegeName"
-                  value={formData.collegeName}
-                  onChange={handleInputChange}
+                  {...register("collegeName")}
                   className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 >
                   <option value="">Select college</option>
@@ -639,9 +579,7 @@ const CreateGroupPage: React.FC = () => {
                 </label>
                 <select
                   id="collegeDepartment"
-                  name="collegeDepartment"
-                  value={formData.collegeDepartment}
-                  onChange={handleInputChange}
+                  {...register("collegeDepartment")}
                   className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 >
                   <option value="">Select department</option>
@@ -661,9 +599,7 @@ const CreateGroupPage: React.FC = () => {
                 </label>
                 <select
                   id="collegeYear"
-                  name="collegeYear"
-                  value={formData.collegeYear}
-                  onChange={handleInputChange}
+                  {...register("collegeYear")}
                   className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 >
                   <option value="">Select year</option>
@@ -683,9 +619,7 @@ const CreateGroupPage: React.FC = () => {
                 </label>
                 <select
                   id="boardType"
-                  name="boardType"
-                  value={formData.boardType}
-                  onChange={handleInputChange}
+                  {...register("boardType")}
                   className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 >
                   <option value="">Select board type</option>
@@ -704,9 +638,7 @@ const CreateGroupPage: React.FC = () => {
                 </label>
                 <select
                   id="board"
-                  name="board"
-                  value={formData.board}
-                  onChange={handleInputChange}
+                  {...register("board")}
                   className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 >
                   <option value="">Select board</option>
@@ -725,9 +657,7 @@ const CreateGroupPage: React.FC = () => {
                 </label>
                 <select
                   id="version"
-                  name="version"
-                  value={formData.version}
-                  onChange={handleInputChange}
+                  {...register("version")}
                   className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 >
                   <option value="">Select version</option>
@@ -746,9 +676,7 @@ const CreateGroupPage: React.FC = () => {
                 </label>
                 <select
                   id="medium"
-                  name="medium"
-                  value={formData.medium}
-                  onChange={handleInputChange}
+                  {...register("medium")}
                   className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 >
                   <option value="">Select medium</option>
@@ -837,15 +765,17 @@ const CreateGroupPage: React.FC = () => {
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="flex-1 rounded-lg border-2 border-gray-300 bg-white px-6 py-3 font-semibold text-gray-700 transition hover:bg-gray-50"
+            disabled={isSubmitting}
+            className="flex-1 rounded-lg border-2 border-gray-300 bg-white px-6 py-3 font-semibold text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="flex-1 rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700"
+            disabled={isSubmitting}
+            className="flex-1 rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Create Group
+            {isSubmitting ? "Creating..." : "Create Group"}
           </button>
         </div>
       </form>

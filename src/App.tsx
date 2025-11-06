@@ -1,5 +1,6 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 import { useAppSelector } from "./store/hooks";
 import Sidebar from "./layout/Sidebar";
 import SidebarRight from "./layout/SidebarRight";
@@ -19,6 +20,7 @@ const App: React.FC = () => {
   if (isAuthPage) {
     return (
       <div className="flex h-screen w-screen items-center justify-center bg-gray-50">
+        <Toaster />
         <MainContent />
       </div>
     );
@@ -26,6 +28,7 @@ const App: React.FC = () => {
 
   return (
     <div className="grid h-screen grid-cols-[15rem_1fr_auto] overflow-hidden">
+      <Toaster />
       {/* Left Sidebar - Navigation */}
       <div className="h-full overflow-y-auto bg-gray-50">
         <Sidebar />
