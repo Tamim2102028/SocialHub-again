@@ -1,11 +1,5 @@
-import {
-  createSlice,
-  type PayloadAction,
-} from "@reduxjs/toolkit";
-import {
-  getCurrentUserId,
-  getUserById,
-} from "../../services/userService";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import { getCurrentUserId, getUserById } from "../../services/userService";
 import type { RootState } from "../store";
 
 interface ProfileState {

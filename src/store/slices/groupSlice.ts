@@ -173,6 +173,10 @@ const groupSlice = createSlice({
     loadPosts(state, action: { payload: GroupPost[] }) {
       state.posts = action.payload;
     },
+    // createGroup adds a new group to the state
+    createGroup(state, action: { payload: Group }) {
+      state.groups.push(action.payload);
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -228,7 +232,8 @@ const groupSlice = createSlice({
   },
 });
 
-export const { selectGroup, loadGroups, loadPosts } = groupSlice.actions;
+export const { selectGroup, loadGroups, loadPosts, createGroup } =
+  groupSlice.actions;
 export default groupSlice.reducer;
 
 /** Selectors
