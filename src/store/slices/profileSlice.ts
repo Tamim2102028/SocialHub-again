@@ -11,22 +11,22 @@ interface ProfileState {
   avatar: string;
   bio?: string;
   role: ("student" | "teacher" | "system")[];
-  category: "university" | "hsc";
+  educationLevel: "UNIVERSITY" | "COLLEGE";
   university?: {
     name: string;
-    department: string;
+    department?: string;
     section?: string;
     subsection?: string;
     roll?: string;
   };
   college?: {
     name: string;
-    department: string;
-    section?: string; // optional for teachers
+    department?: string;
+    section?: string;
     subsection?: string;
-    roll?: string; // optional for teachers
-    sscBatch: string;
-    level?: "1st year" | "2nd year" | "admission"; // optional for teachers
+    roll?: string;
+    sscBatch?: string;
+    level?: "1st year" | "2nd year" | "admission";
   };
   gender?: "male" | "female";
   saved?: string[];
@@ -54,9 +54,7 @@ const getCurrentUserData = (): ProfileState => {
       avatar: userData.avatar,
       bio: userData.bio,
       role: userData.role,
-      // derive category from educationLevel
-      category: userData.educationLevel === "UNIVERSITY" ? "university" : "hsc",
-      // normalize university/college fields to the older shape used across the app
+      educationLevel: userData.educationLevel,
       university: userData.university
         ? {
             name: String(userData.university.name || ""),
@@ -92,7 +90,7 @@ const getCurrentUserData = (): ProfileState => {
       avatar: "",
       bio: "",
       role: ["student"],
-      category: "university" as const,
+      educationLevel: "UNIVERSITY" as const,
       university: {
         name: "",
         department: "",
@@ -137,17 +135,17 @@ const profileSlice = createSlice({
         avatar: "",
         bio: "",
         role: ["student"],
-        category: "university" as const,
+        educationLevel: "UNIVERSITY" as const,
         university: {
           name: "",
           department: "",
         },
         college: undefined,
         gender: undefined,
-        friends: [],
-        pendingRequests: [],
         saved: [],
+        joinedGroup: [],
         preJoinedGroup: [],
+        sentRequestGroup: [],
       };
     },
   },
