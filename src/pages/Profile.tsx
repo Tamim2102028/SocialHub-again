@@ -35,6 +35,14 @@ const Profile: React.FC = () => {
   // Get user data - use Redux state for own profile, userData for others
   const userData = isOwnProfile ? profileData : getUserById(actualUserId);
 
+  // Derive category for non-profile state users
+  const userCategory =
+    userData && "category" in userData
+      ? userData.category
+      : userData?.educationLevel === "UNIVERSITY"
+        ? "university"
+        : "hsc";
+
   // Get user's posts
   const userPosts = getPostsByUserId(actualUserId);
 
@@ -122,9 +130,10 @@ const Profile: React.FC = () => {
             <div className="flex items-center gap-2">
               <FaUniversity className="h-4 w-4 text-blue-600" />
               <p className="font-medium text-gray-800">
-                {userData.category === "university" ? (
+                {userCategory === "university" ? (
                   <>
-                    {userData.university?.name} - {userData.university?.dept}
+                    {userData.university?.name} -{" "}
+                    {userData.university?.department}
                     {userData.role.includes("student") &&
                       userData.university?.section && (
                         <span className="text-gray-600">
@@ -138,17 +147,7 @@ const Profile: React.FC = () => {
                   </>
                 ) : (
                   <>
-                    {userData.college?.name} - {userData.college?.dept}
-                    {userData.role.includes("student") &&
-                      userData.college?.section && (
-                        <span className="text-gray-600">
-                          {" "}
-                          (Section: {userData.college.section}
-                          {userData.college.subsection &&
-                            `-${userData.college.subsection}`}
-                          )
-                        </span>
-                      )}
+                    {userData.college?.name} - {userData.college?.department}
                   </>
                 )}
               </p>

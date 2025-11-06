@@ -1,11 +1,5 @@
-import {
-  createSlice,
-  type PayloadAction,
-} from "@reduxjs/toolkit";
-import {
-  getCurrentUserId,
-  getUserById,
-} from "../../services/userService";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import { getCurrentUserId, getUserById } from "../../services/userService";
 import type { RootState } from "../store";
 
 interface ProfileState {
@@ -20,14 +14,14 @@ interface ProfileState {
   category: "university" | "hsc";
   university?: {
     name: string;
-    dept: string;
+    department: string;
     section?: string;
     subsection?: string;
     roll?: string;
   };
   college?: {
     name: string;
-    dept: string;
+    department: string;
     section?: string; // optional for teachers
     subsection?: string;
     roll?: string; // optional for teachers
@@ -66,7 +60,7 @@ const getCurrentUserData = (): ProfileState => {
       university: userData.university
         ? {
             name: String(userData.university.name || ""),
-            dept: String(userData.university.department || ""),
+            department: String(userData.university.department || ""),
             section: userData.university.section,
             subsection: userData.university.subsection,
             roll: undefined,
@@ -75,7 +69,7 @@ const getCurrentUserData = (): ProfileState => {
       college: userData.college
         ? {
             name: String(userData.college.name || ""),
-            dept: String(userData.college.department || ""),
+            department: String(userData.college.department || ""),
             section: undefined,
             subsection: undefined,
             roll: undefined,
@@ -101,7 +95,7 @@ const getCurrentUserData = (): ProfileState => {
       category: "university" as const,
       university: {
         name: "",
-        dept: "",
+        department: "",
       },
       college: undefined,
       gender: undefined,
@@ -146,7 +140,7 @@ const profileSlice = createSlice({
         category: "university" as const,
         university: {
           name: "",
-          dept: "",
+          department: "",
         },
         college: undefined,
         gender: undefined,
