@@ -35,13 +35,7 @@ const Profile: React.FC = () => {
   // Get user data - use Redux state for own profile, userData for others
   const userData = isOwnProfile ? profileData : getUserById(actualUserId);
 
-  // Derive category for non-profile state users
-  const userCategory =
-    userData && "category" in userData
-      ? userData.category
-      : userData?.educationLevel === "UNIVERSITY"
-        ? "university"
-        : "hsc";
+ 
 
   // Get user's posts
   const userPosts = getPostsByUserId(actualUserId);
