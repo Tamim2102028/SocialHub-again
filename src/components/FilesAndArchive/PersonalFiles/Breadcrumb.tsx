@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { FaChevronRight, FaHome, FaEllipsisH } from "react-icons/fa";
+import { FaChevronRight, FaEllipsisH } from "react-icons/fa";
 
 interface BreadcrumbItem {
   id: string;
@@ -34,35 +34,41 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ currentPath, onNavigate }) => {
   // Render full breadcrumb for short paths
   const renderFullBreadcrumb = () => (
     <nav className="flex items-center space-x-2 overflow-hidden text-sm">
-      {currentPath.map((item, index) => (
-        <React.Fragment key={item.id}>
-          {index === 0 ? (
-            <button
-              onClick={() => onNavigate(index)}
-              className="flex items-center whitespace-nowrap text-blue-600 transition-colors hover:text-blue-800"
-            >
-              <FaHome className="mr-1 h-3 w-3" />
-              <span className="max-w-[120px] truncate">{item.name}</span>
-            </button>
-          ) : (
-            <>
-              <FaChevronRight className="h-3 w-3 flex-shrink-0 text-gray-400" />
+      {currentPath.map((item, index) => {
+        const isLast = index === currentPath.length - 1;
+        return (
+          <React.Fragment key={item.id}>
+            {index === 0 ? (
               <button
                 onClick={() => onNavigate(index)}
-                className={`whitespace-nowrap transition-colors ${
-                  index === currentPath.length - 1
-                    ? "font-medium text-gray-900"
-                    : "text-blue-600 hover:text-blue-800"
+                className={`flex h-[38px] items-center rounded-lg px-3 py-2 transition-all ${
+                  isLast && currentPath.length === 1
+                    ? "text-blue-600"
+                    : "text-gray-600 hover:bg-gray-200"
                 }`}
               >
-                <span className="block max-w-[120px] truncate">
+                <span className="max-w-[120px] truncate font-medium">
                   {item.name}
                 </span>
               </button>
-            </>
-          )}
-        </React.Fragment>
-      ))}
+            ) : (
+              <>
+                <FaChevronRight className="h-3 w-3 flex-shrink-0 text-gray-400" />
+                <button
+                  onClick={() => onNavigate(index)}
+                  className={`h-[38px] rounded-lg px-3 py-2 whitespace-nowrap transition-all ${
+                    isLast ? "text-blue-600" : "text-gray-600 hover:bg-gray-200"
+                  }`}
+                >
+                  <span className="block max-w-[120px] truncate font-medium">
+                    {item.name}
+                  </span>
+                </button>
+              </>
+            )}
+          </React.Fragment>
+        );
+      })}
     </nav>
   );
 
@@ -81,10 +87,11 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ currentPath, onNavigate }) => {
         {/* First item (Home) */}
         <button
           onClick={() => onNavigate(0)}
-          className="flex items-center whitespace-nowrap text-blue-600 transition-colors hover:text-blue-800"
+          className="flex h-[38px] items-center rounded-lg px-3 py-2 whitespace-nowrap text-gray-600 transition-all hover:bg-gray-200"
         >
-          <FaHome className="mr-1 h-3 w-3" />
-          <span className="max-w-[120px] truncate">{firstItem.name}</span>
+          <span className="max-w-[120px] truncate font-medium">
+            {firstItem.name}
+          </span>
         </button>
 
         {/* Separator */}
@@ -94,10 +101,10 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ currentPath, onNavigate }) => {
         <div className="relative">
           <button
             onClick={() => setShowDropdown(!showDropdown)}
-            className="flex items-center rounded px-2 py-1 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700"
+            className="flex h-[38px] items-center justify-center rounded-lg px-3 py-2 text-gray-600 transition-all hover:bg-gray-200"
             title="Show hidden folders"
           >
-            <FaEllipsisH className="h-3 w-3" />
+            <FaEllipsisH className="h-3.5 w-3.5" />
           </button>
 
           {/* Dropdown for hidden items */}
@@ -111,7 +118,7 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ currentPath, onNavigate }) => {
                       onNavigate(hiddenIndex + 1); // +1 because we skip the first item
                       setShowDropdown(false);
                     }}
-                    className="w-full px-3 py-2 text-left text-sm text-gray-700 transition-colors hover:bg-gray-100"
+                    className="w-full px-3 py-2 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100"
                   >
                     <span className="block truncate">{item.name}</span>
                   </button>
@@ -124,18 +131,17 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ currentPath, onNavigate }) => {
         {/* Last two items */}
         {lastTwoItems.map((item, index) => {
           const originalIndex = currentPath.length - 2 + index;
+          const isLast = originalIndex === currentPath.length - 1;
           return (
             <React.Fragment key={item.id}>
               <FaChevronRight className="h-3 w-3 flex-shrink-0 text-gray-400" />
               <button
                 onClick={() => onNavigate(originalIndex)}
-                className={`whitespace-nowrap transition-colors ${
-                  originalIndex === currentPath.length - 1
-                    ? "font-medium text-gray-900"
-                    : "text-blue-600 hover:text-blue-800"
+                className={`h-[38px] rounded-lg px-3 py-2 whitespace-nowrap transition-all ${
+                  isLast ? "text-blue-600" : "text-gray-600 hover:bg-gray-200"
                 }`}
               >
-                <span className="block max-w-[120px] truncate">
+                <span className="block max-w-[120px] truncate font-medium">
                   {item.name}
                 </span>
               </button>

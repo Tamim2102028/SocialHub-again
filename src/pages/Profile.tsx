@@ -35,8 +35,6 @@ const Profile: React.FC = () => {
   // Get user data - use Redux state for own profile, userData for others
   const userData = isOwnProfile ? profileData : getUserById(actualUserId);
 
- 
-
   // Get user's posts
   const userPosts = getPostsByUserId(actualUserId);
 
@@ -126,7 +124,8 @@ const Profile: React.FC = () => {
               <p className="font-medium text-gray-800">
                 {userData.educationLevel === "UNIVERSITY" ? (
                   <>
-                    {userData.university?.name} - {userData.university?.department}
+                    {userData.university?.name} -{" "}
+                    {userData.university?.department}
                     {userData.role.includes("student") &&
                       userData.university?.section && (
                         <span className="text-gray-600">
@@ -141,7 +140,8 @@ const Profile: React.FC = () => {
                 ) : (
                   <>
                     {userData.college?.name}
-                    {userData.college?.department && ` - ${userData.college.department}`}
+                    {userData.college?.department &&
+                      ` - ${userData.college.department}`}
                   </>
                 )}
               </p>
