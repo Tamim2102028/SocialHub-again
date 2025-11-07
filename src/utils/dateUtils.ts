@@ -18,6 +18,17 @@ export const formatPostClock = (dateString: string): string => {
 };
 
 /**
+ * Formats a date string with date and time separated by a dot
+ * @param dateString - ISO date string or any valid date format
+ * @returns Formatted string: "07-Nov-2025 • 2:56 PM"
+ */
+export const formatPostDateTime = (dateString: string): string => {
+  const date = dayjs(dateString).format('DD-MMM-YYYY');
+  const time = dayjs(dateString).format('h:mm A');
+  return `${date} • ${time}`;
+};
+
+/**
  * Formats a date string for relative time (e.g., "2 hours ago", "Yesterday")
  * Falls back to formatted date if older than 2 days
  * @param dateString - ISO date string or any valid date format

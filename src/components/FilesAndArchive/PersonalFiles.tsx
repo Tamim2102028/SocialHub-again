@@ -6,6 +6,7 @@ import EmptyState from "./PersonalFiles/EmptyState";
 import FilesList from "./PersonalFiles/FilesList";
 import UploadModal from "./PersonalFiles/UploadModal";
 import Swal from "sweetalert2";
+import { formatPostDate, formatPostClock } from "../../utils/dateUtils";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
   navigateToFolder,
@@ -110,10 +111,6 @@ const PersonalFiles: React.FC = () => {
     ) : (
       <FaFile className="h-5 w-5 text-gray-600" />
     );
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString();
   };
 
   // Build the fixed 8-folder grid: Level 1..4 × Term 1..2
@@ -232,7 +229,8 @@ const PersonalFiles: React.FC = () => {
                 files={currentFiles}
                 onFolderClick={handleNavigateToFolder}
                 getFileIcon={(item) => getFileIcon(item)}
-                formatDate={formatDate}
+                formatDate={formatPostDate}
+                formatTime={formatPostClock}
               />
             ) : (
               <EmptyState

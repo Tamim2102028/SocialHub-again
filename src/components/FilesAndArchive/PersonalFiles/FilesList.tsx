@@ -36,6 +36,7 @@ interface FilesListProps {
   onFolderClick: (folderId: string, folderName: string) => void;
   getFileIcon: (item: FileItem) => React.ReactElement;
   formatDate: (dateString: string) => string;
+  formatTime: (dateString: string) => string;
 }
 
 const FilesList: React.FC<FilesListProps> = ({
@@ -43,6 +44,7 @@ const FilesList: React.FC<FilesListProps> = ({
   onFolderClick,
   getFileIcon,
   formatDate,
+  formatTime,
 }) => {
   const [showContextMenu, setShowContextMenu] = useState<string | null>(null);
   const contextMenuRef = useRef<HTMLDivElement>(null);
@@ -203,7 +205,7 @@ const FilesList: React.FC<FilesListProps> = ({
                   {item.shared && <FaShare className="h-4 w-4 text-blue-500" />}
                 </div>
                 <p className="text-xs text-gray-500">
-                  {formatDate(item.createdAt)}
+                  {formatDate(item.createdAt)} • {formatTime(item.createdAt)}
                   {item.size && ` • ${item.size}`}
                 </p>
               </div>
