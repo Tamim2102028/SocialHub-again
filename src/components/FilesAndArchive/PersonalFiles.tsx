@@ -141,7 +141,7 @@ const PersonalFiles: React.FC = () => {
         <button
           onClick={handleNavigateBack}
           disabled={currentPath.length === 0}
-          className={`rounded-lg p-2 transition-colors ${
+          className={`flex h-[38px] items-center justify-center rounded-lg border border-gray-300 px-3 py-2 transition-colors ${
             currentPath.length === 0
               ? "cursor-not-allowed bg-gray-100 text-gray-400"
               : "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-800"

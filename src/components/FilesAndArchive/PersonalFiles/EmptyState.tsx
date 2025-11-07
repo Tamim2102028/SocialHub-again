@@ -1,5 +1,6 @@
 import React from "react";
-import { FaFolder, FaPlus, FaUpload } from "react-icons/fa";
+import { FaFolder, FaPlus } from "react-icons/fa";
+import FileActionButton from "../../shared/FileActionButtons";
 
 interface EmptyStateProps {
   searchQuery: string;
@@ -25,20 +26,16 @@ const EmptyState: React.FC<EmptyStateProps> = ({
       </p>
       {!searchQuery && (
         <div className="flex justify-center space-x-3">
-          <button
+          <FileActionButton
+            icon={FaPlus}
+            label="New Folder"
             onClick={onNewFolder}
-            className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-50"
-          >
-            <FaPlus className="h-3 w-3" />
-            New Folder
-          </button>
-          <button
+          />
+          <FileActionButton
+            icon={FaPlus}
+            label="Upload File"
             onClick={onUpload}
-            className="flex items-center gap-2 rounded-lg bg-blue-600 px-3 py-2 text-sm text-white transition-colors hover:bg-blue-700"
-          >
-            <FaUpload className="h-3 w-3" />
-            Upload File
-          </button>
+          />
         </div>
       )}
     </div>
