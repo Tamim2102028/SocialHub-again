@@ -10,6 +10,7 @@ import {
   FaGlobe,
   FaLock,
 } from "react-icons/fa";
+import Swal from "sweetalert2";
 import { useAppDispatch } from "../../../store/hooks";
 import {
   renameItem,
@@ -113,29 +114,69 @@ const FilesList: React.FC<FilesListProps> = ({
     alert(`Downloading ${item.name}...`);
   };
 
-  const handleRename = (item: FileItem) => {
-    const newName = prompt("Enter new name:", item.name);
+  const handleRename = async (item: FileItem) => {
+    const { value: newName } = await Swal.fire({
+      title: "Rename",
+      input: "text",
+      inputLabel: `Enter new name for "${item.name}"`,
+      inputValue: item.name,
+      showCancelButton: true,
+      confirmButtonText: "Rename",
+      cancelButtonText: "Cancel",
+      cancelButtonColor: "#6b7280",
+      inputValidator: (value) => {
+        if (!value || !value.trim()) {
+          return "Name cannot be empty";
+        }
+        if (value.trim() === item.name) {
+          return "Please enter a different name";
+        }
+        return null;
+      },
+    });
+
     if (newName && newName.trim() !== item.name) {
       dispatch(renameItem({ itemId: item.id, newName: newName.trim() }));
+      Swal.fire({
+        icon: "success",
+        title: "Renamed successfully!",
+        timer: 500,
+        showConfirmButton: false,
+      });
     }
   };
 
   const handleCopy = (item: FileItem) => {
     dispatch(copyItem(item.id));
-    alert(`${item.name} copied successfully!`);
   };
 
-  const handleDelete = (item: FileItem) => {
-    if (confirm(`Are you sure you want to delete ${item.name}?`)) {
+  const handleDelete = async (item: FileItem) => {
+    const result = await Swal.fire({
+      title: "Delete Confirmation",
+      text: `Are you sure you want to delete "${item.name}"?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+    });
+
+    if (result.isConfirmed) {
       dispatch(deleteItem(item.id));
+      Swal.fire({
+        title: "Deleted!",
+        text: `${item.name} has been deleted.`,
+        icon: "success",
+        timer: 500,
+        showConfirmButton: false,
+      });
     }
   };
 
   const handleTogglePublic = (item: FileItem) => {
     if (item.type === "folder") {
       dispatch(togglePublic(item.id));
-      const status = item.isPublic ? "private" : "public";
-      alert(`${item.name} is now ${status}!`);
     }
   };
 
@@ -252,7 +293,7 @@ const FilesList: React.FC<FilesListProps> = ({
         ))}
       </div>
 
-      {/* Context Menu Popup */}
+      {/* folder 3 dot Menu Popup */}
       {showContextMenu && (
         <div
           className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center"
@@ -275,7 +316,7 @@ const FilesList: React.FC<FilesListProps> = ({
                   if (currentItem) handleRename(currentItem);
                   setShowContextMenu(null);
                 }}
-                className="flex w-full items-center rounded-md px-4 py-3 text-sm text-gray-700 hover:bg-gray-100"
+                className="flex w-full items-center rounded-md px-4 py-3 text-sm font-medium text-gray-600 hover:bg-gray-100"
               >
                 <FaEdit className="mr-3 h-5 w-5" />
                 Rename
@@ -288,7 +329,7 @@ const FilesList: React.FC<FilesListProps> = ({
                   if (currentItem) handleCopy(currentItem);
                   setShowContextMenu(null);
                 }}
-                className="flex w-full items-center rounded-md px-4 py-3 text-sm text-gray-700 hover:bg-gray-100"
+                className="flex w-full items-center rounded-md px-4 py-3 text-sm font-medium text-gray-600 hover:bg-gray-100"
               >
                 <FaCopy className="mr-3 h-5 w-5" />
                 Copy
@@ -303,7 +344,7 @@ const FilesList: React.FC<FilesListProps> = ({
                     if (currentItem) handleTogglePublic(currentItem);
                     setShowContextMenu(null);
                   }}
-                  className="flex w-full items-center rounded-md px-4 py-3 text-sm text-gray-700 hover:bg-gray-100"
+                  className="flex w-full items-center rounded-md px-4 py-3 text-sm font-medium text-gray-600 hover:bg-gray-100"
                 >
                   {files.find((f) => f.id === showContextMenu)?.isPublic ? (
                     <>
@@ -331,7 +372,7 @@ const FilesList: React.FC<FilesListProps> = ({
                     }
                     setShowContextMenu(null);
                   }}
-                  className="flex w-full items-center rounded-md px-4 py-3 text-sm text-gray-700 hover:bg-gray-100"
+                  className="flex w-full items-center rounded-md px-4 py-3 text-sm font-medium text-gray-600 hover:bg-gray-100"
                 >
                   <FaInfo className="mr-3 h-5 w-5" />
                   Properties
@@ -346,7 +387,7 @@ const FilesList: React.FC<FilesListProps> = ({
                     if (currentItem) handleDelete(currentItem);
                     setShowContextMenu(null);
                   }}
-                  className="flex w-full items-center rounded-md px-4 py-3 text-sm text-red-700 hover:bg-red-50"
+                  className="flex w-full items-center rounded-md px-4 py-3 text-sm font-medium text-red-700 hover:bg-red-50"
                 >
                   <FaTrash className="mr-3 h-5 w-5" />
                   Delete
@@ -355,7 +396,7 @@ const FilesList: React.FC<FilesListProps> = ({
               <div className="border-t border-gray-200 pt-2">
                 <button
                   onClick={() => setShowContextMenu(null)}
-                  className="flex w-full items-center justify-center rounded-md px-4 py-3 text-sm text-gray-500 hover:bg-gray-100"
+                  className="flex w-full items-center justify-center rounded-md px-4 py-3 text-sm font-medium text-gray-500 hover:bg-gray-100"
                 >
                   Cancel
                 </button>
