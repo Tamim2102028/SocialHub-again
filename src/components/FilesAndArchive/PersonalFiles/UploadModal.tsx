@@ -215,14 +215,14 @@ const UploadModal: React.FC<UploadModalProps> = ({
         <div className="flex justify-end space-x-3">
           <button
             onClick={handleClose}
-            className="rounded-lg border border-gray-300 px-4 py-2 text-sm text-gray-700 transition-all hover:border-gray-400 hover:bg-gray-50"
+            className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-all hover:border-gray-400 hover:bg-gray-50"
           >
             Cancel
           </button>
           <button
             onClick={handleUpload}
             disabled={selectedFiles.length === 0}
-            className={`rounded-lg px-4 py-2 text-sm text-white transition-all ${
+            className={`rounded-lg px-4 py-2 text-sm font-medium text-white transition-all ${
               selectedFiles.length > 0
                 ? "bg-blue-600 hover:bg-blue-700 hover:shadow-md"
                 : "cursor-not-allowed bg-gray-400"
