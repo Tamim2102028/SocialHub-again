@@ -1,7 +1,10 @@
 import React from "react";
 import { FaEdit, FaUserPlus, FaEnvelope } from "react-icons/fa";
 import { useAppSelector } from "../../store/hooks";
-import { selectFriendCount, selectPendingRequestsForUser } from "../../store/slices/friendsSlice";
+import {
+  selectFriendCount,
+  selectPendingRequestsForUser,
+} from "../../store/slices/friendsSlice";
 import type { RootState } from "../../store/store";
 
 interface UserData {
@@ -34,8 +37,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   const friendCount = useAppSelector((s: RootState) =>
     selectFriendCount(s, userData.id)
   );
-  const pendingRequestCount = useAppSelector((s: RootState) =>
-    selectPendingRequestsForUser(s, userData.id).length
+  const pendingRequestCount = useAppSelector(
+    (s: RootState) => selectPendingRequestsForUser(s, userData.id).length
   );
 
   return (
@@ -116,7 +119,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               <div className="text-sm text-gray-600">Pending Requests</div>
             </div>
           )}
-          {userData.saved && (
+          {/* Only show saved posts count for own profile */}
+          {isOwnProfile && userData.saved && (
             <div className="text-center">
               <div className="text-2xl font-bold text-gray-900">
                 {userData.saved.length}

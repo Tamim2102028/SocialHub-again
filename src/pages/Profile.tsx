@@ -193,13 +193,16 @@ const Profile: React.FC = () => {
             </button>
           )}
 
-          <button
-            onClick={() => navigate("/profile/saved")}
-            className={`px-1 py-4 text-sm font-medium text-gray-500 transition-colors hover:text-black`}
-          >
-            <FaBookmark className="mr-2 inline h-4 w-4" />
-            Saved
-          </button>
+          {/* Only show Saved button for own profile */}
+          {isOwnProfile && (
+            <button
+              onClick={() => navigate("/profile/saved")}
+              className={`px-1 py-4 text-sm font-medium text-gray-500 transition-colors hover:text-black`}
+            >
+              <FaBookmark className="mr-2 inline h-4 w-4" />
+              Saved
+            </button>
+          )}
         </nav>
       </div>
 

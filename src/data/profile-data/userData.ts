@@ -53,7 +53,7 @@ export interface UserData {
 
   // ❌ Removed: friends, pendingRequests, sentRequests
   // ✅ Now handled by separate friendships.ts and friendRequests.ts files
-  
+
   saved?: string[];
 
   preJoinedGroup?: string[];
@@ -93,7 +93,7 @@ const rawUsersData: UserData[] = [
         location: "Office 101",
       },
     ],
-    
+
     saved: [],
 
     preJoinedGroup: ["pg1", "pg2", "pg5"],
@@ -571,4 +571,3 @@ export const usersData: CompatUserData[] = rawUsersData.map((u) => {
 // Note: runtime helper functions (getCurrentUserId, getUserById, updateUserById)
 // live in `userHelpers.ts`. This file exports only seeded data and the
 // `UserData` type so other modules can import `usersData` safely.
-
