@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAppSelector } from "../store/hooks";
-import HomePostCard from "../components/Home/HomePostCard";
-import CreatePost from "../components/Home/CreatePost";
-import LoadingSkeleton from "../components/Home/LoadingSkeleton";
+import { HomePostCard, CreatePost, LoadingSkeleton } from "../components/Home";
 import DailyXPClaim from "../components/Gaming/Dashboard/DailyXPClaim";
 
 const Home: React.FC = () => {

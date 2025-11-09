@@ -11,8 +11,7 @@ import {
 import { getPostsByUserId } from "../data/profile-data/profilePostData";
 import { getUserById, getCurrentUserId } from "../services/userService";
 import { getPublicFoldersByUserId } from "../data/publicFilesData";
-import ProfilePosts from "../components/Profile/ProfilePosts";
-import PublicFiles from "../components/Profile/PublicFiles";
+import { ProfilePosts, PublicFiles } from "../components/Profile";
 import PageLoader from "./Fallbacks/PageLoader";
 import { useAppSelector } from "../store/hooks";
 

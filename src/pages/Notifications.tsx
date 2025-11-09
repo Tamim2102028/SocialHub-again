@@ -1,8 +1,7 @@
 import React from "react";
 import { FaBell, FaCheck } from "react-icons/fa";
 import { useAppSelector } from "../store/hooks";
-import NotificationFilters from "../components/Notifications/NotificationFilters";
-import NotificationItem from "../components/Notifications/NotificationItem";
+import { NotificationFilters, NotificationItem } from "../components/Notifications";
 
 const Notifications: React.FC = () => {
   const filter = useAppSelector((state) => state.ui.notifications.filter);

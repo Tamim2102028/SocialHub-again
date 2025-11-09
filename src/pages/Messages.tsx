@@ -1,6 +1,5 @@
 import React from "react";
-import ConversationList from "../components/Messages/ConversationList";
-import ChatArea from "../components/Messages/ChatArea";
+import { ConversationList, ChatArea } from "../components/Messages";
 
 const Messages: React.FC = () => {
   return (

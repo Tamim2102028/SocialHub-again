@@ -1,10 +1,12 @@
 import React, { useState, useMemo } from "react";
-import FriendsHeader from "../components/Friends/FriendsHeader";
-import FriendsTabs from "../components/Friends/FriendsTabs";
-import FriendsList from "../components/Friends/FriendsList";
-import FriendRequests from "../components/Friends/FriendRequests";
-import FriendSuggestions from "../components/Friends/FriendSuggestions";
-import SentRequests from "../components/Friends/SentRequests";
+import {
+  FriendsHeader,
+  FriendsTabs,
+  FriendsList,
+  FriendRequests,
+  FriendSuggestions,
+  SentRequests,
+} from "../components/Friends";
 import FriendCard from "../components/shared/FriendCard";
 import { usersData } from "../data/profile-data/userData";
 import { getCurrentUserId } from "../services/userService";

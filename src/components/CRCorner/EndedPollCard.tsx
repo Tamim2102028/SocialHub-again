@@ -24,10 +24,7 @@ export const EndedPollCard: React.FC<EndedPollCardProps> = ({
     <div className="rounded-lg border border-gray-200 bg-gray-50 p-3">
       {!isExpanded ? (
         // Compact View
-        <div
-          onClick={() => onToggleExpand(poll.id)}
-          className="cursor-pointer"
-        >
+        <div onClick={() => onToggleExpand(poll.id)} className="cursor-pointer">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0 flex-1">
               <h4 className="truncate text-sm font-medium text-gray-900">
@@ -96,7 +93,7 @@ export const EndedPollCard: React.FC<EndedPollCardProps> = ({
                       {option.text}
                       {isWinner && (
                         <span className="ml-2 text-xs font-semibold text-green-600">
-                          🏆 Winner
+                          Winner
                         </span>
                       )}
                     </span>
