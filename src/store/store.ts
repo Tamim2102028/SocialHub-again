@@ -16,6 +16,7 @@ import classRoomSlice from "./slices/classRoom/classRoomSlice.js";
 import roomPostsSlice from "./slices/classRoom/roomPostsSlice.js";
 import crCornerSlice from "./slices/university/crCornerSlice.js";
 import friendsSlice from "./slices/friendsSlice";
+import searchSlice from "./slices/search/searchSlice";
 
 export const store = configureStore({
   reducer: {
@@ -36,6 +37,7 @@ export const store = configureStore({
     tournament: tournamentSlice,
     achievement: achievementSlice,
     friends: friendsSlice,
+    search: searchSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

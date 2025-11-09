@@ -1,30 +1,21 @@
 import React from "react";
 import { FaHashtag } from "react-icons/fa";
-import { mockSearchResults } from "./data/searchData";
+import { useAppSelector } from "../../store/hooks";
+import { selectFilteredHashtags } from "../../store/slices/search/searchSlice";
 
 interface HashtagsResultsProps {
-  searchQuery: string;
   isVisible: boolean;
 }
 
-const HashtagsResults: React.FC<HashtagsResultsProps> = ({
-  searchQuery,
-  isVisible,
-}) => {
+const HashtagsResults: React.FC<HashtagsResultsProps> = ({ isVisible }) => {
+  const filteredHashtags = useAppSelector(selectFilteredHashtags);
+
   if (!isVisible) return null;
+  if (filteredHashtags.length === 0) return null;
 
   const handleHashtagClick = (tag: string) => {
     console.log("Navigating to hashtag:", tag);
   };
-
-  // Filter hashtags based on search query
-  const filteredHashtags = mockSearchResults.hashtags.filter((hashtag) => {
-    if (!searchQuery.trim()) return true;
-    const query = searchQuery.toLowerCase();
-    return hashtag.tag.toLowerCase().includes(query);
-  });
-
-  if (filteredHashtags.length === 0) return null;
 
   return (
     <div>
@@ -34,7 +25,7 @@ const HashtagsResults: React.FC<HashtagsResultsProps> = ({
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {filteredHashtags.map((hashtag) => (
           <div
-            key={hashtag.tag}
+            key={hashtag.id}
             onClick={() => handleHashtagClick(hashtag.tag)}
             className="cursor-pointer rounded-lg bg-white p-4 shadow-sm transition-all hover:scale-105 hover:shadow-md"
           >
