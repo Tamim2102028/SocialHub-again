@@ -128,7 +128,7 @@ const FolderSection: React.FC = () => {
         icon: "success",
         title: "Folder created",
         text: `"${folderName}" has been created successfully`,
-        timer: 1500,
+        timer: 500,
         showConfirmButton: false,
       });
     }
@@ -159,7 +159,7 @@ const FolderSection: React.FC = () => {
       icon: "success",
       title: "Files uploaded",
       text: `${files.length} file(s) uploaded successfully`,
-      timer: 1500,
+      timer: 500,
       showConfirmButton: false,
     });
   };
