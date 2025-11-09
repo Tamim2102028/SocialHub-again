@@ -3,14 +3,17 @@ import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../store/hooks";
 import { selectUserById } from "../../store/slices/profileSlice";
 import type { RootState } from "../../store/store";
+import { confirm } from "../../utils/sweetAlert";
 import {
   FaPoll,
   FaPlus,
   FaBullhorn,
   FaFile,
   FaTimes,
+  FaEdit,
+  FaTrash,
+  FaEllipsisH,
 } from "react-icons/fa";
-import { BsThreeDots } from "react-icons/bs";
 
 interface Poll {
   id: number;
@@ -329,8 +332,18 @@ const CRCorner: React.FC = () => {
     if (menuOpenFor === id) setMenuOpenFor(null);
   };
 
-  const handleDeletePoll = (id: number) => {
-    setPolls((prev) => prev.filter((p) => p.id !== id));
+  const handleDeletePoll = async (id: number) => {
+    const confirmed = await confirm({
+      title: "Delete Poll?",
+      text: "Are you sure you want to delete this poll? This action cannot be undone.",
+      icon: "warning",
+      confirmButtonText: "Yes, delete it",
+      isDanger: true,
+    });
+
+    if (confirmed) {
+      setPolls((prev) => prev.filter((p) => p.id !== id));
+    }
   };
 
   const handleEndPoll = (id: number) => {
@@ -603,33 +616,38 @@ const CRCorner: React.FC = () => {
                   <div className="absolute top-3 right-3">
                     <button
                       onClick={() => toggleMenu(announcement.id)}
-                      className="cursor-pointer rounded-full p-1 text-gray-600 hover:bg-gray-100"
+                      className="rounded-lg p-2 
+                      bg-blue-100 text-gray-600 cursor-pointer transition-colors hover:bg-blue-50"
                       aria-label="Open menu"
                     >
-                      <BsThreeDots className="h-5 w-5" />
+                      <FaEllipsisH className="h-4 w-4" />
                     </button>
 
                     {/* menu popup */}
                     {menuOpenFor === announcement.id && (
-                      <div className="absolute top-8 right-0 z-20 w-40 rounded-md border border-gray-200 bg-white shadow-lg">
-                        <button
-                          onClick={() => {
-                            /* placeholder edit */
-                            setMenuOpenFor(null);
-                            alert("Edit not implemented yet");
-                          }}
-                          className="w-full px-3 py-2 text-left text-sm hover:bg-gray-50"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() =>
-                            handleDeleteAnnouncement(announcement.id)
-                          }
-                          className="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-gray-50"
-                        >
-                          Delete
-                        </button>
+                      <div className="absolute top-full right-0 z-50 mt-1 w-48 rounded-lg border border-gray-200 bg-white shadow-lg">
+                        <div className="py-1">
+                          <button
+                            onClick={() => {
+                              /* placeholder edit */
+                              setMenuOpenFor(null);
+                              alert("Edit not implemented yet");
+                            }}
+                            className="flex w-full items-center gap-3 px-4 py-2 text-left text-sm text-gray-700 transition-colors hover:bg-gray-50"
+                          >
+                            <FaEdit className="h-4 w-4" />
+                            <span className="font-medium">Edit</span>
+                          </button>
+                          <button
+                            onClick={() =>
+                              handleDeleteAnnouncement(announcement.id)
+                            }
+                            className="flex w-full items-center gap-3 px-4 py-2 text-left text-sm text-red-600 transition-colors hover:bg-gray-50"
+                          >
+                            <FaTrash className="h-4 w-4" />
+                            <span className="font-medium">Delete</span>
+                          </button>
+                        </div>
                       </div>
                     )}
                   </div>
