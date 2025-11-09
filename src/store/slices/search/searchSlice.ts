@@ -263,13 +263,22 @@ export const selectFilteredPosts = (state: RootState) => {
 };
 
 export const selectFilteredHashtags = (state: RootState) => {
-  const { query, hashtags } = state.search;
+  const { query } = state.search;
+  const posts = state.posts.posts;
+
   // Show nothing if search query is empty
   if (!query.trim()) return [];
+
   const lowerQuery = query.toLowerCase();
-  return hashtags.filter((hashtag) =>
-    hashtag.tag.toLowerCase().includes(lowerQuery)
-  );
+
+  // Filter posts that have tags matching the search query
+  return posts.filter((post) => {
+    if (!post.tags || post.tags.length === 0) return false;
+    
+    return post.tags.some((tag) =>
+      tag.toLowerCase().includes(lowerQuery)
+    );
+  });
 };
 
 export const selectFilteredGroups = (state: RootState) => {

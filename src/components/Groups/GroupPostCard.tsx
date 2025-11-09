@@ -117,6 +117,20 @@ const GroupPostCardSimple: React.FC<Props> = ({ post }) => {
       {/* Post Content */}
       <div className="px-4 pb-3">
         <p className="whitespace-pre-wrap text-gray-900">{post.content}</p>
+
+        {/* Tags */}
+        {post.tags && post.tags.length > 0 && (
+          <div className="mt-3 flex flex-wrap gap-2">
+            {post.tags.map((tag, index) => (
+              <span
+                key={index}
+                className="inline-block cursor-pointer rounded-full bg-blue-50 px-3 py-1 text-sm font-medium text-blue-600 transition-colors hover:bg-blue-100"
+              >
+                #{tag}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Post Images */}
