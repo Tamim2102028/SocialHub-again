@@ -28,7 +28,7 @@ import {
   updateAnnouncement,
   deleteAnnouncement,
   toggleAnnouncementRead,
-} from "../../store/slices/classRoom/crCornerSlice";
+} from "../../store/slices/university/crCornerSlice";
 
 const CRCorner: React.FC = () => {
   const dispatch = useAppDispatch();

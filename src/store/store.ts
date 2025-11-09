@@ -14,7 +14,7 @@ import achievementSlice from "./slices/achievementSlice";
 import groupSlice from "./slices/groupSlice";
 import classRoomSlice from "./slices/classRoom/classRoomSlice.js";
 import roomPostsSlice from "./slices/classRoom/roomPostsSlice.js";
-import crCornerSlice from "./slices/classRoom/crCornerSlice";
+import crCornerSlice from "./slices/university/crCornerSlice.js";
 import friendsSlice from "./slices/friendsSlice";
 
 export const store = configureStore({
