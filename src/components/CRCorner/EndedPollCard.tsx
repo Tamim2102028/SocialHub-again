@@ -30,8 +30,10 @@ export const EndedPollCard: React.FC<EndedPollCardProps> = ({
               <h4 className="truncate text-sm font-medium text-gray-900">
                 {poll.question}
               </h4>
-              <p className="mt-1 text-xs text-gray-500">
-                Ended on {poll.endedAt} · {poll.totalVotes} votes
+              <p className="mt-1 flex items-center gap-2 text-xs text-gray-500">
+                <span>Ended on {poll.endedAt}</span>
+                <span className="text-base">•</span>
+                <span>{poll.totalVotes} votes</span>
               </p>
               <p className="mt-1 text-xs font-medium text-blue-600">
                 {winningOption.text} ({winningOption.votes} votes)
@@ -50,8 +52,10 @@ export const EndedPollCard: React.FC<EndedPollCardProps> = ({
               <h4 className="text-base font-medium text-gray-900">
                 {poll.question}
               </h4>
-              <p className="mt-1 text-xs text-gray-500">
-                Ended on {poll.endedAt} · {poll.totalVotes} total votes
+              <p className="mt-1 flex items-center gap-2 text-xs text-gray-500">
+                <span>Ended on {poll.endedAt}</span>
+                <span className="text-base">•</span>
+                <span>{poll.totalVotes} total votes</span>
               </p>
             </div>
             <div className="flex items-center gap-2">

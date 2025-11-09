@@ -4,6 +4,7 @@ import { selectUserById } from "../../store/slices/profileSlice";
 import type { RootState } from "../../store/store";
 import { confirm } from "../../utils/sweetAlert";
 import { FaPoll, FaPlus, FaBullhorn, FaTimes, FaFile } from "react-icons/fa";
+import dayjs from "dayjs";
 import {
   PollCard,
   EndedPollCard,
@@ -21,6 +22,12 @@ const CRCorner: React.FC = () => {
   const [postTitle, setPostTitle] = useState("");
   const [postContent, setPostContent] = useState("");
   const [attachedFile, setAttachedFile] = useState<File | null>(null);
+
+  // Edit announcement state
+  const [editingAnnouncementId, setEditingAnnouncementId] = useState<
+    number | null
+  >(null);
+  const [existingFileName, setExistingFileName] = useState<string>("");
 
   // Poll creation state
   const [showCreatePoll, setShowCreatePoll] = useState(false);
@@ -78,7 +85,7 @@ const CRCorner: React.FC = () => {
       title: "Class Representative Meeting",
       content:
         "All CRs are requested to attend the monthly meeting in Room 301.",
-      date: "Oct 5, 2025",
+      date: dayjs("2025-10-05").format("MMM D, YYYY"),
       postedBy: "Tamim Ahmed",
       postedById: "tamim-id",
       readBy: [],
@@ -88,7 +95,7 @@ const CRCorner: React.FC = () => {
       title: "Circuit Analysis Notes - Shared by Sir",
       content:
         "Our professor has shared the complete lecture notes for Circuit Analysis. Download and study before the midterm exam.",
-      date: "Oct 3, 2025",
+      date: dayjs("2025-10-03").format("MMM D, YYYY"),
       postedBy: "Sadia Rahman",
       postedById: "sadia-id",
       readBy: [],
@@ -100,7 +107,7 @@ const CRCorner: React.FC = () => {
       title: "Assignment Deadline Extended",
       content:
         "Good news! The CSE 305 assignment deadline has been extended to Oct 15. Make sure to submit on time.",
-      date: "Oct 2, 2025",
+      date: dayjs("2025-10-02").format("MMM D, YYYY"),
       postedBy: "Tamim Ahmed",
       postedById: "tamim-id",
       readBy: [],
@@ -188,10 +195,6 @@ const CRCorner: React.FC = () => {
     }
   };
 
-  const handleRemoveFile = () => {
-    setAttachedFile(null);
-  };
-
   const handleCreatePost = () => {
     if (!isCurrentUserCr) {
       alert("Only Class Representatives can create announcements.");
@@ -199,34 +202,54 @@ const CRCorner: React.FC = () => {
     }
 
     if (postTitle.trim() && postContent.trim()) {
-      const newAnnouncement: Announcement = {
-        id: Date.now(),
-        title: postTitle.trim(),
-        content: postContent.trim(),
-        date: new Date().toLocaleDateString("en-US", {
-          month: "short",
-          day: "numeric",
-          year: "numeric",
-        }),
-        // use the logged-in user's name if available
-        postedBy: currentUser?.name || "CR",
-        postedById: currentUser?.id,
-        hasFile: !!attachedFile,
-        fileName: attachedFile ? attachedFile.name : undefined,
-        readBy: [],
-      };
+      if (editingAnnouncementId) {
+        // Update existing announcement
+        setAnnouncements((prev) =>
+          prev.map((ann) =>
+            ann.id === editingAnnouncementId
+              ? {
+                  ...ann,
+                  title: postTitle.trim(),
+                  content: postContent.trim(),
+                  hasFile: !!attachedFile || !!existingFileName,
+                  fileName: attachedFile
+                    ? attachedFile.name
+                    : existingFileName || ann.fileName,
+                  fileUrl: attachedFile
+                    ? URL.createObjectURL(attachedFile)
+                    : ann.fileUrl,
+                }
+              : ann
+          )
+        );
+      } else {
+        // Create new announcement
+        const newAnnouncement: Announcement = {
+          id: Date.now(),
+          title: postTitle.trim(),
+          content: postContent.trim(),
+          date: dayjs().format("MMM D, YYYY"),
+          postedBy: currentUser?.name || "CR",
+          postedById: currentUser?.id,
+          hasFile: !!attachedFile,
+          fileName: attachedFile ? attachedFile.name : undefined,
+          readBy: [],
+        };
 
-      // If there's an attached file, we store it in-memory using URL.createObjectURL
-      if (attachedFile) {
-        // attach a temporary download URL (not persisted)
-        newAnnouncement.fileUrl = URL.createObjectURL(attachedFile);
+        // If there's an attached file, we store it in-memory using URL.createObjectURL
+        if (attachedFile) {
+          newAnnouncement.fileUrl = URL.createObjectURL(attachedFile);
+        }
+
+        setAnnouncements((prev) => [newAnnouncement, ...prev]);
       }
 
-      setAnnouncements((prev) => [newAnnouncement, ...prev]);
       setPostTitle("");
       setPostContent("");
       setAttachedFile(null);
+      setExistingFileName("");
       setShowCreatePost(false);
+      setEditingAnnouncementId(null);
     }
   };
 
@@ -300,6 +323,20 @@ const CRCorner: React.FC = () => {
     setMenuOpenFor((prev) => (prev === id ? null : id));
   };
 
+  const handleEditAnnouncement = (id: number) => {
+    const announcement = announcements.find((a) => a.id === id);
+    if (announcement) {
+      setEditingAnnouncementId(id);
+      setPostTitle(announcement.title);
+      setPostContent(announcement.content);
+      if (announcement.hasFile && announcement.fileName) {
+        setExistingFileName(announcement.fileName);
+      }
+      setShowCreatePost(true);
+      setMenuOpenFor(null);
+    }
+  };
+
   const handleDeleteAnnouncement = async (id: number) => {
     const confirmed = await confirm({
       title: "Delete Announcement?",
@@ -331,25 +368,13 @@ const CRCorner: React.FC = () => {
   };
 
   const handleEndPoll = (id: number) => {
-    const now = new Date();
-    const date = now.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
-    const time = now.toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    });
-
     setPolls((prev) =>
       prev.map((p) =>
         p.id === id
           ? {
               ...p,
               isEnded: true,
-              endedAt: `${date} at ${time}`,
+              endedAt: dayjs().format("MMM D, YYYY [at] h:mm A"),
             }
           : p
       )
@@ -407,11 +432,20 @@ const CRCorner: React.FC = () => {
             <div className="flex items-center gap-2">
               <FaBullhorn className="h-5 w-5 text-blue-600" />
               <h3 className="text-lg font-semibold text-gray-900">
-                New Announcement
+                {editingAnnouncementId
+                  ? "Edit Announcement"
+                  : "New Announcement"}
               </h3>
             </div>
             <button
-              onClick={() => setShowCreatePost(false)}
+              onClick={() => {
+                setShowCreatePost(false);
+                setEditingAnnouncementId(null);
+                setPostTitle("");
+                setPostContent("");
+                setAttachedFile(null);
+                setExistingFileName("");
+              }}
               className="rounded p-1 text-gray-500 hover:bg-gray-100"
             >
               <FaTimes className="h-5 w-5" />
@@ -436,16 +470,24 @@ const CRCorner: React.FC = () => {
             />
 
             {/* File Attachment */}
-            {attachedFile ? (
+            {attachedFile || existingFileName ? (
               <div className="flex items-center justify-between rounded-md border border-gray-300 bg-gray-50 p-3">
                 <div className="flex items-center gap-2">
                   <FaFile className="h-4 w-4 text-blue-600" />
                   <span className="text-sm text-gray-700">
-                    {attachedFile.name}
+                    {attachedFile ? attachedFile.name : existingFileName}
+                    {existingFileName && !attachedFile && (
+                      <span className="ml-2 text-xs text-gray-500">
+                        (Existing file)
+                      </span>
+                    )}
                   </span>
                 </div>
                 <button
-                  onClick={handleRemoveFile}
+                  onClick={() => {
+                    setAttachedFile(null);
+                    setExistingFileName("");
+                  }}
                   className="rounded p-1 text-red-500 hover:bg-red-50"
                 >
                   <FaTimes className="h-4 w-4" />
@@ -468,7 +510,14 @@ const CRCorner: React.FC = () => {
 
             <div className="flex gap-3">
               <button
-                onClick={() => setShowCreatePost(false)}
+                onClick={() => {
+                  setShowCreatePost(false);
+                  setEditingAnnouncementId(null);
+                  setPostTitle("");
+                  setPostContent("");
+                  setAttachedFile(null);
+                  setExistingFileName("");
+                }}
                 className="flex-1 rounded-md border border-gray-300 py-2.5 text-base font-medium text-gray-700 transition-colors hover:bg-gray-50"
               >
                 Cancel
@@ -478,7 +527,7 @@ const CRCorner: React.FC = () => {
                 disabled={!postTitle.trim() || !postContent.trim()}
                 className="flex-1 rounded-md bg-blue-600 py-2.5 text-base font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-300"
               >
-                Post
+                {editingAnnouncementId ? "Update" : "Post"}
               </button>
             </div>
           </div>
@@ -596,10 +645,7 @@ const CRCorner: React.FC = () => {
                 onToggleExpanded={toggleExpanded}
                 onToggleMenu={toggleMenu}
                 onToggleRead={toggleRead}
-                onEdit={() => {
-                  setMenuOpenFor(null);
-                  alert("Edit not implemented yet");
-                }}
+                onEdit={handleEditAnnouncement}
                 onDelete={handleDeleteAnnouncement}
                 onDownload={handleDownload}
               />
