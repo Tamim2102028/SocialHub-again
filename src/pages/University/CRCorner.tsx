@@ -33,6 +33,7 @@ const CRCorner: React.FC = () => {
   const [showCreatePoll, setShowCreatePoll] = useState(false);
   const [pollQuestion, setPollQuestion] = useState("");
   const [pollOptions, setPollOptions] = useState<string[]>(["", ""]);
+  const [editingPollId, setEditingPollId] = useState<number | null>(null);
 
   // current logged-in user (from profile slice)
   const currentUser = useAppSelector((s: RootState) =>
@@ -273,17 +274,40 @@ const CRCorner: React.FC = () => {
       return;
     }
 
-    const newPoll: Poll = {
-      id: Date.now(),
-      question: q,
-      options: opts.map((text, i) => ({ id: i + 1, text, votes: 0 })),
-      totalVotes: 0,
-    };
+    if (editingPollId) {
+      // Update existing poll
+      setPolls((prev) =>
+        prev.map((poll) =>
+          poll.id === editingPollId
+            ? {
+                ...poll,
+                question: q,
+                options: opts.map((text, i) => {
+                  // Preserve existing option data if available, otherwise create new option
+                  const existingOption = poll.options[i];
+                  return existingOption
+                    ? { ...existingOption, text }
+                    : { id: poll.options.length + i + 1, text, votes: 0 };
+                }),
+              }
+            : poll
+        )
+      );
+    } else {
+      // Create new poll
+      const newPoll: Poll = {
+        id: Date.now(),
+        question: q,
+        options: opts.map((text, i) => ({ id: i + 1, text, votes: 0 })),
+        totalVotes: 0,
+      };
+      setPolls((prev) => [newPoll, ...prev]);
+    }
 
-    setPolls((prev) => [newPoll, ...prev]);
     setPollQuestion("");
     setPollOptions(["", ""]);
     setShowCreatePoll(false);
+    setEditingPollId(null);
   };
 
   const handleDownload = (announcement: Announcement) => {
@@ -321,6 +345,16 @@ const CRCorner: React.FC = () => {
 
   const toggleMenu = (id: number) => {
     setMenuOpenFor((prev) => (prev === id ? null : id));
+  };
+
+  const handleEditPoll = (id: number) => {
+    const poll = polls.find((p) => p.id === id);
+    if (poll) {
+      setEditingPollId(id);
+      setPollQuestion(poll.question);
+      setPollOptions(poll.options.map((opt) => opt.text));
+      setShowCreatePoll(true);
+    }
   };
 
   const handleEditAnnouncement = (id: number) => {
@@ -540,10 +574,17 @@ const CRCorner: React.FC = () => {
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <FaPoll className="h-5 w-5 text-blue-600" />
-              <h3 className="text-lg font-semibold text-gray-900">New Poll</h3>
+              <h3 className="text-lg font-semibold text-gray-900">
+                {editingPollId ? "Edit Poll" : "New Poll"}
+              </h3>
             </div>
             <button
-              onClick={() => setShowCreatePoll(false)}
+              onClick={() => {
+                setShowCreatePoll(false);
+                setEditingPollId(null);
+                setPollQuestion("");
+                setPollOptions(["", ""]);
+              }}
               className="rounded p-1 text-gray-500 hover:bg-gray-100"
             >
               <FaTimes className="h-5 w-5" />
@@ -571,7 +612,7 @@ const CRCorner: React.FC = () => {
                   <button
                     onClick={() => removePollOption(i)}
                     disabled={pollOptions.length <= 2}
-                    className="rounded bg-red-50 px-3 py-2 text-sm text-red-600 hover:bg-red-100 disabled:opacity-50"
+                    className="rounded-md border border-red-200 bg-red-50 px-4 py-2 text-sm font-medium text-red-600 transition-colors hover:border-red-300 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-red-200 disabled:hover:bg-red-50"
                   >
                     Remove
                   </button>
@@ -603,7 +644,7 @@ const CRCorner: React.FC = () => {
                 }
                 className="flex-1 rounded-md bg-blue-600 py-2.5 text-base font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-300"
               >
-                Create Poll
+                {editingPollId ? "Update Poll" : "Create Poll"}
               </button>
             </div>
           </div>
@@ -695,7 +736,7 @@ const CRCorner: React.FC = () => {
                       selectedOption={selectedPolls[poll.id] ?? null}
                       onVote={handleVote}
                       onCancelVote={handleCancelVote}
-                      onEditPoll={() => alert("Edit poll feature coming soon!")}
+                      onEditPoll={handleEditPoll}
                       onEndPoll={handleEndPoll}
                       onDeletePoll={handleDeletePoll}
                     />
