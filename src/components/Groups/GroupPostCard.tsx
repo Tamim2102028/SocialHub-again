@@ -8,6 +8,8 @@ import {
   FaRegComment,
   FaBookmark,
   FaRegBookmark,
+  FaLink,
+  FaFlag,
 } from "react-icons/fa";
 import type { GroupPost } from "../../data/group-data/groupPostsData";
 import { useAppSelector } from "../../store/hooks";
@@ -55,9 +57,12 @@ const GroupPostCardSimple: React.FC<Props> = ({ post }) => {
             >
               {author?.name || post.createdBy}
             </h3>
-            <p className="text-sm text-gray-500 flex items-center gap-2">
-              <span>@
-                <span className="text-gray-500">{author?.username || post.createdBy}</span>
+            <p className="flex items-center gap-2 text-sm text-gray-500">
+              <span>
+                @
+                <span className="text-gray-500">
+                  {author?.username || post.createdBy}
+                </span>
               </span>
               <span className="h-1 w-1 rounded-full bg-gray-400" aria-hidden />
               <span>{formatPostDate(post.createdAt)}</span>
@@ -70,35 +75,38 @@ const GroupPostCardSimple: React.FC<Props> = ({ post }) => {
         <div className="relative">
           <button
             onClick={() => setShowMenu(!showMenu)}
-            className="rounded-full p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+            className="rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-200"
+            title="More actions"
           >
-            <FaEllipsisH size={16} />
+            <FaEllipsisH className="h-4 w-4" />
           </button>
 
           {showMenu && (
-            <div className="ring-opacity-5 absolute right-0 z-10 mt-2 w-48 rounded-md bg-white shadow-lg ring-1 ring-black">
+            <div className="absolute top-full right-0 z-50 mt-1 w-48 rounded-lg border border-gray-200 bg-white shadow-lg">
               <div className="py-1">
                 <button
                   onClick={handleBookmark}
-                  className="flex w-full items-center px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
+                  className={`flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors hover:bg-gray-50 ${isBookmarked ? "text-blue-600" : "text-gray-700"}`}
                 >
                   {isBookmarked ? (
                     <>
-                      <FaBookmark className="mr-3 text-blue-600" size={14} />
-                      Remove bookmark
+                      <FaBookmark className="h-4 w-4 flex-shrink-0" />
+                      <span className="font-medium">Remove bookmark</span>
                     </>
                   ) : (
                     <>
-                      <FaRegBookmark className="mr-3" size={14} />
-                      Save post
+                      <FaRegBookmark className="h-4 w-4 flex-shrink-0" />
+                      <span className="font-medium">Save post</span>
                     </>
                   )}
                 </button>
-                <button className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100">
-                  Copy link
+                <button className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-gray-700 transition-colors hover:bg-gray-50">
+                  <FaLink className="h-4 w-4 flex-shrink-0" />
+                  <span className="font-medium">Copy link</span>
                 </button>
-                <button className="block w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-100">
-                  Report post
+                <button className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-red-600 transition-colors hover:bg-gray-50">
+                  <FaFlag className="h-4 w-4 flex-shrink-0" />
+                  <span className="font-medium">Report post</span>
                 </button>
               </div>
             </div>
