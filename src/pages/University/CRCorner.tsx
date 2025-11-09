@@ -80,7 +80,7 @@ const CRCorner: React.FC = () => {
       ],
       totalVotes: 110,
       isEnded: true,
-      endedAt: "Nov 5, 2025",
+      endedAt: "Nov 5, 2025 at 3:45 PM",
     },
     {
       id: 3,
@@ -93,7 +93,7 @@ const CRCorner: React.FC = () => {
       ],
       totalVotes: 125,
       isEnded: true,
-      endedAt: "Nov 3, 2025",
+      endedAt: "Nov 3, 2025 at 10:30 AM",
     },
   ]);
 
@@ -347,17 +347,25 @@ const CRCorner: React.FC = () => {
   };
 
   const handleEndPoll = (id: number) => {
+    const now = new Date();
+    const date = now.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+    const time = now.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
+
     setPolls((prev) =>
       prev.map((p) =>
         p.id === id
           ? {
               ...p,
               isEnded: true,
-              endedAt: new Date().toLocaleDateString("en-US", {
-                month: "short",
-                day: "numeric",
-                year: "numeric",
-              }),
+              endedAt: `${date} at ${time}`,
             }
           : p
       )
@@ -909,7 +917,7 @@ const CRCorner: React.FC = () => {
                                     {winningOption.votes} votes)
                                   </p>
                                 </div>
-                                <span className="flex-shrink-0 text-xs text-gray-400">
+                                <span className="flex-shrink-0 text-sm font-medium text-blue-600">
                                   Click to expand
                                 </span>
                               </div>
@@ -929,7 +937,7 @@ const CRCorner: React.FC = () => {
                                 </div>
                                 <button
                                   onClick={() => toggleExpandPoll(poll.id)}
-                                  className="flex-shrink-0 text-sm text-blue-600 hover:text-blue-800"
+                                  className="flex-shrink-0 rounded-md border border-blue-200 bg-blue-50 px-3 py-1.5 text-sm font-medium text-blue-600 transition-colors hover:border-blue-300 hover:bg-blue-100"
                                 >
                                   Collapse
                                 </button>
