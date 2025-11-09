@@ -178,7 +178,7 @@ const FolderSection: React.FC = () => {
       icon: "success",
       title: "Download started",
       text: `Downloading ${file.name}`,
-      timer: 1500,
+      timer: 500,
       showConfirmButton: false,
     });
   };
@@ -201,7 +201,7 @@ const FolderSection: React.FC = () => {
         icon: "success",
         title: "Renamed",
         text: `File renamed to "${newName}"`,
-        timer: 1500,
+        timer: 500,
         showConfirmButton: false,
       });
     }
@@ -225,7 +225,7 @@ const FolderSection: React.FC = () => {
         icon: "success",
         title: "Deleted",
         text: "File deleted successfully",
-        timer: 1500,
+        timer: 500,
         showConfirmButton: false,
       });
     }
@@ -307,10 +307,14 @@ const FolderSection: React.FC = () => {
                 {folders.map((folder) => (
                   <div
                     key={folder.id}
-                    onClick={() => handleSubFolderClick(folder.id, folder.name)}
-                    className="flex cursor-pointer items-center justify-between p-3 transition-colors hover:bg-gray-50"
+                    className="flex items-center justify-between p-3 transition-colors hover:bg-gray-50"
                   >
-                    <div className="flex flex-1 items-center space-x-3">
+                    <div
+                      onClick={() =>
+                        handleSubFolderClick(folder.id, folder.name)
+                      }
+                      className="flex flex-1 cursor-pointer items-center space-x-3"
+                    >
                       <FaFolder className="h-5 w-5 text-blue-500" />
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-sm font-medium text-gray-900">
@@ -320,8 +324,15 @@ const FolderSection: React.FC = () => {
                           {folder.fileCount || 0} files
                         </p>
                       </div>
+                      <FaChevronRight className="h-4 w-4 text-gray-400" />
                     </div>
-                    <FaChevronRight className="h-4 w-4 text-gray-400" />
+                    <FileActionsMenu
+                      file={folder}
+                      onDownload={() => {}}
+                      onRename={() => handleRename(folder)}
+                      onDelete={() => handleDelete(folder)}
+                      onDetails={() => handleDetails(folder)}
+                    />
                   </div>
                 ))}
               </div>
