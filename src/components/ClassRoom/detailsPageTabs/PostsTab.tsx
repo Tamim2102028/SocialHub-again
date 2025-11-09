@@ -9,10 +9,10 @@ import {
   togglePinPost,
 } from "../../../store/slices/classRoom/roomPostsSlice";
 import { BsThreeDots } from "react-icons/bs";
-import Swal from "sweetalert2";
 import { formatPostDate, formatPostClock } from "../../../utils/dateUtils";
 import { type RoomPost } from "../../../data/rooms-data/roomPostData";
 import { type UserData } from "../../../data/profile-data/userData";
+import { showPostMenu } from "../../../utils/customModals";
 
 interface Props {
   roomId: string;
@@ -65,88 +65,38 @@ const PostsTab: React.FC<Props> = ({
   const dispatch = useAppDispatch();
 
   const handlePostMenu = async (post: RoomPost) => {
-    const pinLabel = post.pinned ? "Unpin" : "Pin";
     const isCreator = !!currentUserId && currentUserId === creatorId;
     const isAdmin = !!currentUserId && !!admins?.includes(currentUserId);
     const isAuthor = !!currentUserId && currentUserId === post.authorId;
-    
+
     const canEdit = isAuthor;
     const canPin = isCreator || isAdmin;
     const canDelete = isAuthor || isCreator; // Only author or creator can delete
 
-    const editHtml = canEdit
-      ? `<button id="swal-edit" class="w-50 px-3 py-2 rounded border border-gray-200 bg-white text-gray-700 hover:bg-gray-50">Edit</button>`
-      : "";
-    const pinHtml = canPin
-      ? `<button id="swal-pin" class="w-50 px-3 py-2 rounded border border-gray-200 bg-white text-gray-700 hover:bg-gray-50">${pinLabel}</button>`
-      : "";
-    const delHtml = canDelete
-      ? `<button id="swal-del" class="w-50 px-3 py-2 rounded border border-red-100 bg-white text-red-600 hover:bg-red-50">Delete</button>`
-      : "";
-
-    // if no actions are available, show a simple message
-    const actionsHtml =
-      editHtml || pinHtml || delHtml
-        ? `${editHtml}${pinHtml}${delHtml}`
-        : `<div class="text-sm text-gray-600">No actions available</div>`;
-
-    await Swal.fire({
-      title: "Post options",
-      html: `
-        <div class="flex flex-col items-center gap-2 min-w-[160px]">
-          ${actionsHtml}
-        </div>
-      `,
-      showConfirmButton: false,
-      showCloseButton: true,
-      didOpen: () => {
-        const popup = Swal.getPopup();
-        if (!popup) return;
-        const editBtn = popup.querySelector(
-          "#swal-edit"
-        ) as HTMLButtonElement | null;
-        const pinBtn = popup.querySelector(
-          "#swal-pin"
-        ) as HTMLButtonElement | null;
-        const delBtn = popup.querySelector(
-          "#swal-del"
-        ) as HTMLButtonElement | null;
-
-        const onEdit = () => {
-          setPostEditingId(post.id);
-          setPostEditText((s) => ({ ...s, [post.id]: post.content }));
-          Swal.close();
-        };
-
-        const onPin = () => {
-          dispatch(togglePinPost(post.id));
-          Swal.close();
-        };
-
-        const onDel = () => {
-          dispatch(deletePost(post.id));
-          Swal.close();
-        };
-
-        if (editBtn) editBtn.addEventListener("click", onEdit);
-        if (pinBtn) pinBtn.addEventListener("click", onPin);
-        if (delBtn) delBtn.addEventListener("click", onDel);
-
-        // cleanup listeners when swal closes
-        const removeListeners = () => {
-          if (editBtn) editBtn.removeEventListener("click", onEdit);
-          if (pinBtn) pinBtn.removeEventListener("click", onPin);
-          if (delBtn) delBtn.removeEventListener("click", onDel);
-        };
-
-        const observer = new MutationObserver(() => {
-          if (!document.contains(popup)) {
-            removeListeners();
-            observer.disconnect();
+    await showPostMenu({
+      onEdit: canEdit
+        ? () => {
+            setPostEditingId(post.id);
+            setPostEditText((s) => ({ ...s, [post.id]: post.content }));
           }
-        });
-        observer.observe(document, { childList: true, subtree: true });
-      },
+        : undefined,
+      onPin:
+        canPin && !post.pinned
+          ? () => {
+              dispatch(togglePinPost(post.id));
+            }
+          : undefined,
+      onUnpin:
+        canPin && post.pinned
+          ? () => {
+              dispatch(togglePinPost(post.id));
+            }
+          : undefined,
+      onDelete: canDelete
+        ? () => {
+            dispatch(deletePost(post.id));
+          }
+        : undefined,
     });
   };
 
@@ -475,7 +425,8 @@ const PostsTab: React.FC<Props> = ({
                                           !!currentUserId &&
                                           currentUserId === creatorId;
                                         const canEditReply = isReplyAuthor; // Only author can edit
-                                        const canDeleteReply = isReplyAuthor || isCreator; // Author or creator can delete
+                                        const canDeleteReply =
+                                          isReplyAuthor || isCreator; // Author or creator can delete
                                         return (
                                           <>
                                             {canEditReply ? (

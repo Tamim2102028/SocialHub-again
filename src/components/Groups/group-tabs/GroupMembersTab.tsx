@@ -2,8 +2,8 @@ import React from "react";
 import FriendCard from "../../shared/FriendCard";
 import { type UserData } from "../../../data/profile-data/userData";
 import { BsThreeDots } from "react-icons/bs";
-import Swal from "sweetalert2"; // Keep for custom HTML modal
 import { showError } from "../../../utils/sweetAlert";
+import { showMemberMenu } from "../../../utils/customModals";
 import { useAppSelector } from "../../../store/hooks";
 import type { RootState } from "../../../store/store";
 import {
@@ -63,7 +63,6 @@ const GroupMembersTab: React.FC<Props> = ({
     userName?: string,
     isAdmin?: boolean
   ) => {
-    const adminLabel = isAdmin ? "Remove admin" : "Make admin";
     const isOwner = !!currentUser && !!owner && currentUser.id === owner;
 
     // Only owner can manage admin status
@@ -77,75 +76,38 @@ const GroupMembersTab: React.FC<Props> = ({
       (admins.includes(currentUser.id) || currentUser.id === owner);
     const canRemove = isOwner || (isCurrentUserAdmin && !isAdmin);
 
-    const adminHtml = showAdminBtn
-      ? `<button id="swal-admin" class="w-50 px-3 py-2 rounded border border-gray-200 bg-white text-gray-700 hover:bg-gray-50">${adminLabel}</button>`
-      : "";
-
-    const removeHtml = canRemove
-      ? `<button id="swal-remove" class="w-50 px-3 py-2 rounded border border-red-100 bg-white text-red-600 hover:bg-red-50">Remove from group</button>`
-      : "";
-
-    await Swal.fire({
-      title: `${userName ?? "Member"} options`,
-      html: `
-        <div class="flex flex-col items-center gap-2 min-w-[200px]">
-          ${removeHtml}
-          ${adminHtml}
-        </div>
-      `,
-      showConfirmButton: false,
-      showCloseButton: true,
-      didOpen: () => {
-        const popup = Swal.getPopup();
-        if (!popup) return;
-        const removeBtn = popup.querySelector(
-          "#swal-remove"
-        ) as HTMLButtonElement | null;
-        const adminBtn = popup.querySelector(
-          "#swal-admin"
-        ) as HTMLButtonElement | null;
-
-        const onRemoveClick = async () => {
-          Swal.close();
-          // Call onRemoveMember which handles confirmation
-          if (onRemoveMember) {
-            onRemoveMember(userId);
+    await showMemberMenu(userName ?? "Member", {
+      onRemove: canRemove
+        ? () => {
+            if (onRemoveMember) onRemoveMember(userId);
           }
-        };
-
-        const onMakeAdminClick = () => {
-          // only owner can make/remove admins
-          if (!currentUser || currentUser.id !== owner) {
-            showError({
-              title: "Not allowed",
-              text: "Only the group owner can change admin status.",
-            });
-            return;
-          }
-          if (isAdmin) {
-            if (onRemoveAdmin) onRemoveAdmin(userId);
-          } else {
-            if (onMakeAdmin) onMakeAdmin(userId);
-          }
-          Swal.close();
-        };
-
-        if (removeBtn) removeBtn.addEventListener("click", onRemoveClick);
-        if (adminBtn) adminBtn.addEventListener("click", onMakeAdminClick);
-
-        const removeListeners = () => {
-          if (removeBtn) removeBtn.removeEventListener("click", onRemoveClick);
-          if (adminBtn) adminBtn.removeEventListener("click", onMakeAdminClick);
-        };
-
-        const observer = new MutationObserver(() => {
-          if (!document.contains(popup)) {
-            removeListeners();
-            observer.disconnect();
-          }
-        });
-        observer.observe(document, { childList: true, subtree: true });
-      },
+        : undefined,
+      onMakeAdmin:
+        showAdminBtn && !isAdmin
+          ? () => {
+              if (!currentUser || currentUser.id !== owner) {
+                showError({
+                  title: "Not allowed",
+                  text: "Only the group owner can change admin status.",
+                });
+                return;
+              }
+              if (onMakeAdmin) onMakeAdmin(userId);
+            }
+          : undefined,
+      onRemoveAdmin:
+        showAdminBtn && isAdmin
+          ? () => {
+              if (!currentUser || currentUser.id !== owner) {
+                showError({
+                  title: "Not allowed",
+                  text: "Only the group owner can change admin status.",
+                });
+                return;
+              }
+              if (onRemoveAdmin) onRemoveAdmin(userId);
+            }
+          : undefined,
     });
   };
 
