@@ -7,6 +7,12 @@ export interface Poll {
   endedAt?: string;
 }
 
+export interface AttachedFile {
+  id: string;
+  name: string;
+  url?: string;
+}
+
 export interface Announcement {
   id: number;
   title: string;
@@ -15,7 +21,8 @@ export interface Announcement {
   postedBy: string;
   postedById?: string;
   hasFile?: boolean;
-  fileName?: string;
-  fileUrl?: string;
+  fileName?: string; // deprecated - keeping for backward compatibility
+  fileUrl?: string; // deprecated - keeping for backward compatibility
+  files?: AttachedFile[]; // new: multiple files support
   readBy?: string[];
 }

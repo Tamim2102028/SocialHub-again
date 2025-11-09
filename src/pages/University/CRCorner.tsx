@@ -40,13 +40,15 @@ const CRCorner: React.FC = () => {
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [postTitle, setPostTitle] = useState("");
   const [postContent, setPostContent] = useState("");
-  const [attachedFile, setAttachedFile] = useState<File | null>(null);
+  const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
 
   // Edit announcement state
   const [editingAnnouncementId, setEditingAnnouncementId] = useState<
     number | null
   >(null);
-  const [existingFileName, setExistingFileName] = useState<string>("");
+  const [existingFiles, setExistingFiles] = useState<
+    Array<{ id: string; name: string; url?: string }>
+  >([]);
 
   // Poll creation state
   const [showCreatePoll, setShowCreatePoll] = useState(false);
@@ -98,9 +100,18 @@ const CRCorner: React.FC = () => {
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setAttachedFile(e.target.files[0]);
+    if (e.target.files) {
+      const filesArray = Array.from(e.target.files);
+      setAttachedFiles((prev) => [...prev, ...filesArray]);
     }
+  };
+
+  const handleRemoveFile = (index: number) => {
+    setAttachedFiles((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleRemoveExistingFile = (fileId: string) => {
+    setExistingFiles((prev) => prev.filter((f) => f.id !== fileId));
   };
 
   const handleCreatePost = () => {
@@ -112,21 +123,32 @@ const CRCorner: React.FC = () => {
     if (postTitle.trim() && postContent.trim()) {
       if (editingAnnouncementId) {
         // Update existing announcement
+        const allFiles = [
+          ...existingFiles,
+          ...attachedFiles.map((file) => ({
+            id: `${Date.now()}-${Math.random()}`,
+            name: file.name,
+            url: URL.createObjectURL(file),
+          })),
+        ];
+
         const updates: Partial<Announcement> & { id: number } = {
           id: editingAnnouncementId,
           title: postTitle.trim(),
           content: postContent.trim(),
-          hasFile: !!attachedFile || !!existingFileName,
-          fileName: attachedFile ? attachedFile.name : existingFileName,
+          hasFile: allFiles.length > 0,
+          files: allFiles,
         };
-
-        if (attachedFile) {
-          updates.fileUrl = URL.createObjectURL(attachedFile);
-        }
 
         dispatch(updateAnnouncement(updates));
       } else {
         // Create new announcement
+        const files = attachedFiles.map((file) => ({
+          id: `${Date.now()}-${Math.random()}`,
+          name: file.name,
+          url: URL.createObjectURL(file),
+        }));
+
         const newAnnouncement: Announcement = {
           id: Date.now(),
           title: postTitle.trim(),
@@ -134,22 +156,18 @@ const CRCorner: React.FC = () => {
           date: dayjs().format("MMM D, YYYY"),
           postedBy: currentUser?.name || "CR",
           postedById: currentUser?.id,
-          hasFile: !!attachedFile,
-          fileName: attachedFile ? attachedFile.name : undefined,
+          hasFile: files.length > 0,
+          files,
           readBy: [],
         };
-
-        if (attachedFile) {
-          newAnnouncement.fileUrl = URL.createObjectURL(attachedFile);
-        }
 
         dispatch(createAnnouncement(newAnnouncement));
       }
 
       setPostTitle("");
       setPostContent("");
-      setAttachedFile(null);
-      setExistingFileName("");
+      setAttachedFiles([]);
+      setExistingFiles([]);
       setShowCreatePost(false);
       setEditingAnnouncementId(null);
     }
@@ -185,7 +203,13 @@ const CRCorner: React.FC = () => {
             ? { ...existingOption, text }
             : { id: poll.options.length + i + 1, text, votes: 0 };
         });
-        dispatch(updatePoll({ id: editingPollId, question: q, options: updatedOptions }));
+        dispatch(
+          updatePoll({
+            id: editingPollId,
+            question: q,
+            options: updatedOptions,
+          })
+        );
       }
     } else {
       // Create new poll
@@ -257,9 +281,21 @@ const CRCorner: React.FC = () => {
       setEditingAnnouncementId(id);
       setPostTitle(announcement.title);
       setPostContent(announcement.content);
-      if (announcement.hasFile && announcement.fileName) {
-        setExistingFileName(announcement.fileName);
+
+      // Load existing files
+      if (announcement.files && announcement.files.length > 0) {
+        setExistingFiles(announcement.files);
+      } else if (announcement.hasFile && announcement.fileName) {
+        // Backward compatibility with old single file
+        setExistingFiles([
+          {
+            id: `${announcement.id}-file`,
+            name: announcement.fileName,
+            url: announcement.fileUrl,
+          },
+        ]);
       }
+
       setShowCreatePost(true);
       setMenuOpenFor(null);
     }
@@ -296,7 +332,9 @@ const CRCorner: React.FC = () => {
   };
 
   const handleEndPoll = (id: number) => {
-    dispatch(endPoll({ id, endedAt: dayjs().format("MMM D, YYYY [at] h:mm A") }));
+    dispatch(
+      endPoll({ id, endedAt: dayjs().format("MMM D, YYYY [at] h:mm A") })
+    );
   };
 
   const toggleExpandPoll = (id: number) => {
@@ -351,8 +389,8 @@ const CRCorner: React.FC = () => {
                 setEditingAnnouncementId(null);
                 setPostTitle("");
                 setPostContent("");
-                setAttachedFile(null);
-                setExistingFileName("");
+                setAttachedFiles([]);
+                setExistingFiles([]);
               }}
               className="rounded p-1 text-gray-500 hover:bg-gray-100"
             >
@@ -377,44 +415,68 @@ const CRCorner: React.FC = () => {
               className="w-full resize-none rounded-md border border-gray-300 px-4 py-3 text-base focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
             />
 
-            {/* File Attachment */}
-            {attachedFile || existingFileName ? (
-              <div className="flex items-center justify-between rounded-md border border-gray-300 bg-gray-50 p-3">
-                <div className="flex items-center gap-2">
-                  <FaFile className="h-4 w-4 text-blue-600" />
-                  <span className="text-sm text-gray-700">
-                    {attachedFile ? attachedFile.name : existingFileName}
-                    {existingFileName && !attachedFile && (
+            {/* File Attachments */}
+            <div className="space-y-2">
+              {/* Display existing files */}
+              {existingFiles.map((file) => (
+                <div
+                  key={file.id}
+                  className="flex items-center justify-between rounded-md border border-gray-300 bg-gray-50 p-3"
+                >
+                  <div className="flex items-center gap-2">
+                    <FaFile className="h-4 w-4 text-blue-600" />
+                    <span className="text-sm text-gray-700">
+                      {file.name}
                       <span className="ml-2 text-xs text-gray-500">
                         (Existing file)
                       </span>
-                    )}
-                  </span>
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => handleRemoveExistingFile(file.id)}
+                    className="rounded p-1 text-red-500 hover:bg-red-50"
+                  >
+                    <FaTimes className="h-4 w-4" />
+                  </button>
                 </div>
-                <button
-                  onClick={() => {
-                    setAttachedFile(null);
-                    setExistingFileName("");
-                  }}
-                  className="rounded p-1 text-red-500 hover:bg-red-50"
+              ))}
+
+              {/* Display newly attached files */}
+              {attachedFiles.map((file, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between rounded-md border border-gray-300 bg-blue-50 p-3"
                 >
-                  <FaTimes className="h-4 w-4" />
-                </button>
-              </div>
-            ) : (
+                  <div className="flex items-center gap-2">
+                    <FaFile className="h-4 w-4 text-blue-600" />
+                    <span className="text-sm text-gray-700">{file.name}</span>
+                  </div>
+                  <button
+                    onClick={() => handleRemoveFile(index)}
+                    className="rounded p-1 text-red-500 hover:bg-red-50"
+                  >
+                    <FaTimes className="h-4 w-4" />
+                  </button>
+                </div>
+              ))}
+
+              {/* Add file button */}
               <label className="flex cursor-pointer items-center justify-center gap-2 rounded-md border-2 border-dashed border-gray-300 p-3 transition-colors hover:border-blue-400 hover:bg-blue-50">
-                <FaFile className="h-4 w-4 text-gray-600" />
+                <FaPlus className="h-4 w-4 text-gray-600" />
                 <span className="text-sm text-gray-600">
-                  Attach file (Notes, Assignment, etc.)
+                  {existingFiles.length + attachedFiles.length > 0
+                    ? "Add more files"
+                    : "Attach files (Notes, Assignment, etc.)"}
                 </span>
                 <input
                   type="file"
+                  multiple
                   onChange={handleFileChange}
                   className="hidden"
                   accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png"
                 />
               </label>
-            )}
+            </div>
 
             <div className="flex gap-3">
               <button
@@ -423,8 +485,8 @@ const CRCorner: React.FC = () => {
                   setEditingAnnouncementId(null);
                   setPostTitle("");
                   setPostContent("");
-                  setAttachedFile(null);
-                  setExistingFileName("");
+                  setAttachedFiles([]);
+                  setExistingFiles([]);
                 }}
                 className="flex-1 rounded-md border border-gray-300 py-2.5 text-base font-medium text-gray-700 transition-colors hover:bg-gray-50"
               >

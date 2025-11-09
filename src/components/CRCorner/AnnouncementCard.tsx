@@ -43,7 +43,7 @@ export const AnnouncementCard: React.FC<AnnouncementCardProps> = ({
       <div className="absolute top-3 right-3">
         <button
           onClick={() => onToggleMenu(announcement.id)}
-          className="rounded-lg p-2 bg-blue-100 text-gray-600 cursor-pointer transition-colors hover:bg-blue-50"
+          className="cursor-pointer rounded-lg bg-blue-100 p-2 text-gray-600 transition-colors hover:bg-blue-50"
           aria-label="Open menu"
         >
           <FaEllipsisH className="h-4 w-4" />
@@ -97,21 +97,56 @@ export const AnnouncementCard: React.FC<AnnouncementCardProps> = ({
           )}
       </div>
 
-      {/* File Attachment Display */}
+      {/* File Attachments Display */}
       {announcement.hasFile && (
-        <div className="mb-3 flex items-center justify-between rounded bg-blue-50 px-3 py-2">
-          <div className="flex min-w-0 flex-1 items-center gap-2">
-            <FaFile className="h-4 w-4 flex-shrink-0 text-blue-600" />
-            <span className="truncate text-sm font-medium text-blue-700">
-              {announcement.fileName}
-            </span>
-          </div>
-          <button
-            onClick={() => onDownload(announcement)}
-            className="ml-2 flex-shrink-0 text-sm font-semibold text-blue-600 hover:text-blue-800"
-          >
-            Download
-          </button>
+        <div className="mb-3 space-y-2">
+          {/* New multiple files */}
+          {announcement.files && announcement.files.length > 0
+            ? announcement.files.map((file) => (
+                <div
+                  key={file.id}
+                  className="flex items-center justify-between rounded bg-blue-50 px-3 py-2"
+                >
+                  <div className="flex min-w-0 flex-1 items-center gap-2">
+                    <FaFile className="h-4 w-4 flex-shrink-0 text-blue-600" />
+                    <span className="truncate text-sm font-medium text-blue-700">
+                      {file.name}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => {
+                      if (file.url) {
+                        const link = document.createElement("a");
+                        link.href = file.url;
+                        link.download = file.name;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                      }
+                    }}
+                    className="ml-2 flex-shrink-0 text-sm font-semibold text-blue-600 hover:text-blue-800"
+                  >
+                    Download
+                  </button>
+                </div>
+              ))
+            : /* Backward compatibility - single file */
+              announcement.fileName && (
+                <div className="flex items-center justify-between rounded bg-blue-50 px-3 py-2">
+                  <div className="flex min-w-0 flex-1 items-center gap-2">
+                    <FaFile className="h-4 w-4 flex-shrink-0 text-blue-600" />
+                    <span className="truncate text-sm font-medium text-blue-700">
+                      {announcement.fileName}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => onDownload(announcement)}
+                    className="ml-2 flex-shrink-0 text-sm font-semibold text-blue-600 hover:text-blue-800"
+                  >
+                    Download
+                  </button>
+                </div>
+              )}
         </div>
       )}
 
@@ -137,9 +172,7 @@ export const AnnouncementCard: React.FC<AnnouncementCardProps> = ({
             onClick={() => onToggleRead(announcement.id)}
             disabled={isRead}
             className={`cursor-pointer rounded px-2 py-0.5 text-sm font-medium transition-colors disabled:cursor-not-allowed ${
-              isRead
-                ? "bg-gray-200 text-gray-700"
-                : "bg-red-50 text-red-700"
+              isRead ? "bg-gray-200 text-gray-700" : "bg-red-50 text-red-700"
             }`}
           >
             {isRead ? "Marked" : "Mark as read"}

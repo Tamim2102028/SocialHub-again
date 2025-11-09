@@ -18,6 +18,12 @@ export interface Poll {
   endedAt?: string;
 }
 
+export interface AttachedFile {
+  id: string;
+  name: string;
+  url?: string;
+}
+
 export interface Announcement {
   id: number;
   title: string;
@@ -26,8 +32,9 @@ export interface Announcement {
   postedBy: string;
   postedById?: string;
   hasFile?: boolean;
-  fileName?: string;
-  fileUrl?: string;
+  fileName?: string; // deprecated - keeping for backward compatibility
+  fileUrl?: string; // deprecated - keeping for backward compatibility
+  files?: AttachedFile[]; // new: multiple files support
   readBy?: string[];
 }
 
@@ -110,7 +117,20 @@ const initialState: CRCornerState = {
       postedById: "sadia-id",
       readBy: [],
       hasFile: true,
-      fileName: "Circuit_Analysis_Notes.pdf",
+      files: [
+        {
+          id: "file-1",
+          name: "Circuit_Analysis_Notes.pdf",
+        },
+        {
+          id: "file-2",
+          name: "Circuit_Analysis_Slides.pptx",
+        },
+        {
+          id: "file-3",
+          name: "Practice_Problems.pdf",
+        },
+      ],
     },
     {
       id: 3,
