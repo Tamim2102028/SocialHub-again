@@ -1,20 +1,52 @@
 import React, { useState } from "react";
-import { FaFolder, FaChevronDown, FaChevronRight } from "react-icons/fa";
-import { useAppSelector } from "../../../store/hooks";
+import {
+  FaFolder,
+  FaChevronDown,
+  FaChevronRight,
+  FaArrowLeft,
+  FaFile,
+  FaPlus,
+} from "react-icons/fa";
+import Swal from "sweetalert2";
+import { useAppSelector, useAppDispatch } from "../../../store/hooks";
+import FileActionButton from "../../shared/FileActionButtons";
 import {
   selectTheoryCourses,
   selectSessionalCourses,
+  selectIsViewingFolder,
+  selectBreadcrumbPath,
+  selectCurrentFolderItems,
+  navigateToFolder,
+  navigateToSubFolder,
+  navigateBack,
+  navigateToBreadcrumb,
+  createFolderInArchive,
+  uploadFileToArchive,
 } from "../../../store/slices/communityStudyArchiveSlice";
+import Breadcrumb from "../PersonalFiles/Breadcrumb";
+import UploadModal from "../PersonalFiles/UploadModal";
 
 const FolderSection: React.FC = () => {
+  const dispatch = useAppDispatch();
+
   // Redux state - get courses based on selected level and term
   const theoryCourses = useAppSelector(selectTheoryCourses);
   const sessionalCourses = useAppSelector(selectSessionalCourses);
+  const isViewingFolder = useAppSelector(selectIsViewingFolder);
+  const breadcrumbPath = useAppSelector(selectBreadcrumbPath);
+  const currentFolderItems = useAppSelector(selectCurrentFolderItems);
+
+  // Get current folder ID to determine what to show
+  const currentFolderId =
+    breadcrumbPath.length > 0
+      ? breadcrumbPath[breadcrumbPath.length - 1].id
+      : null;
 
   // Local state for managing collapsed/expanded courses
   const [expandedCourses, setExpandedCourses] = useState<Set<string>>(
     new Set()
   );
+  const [showUploadModal, setShowUploadModal] = useState(false);
 
   const toggleCourse = (courseId: string) => {
     setExpandedCourses((prev) => {
@@ -28,8 +60,227 @@ const FolderSection: React.FC = () => {
     });
   };
 
+  const handleFolderClick = (
+    courseId: string,
+    courseName: string,
+    folderId: string,
+    folderName: string
+  ) => {
+    dispatch(navigateToFolder({ courseId, courseName, folderId, folderName }));
+  };
+
+  const handleBackClick = () => {
+    dispatch(navigateBack());
+  };
+
+  const handleBreadcrumbClick = (index: number) => {
+    dispatch(navigateToBreadcrumb(index));
+  };
+
+  const handleSubFolderClick = (folderId: string, folderName: string) => {
+    dispatch(navigateToSubFolder({ id: folderId, name: folderName }));
+  };
+
+  const handleCreateFolder = async () => {
+    const { value: folderName } = await Swal.fire<string>({
+      title: "Create New Folder",
+      input: "text",
+      inputPlaceholder: "Enter folder name",
+      showCancelButton: true,
+      confirmButtonText: "Create Folder",
+      cancelButtonText: "Cancel",
+      cancelButtonColor: "#d33",
+      inputAttributes: {
+        maxlength: "50",
+        autocapitalize: "off",
+        autocorrect: "off",
+      },
+      preConfirm: (value) => {
+        if (!value || !value.trim()) {
+          Swal.showValidationMessage("Folder name is required");
+          return null;
+        }
+        const invalidChars = /[<>:"/\\|?*]/;
+        if (invalidChars.test(value)) {
+          Swal.showValidationMessage("Folder name contains invalid characters");
+          return null;
+        }
+        if (value.trim().length > 50) {
+          Swal.showValidationMessage(
+            "Folder name must be less than 50 characters"
+          );
+          return null;
+        }
+        return value.trim();
+      },
+    });
+
+    if (folderName && currentFolderId) {
+      // Dispatch action to create folder in current location
+      dispatch(
+        createFolderInArchive({
+          parentFolderId: currentFolderId,
+          folderName,
+        })
+      );
+
+      Swal.fire({
+        icon: "success",
+        title: "Folder created",
+        text: `"${folderName}" has been created successfully`,
+        timer: 1500,
+        showConfirmButton: false,
+      });
+    }
+  };
+
+  const handleUploadFile = () => {
+    setShowUploadModal(true);
+  };
+
+  const handleUploadFiles = (files: File[]) => {
+    if (!currentFolderId) return;
+
+    // Format files for Redux action
+    const formattedFiles = files.map((file) => ({
+      name: file.name,
+      size: `${(file.size / 1024).toFixed(1)} KB`,
+    }));
+
+    // Dispatch action to upload files to current folder
+    dispatch(
+      uploadFileToArchive({
+        folderId: currentFolderId,
+        files: formattedFiles,
+      })
+    );
+
+    Swal.fire({
+      icon: "success",
+      title: "Files uploaded",
+      text: `${files.length} file(s) uploaded successfully`,
+      timer: 1500,
+      showConfirmButton: false,
+    });
+  };
+
+  // Get folders and files from Redux store
+  const folders = currentFolderItems.filter((item) => item.type === "folder");
+  const files = currentFolderItems.filter((item) => item.type === "file");
+
+  // If viewing folder, show files and sub-folders list
+  if (isViewingFolder) {
+    return (
+      <div className="space-y-4">
+        {/* Back Button and Breadcrumb */}
+        <div className="flex items-center space-x-3">
+          {breadcrumbPath.length > 1 && (
+            <button
+              onClick={handleBackClick}
+              className="flex h-[38px] items-center space-x-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+            >
+              <FaArrowLeft className="h-4 w-4" />
+              <span>Back</span>
+            </button>
+          )}
+
+          {/* Breadcrumb Navigation */}
+          <Breadcrumb
+            currentPath={breadcrumbPath}
+            onNavigate={handleBreadcrumbClick}
+          />
+        </div>
+
+        {/* Sub-Folders Section */}
+        <div className="rounded-lg border border-gray-200 bg-white">
+          <div className="flex items-center justify-between border-b border-gray-200 bg-gray-50 p-3">
+            <h3 className="text-sm font-semibold text-gray-900">
+              Folders ({folders.length})
+            </h3>
+            <div className="flex items-center space-x-2">
+              <FileActionButton
+                icon={FaPlus}
+                label="New Folder"
+                onClick={handleCreateFolder}
+              />
+              <FileActionButton
+                icon={FaPlus}
+                label="Upload File"
+                onClick={handleUploadFile}
+              />
+            </div>
+          </div>
+          {folders.length > 0 && (
+            <div className="divide-y divide-gray-100">
+              {folders.map((folder) => (
+                <div
+                  key={folder.id}
+                  onClick={() => handleSubFolderClick(folder.id, folder.name)}
+                  className="flex cursor-pointer items-center justify-between p-3 transition-colors hover:bg-gray-50"
+                >
+                  <div className="flex flex-1 items-center space-x-3">
+                    <FaFolder className="h-5 w-5 text-blue-500" />
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium text-gray-900">
+                        {folder.name}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {folder.fileCount || 0} files
+                      </p>
+                    </div>
+                  </div>
+                  <FaChevronRight className="h-4 w-4 text-gray-400" />
+                </div>
+              ))}
+            </div>
+          )}
+          {folders.length === 0 && (
+            <div className="p-4 text-center text-sm text-gray-500">
+              No folders yet. Create a new folder to get started.
+            </div>
+          )}
+        </div>
+
+        {/* Files List */}
+        <div className="rounded-lg border border-gray-200 bg-white">
+          <div className="flex items-center justify-between border-b border-gray-200 bg-gray-50 p-3">
+            <h3 className="text-sm font-semibold text-gray-900">
+              Files ({files.length})
+            </h3>
+          </div>
+          {files.length > 0 ? (
+            <div className="divide-y divide-gray-100">
+              {files.map((file) => (
+                <div
+                  key={file.id}
+                  className="flex cursor-pointer items-center justify-between p-3 transition-colors hover:bg-gray-50"
+                >
+                  <div className="flex flex-1 items-center space-x-3">
+                    <FaFile className="h-5 w-5 text-red-500" />
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium text-gray-900">
+                        {file.name}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {file.size || "Unknown size"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="p-4 text-center text-sm text-gray-500">
+              No files yet. Upload files to get started.
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {/* Theory Courses */}
       <div>
         <h3 className="mb-3 text-sm font-semibold text-gray-700">
@@ -69,6 +320,14 @@ const FolderSection: React.FC = () => {
                       {course.folders.map((folder) => (
                         <div
                           key={folder.id}
+                          onClick={() =>
+                            handleFolderClick(
+                              course.id,
+                              course.name,
+                              folder.id,
+                              folder.name
+                            )
+                          }
                           className="group flex cursor-pointer items-center justify-between p-3 transition-colors hover:bg-gray-50"
                         >
                           <div className="flex flex-1 items-center space-x-3">
@@ -140,6 +399,14 @@ const FolderSection: React.FC = () => {
                       {course.folders.map((folder) => (
                         <div
                           key={folder.id}
+                          onClick={() =>
+                            handleFolderClick(
+                              course.id,
+                              course.name,
+                              folder.id,
+                              folder.name
+                            )
+                          }
                           className="group flex cursor-pointer items-center justify-between p-3 transition-colors hover:bg-gray-50"
                         >
                           <div className="flex flex-1 items-center space-x-3">
@@ -171,6 +438,13 @@ const FolderSection: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Upload Modal */}
+      <UploadModal
+        isOpen={showUploadModal}
+        onClose={() => setShowUploadModal(false)}
+        onUploadFiles={handleUploadFiles}
+      />
     </div>
   );
 };
