@@ -20,9 +20,19 @@ export interface SearchHashtag {
   posts: string;
 }
 
+export interface SearchGroup {
+  id: string;
+  name: string;
+  description: string;
+  profileImage: string;
+  memberCount: number;
+  privacy: "public" | "private";
+  groupFor?: "students" | "teachers" | "all";
+}
+
 interface SearchState {
   query: string;
-  activeFilter: "all" | "people" | "posts" | "hashtags";
+  activeFilter: "all" | "people" | "posts" | "hashtags" | "groups";
   people: SearchPerson[];
   hashtags: SearchHashtag[];
   recentSearches: string[];
@@ -151,7 +161,7 @@ const searchSlice = createSlice({
 
     setActiveFilter: (
       state,
-      action: PayloadAction<"all" | "people" | "posts" | "hashtags">
+      action: PayloadAction<"all" | "people" | "posts" | "hashtags" | "groups">
     ) => {
       state.activeFilter = action.payload;
     },
@@ -259,6 +269,19 @@ export const selectFilteredHashtags = (state: RootState) => {
   const lowerQuery = query.toLowerCase();
   return hashtags.filter((hashtag) =>
     hashtag.tag.toLowerCase().includes(lowerQuery)
+  );
+};
+
+export const selectFilteredGroups = (state: RootState) => {
+  const { query } = state.search;
+  const groups = state.groups.groups; // Get groups from groupSlice
+  // Show nothing if search query is empty
+  if (!query.trim()) return [];
+  const lowerQuery = query.toLowerCase();
+  return groups.filter(
+    (group) =>
+      group.name.toLowerCase().includes(lowerQuery) ||
+      (group.description?.toLowerCase().includes(lowerQuery) ?? false)
   );
 };
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { FaSearch, FaUser, FaHashtag, FaImage } from "react-icons/fa";
+import { FaSearch, FaUser, FaHashtag, FaImage, FaUsers } from "react-icons/fa";
 
 interface SearchFiltersProps {
   activeFilter: string;
@@ -14,6 +14,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
     { id: "all", name: "All", icon: FaSearch },
     { id: "people", name: "People", icon: FaUser },
     { id: "posts", name: "Posts", icon: FaImage },
+    { id: "groups", name: "Groups", icon: FaUsers },
     { id: "hashtags", name: "Hashtags", icon: FaHashtag },
   ];
 
