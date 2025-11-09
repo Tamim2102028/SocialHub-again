@@ -230,7 +230,8 @@ export const selectRecentSearches = (state: RootState) =>
 
 export const selectFilteredPeople = (state: RootState) => {
   const { query, people } = state.search;
-  if (!query.trim()) return people;
+  // Show nothing if search query is empty
+  if (!query.trim()) return [];
   const lowerQuery = query.toLowerCase();
   return people.filter(
     (person) =>
@@ -242,7 +243,8 @@ export const selectFilteredPeople = (state: RootState) => {
 export const selectFilteredPosts = (state: RootState) => {
   const { query } = state.search;
   const posts = state.posts.posts; // Get posts from postsSlice
-  if (!query.trim()) return posts;
+  // Show nothing if search query is empty
+  if (!query.trim()) return [];
   const lowerQuery = query.toLowerCase();
   return posts.filter((post) => {
     // Search in post content
@@ -252,7 +254,8 @@ export const selectFilteredPosts = (state: RootState) => {
 
 export const selectFilteredHashtags = (state: RootState) => {
   const { query, hashtags } = state.search;
-  if (!query.trim()) return hashtags;
+  // Show nothing if search query is empty
+  if (!query.trim()) return [];
   const lowerQuery = query.toLowerCase();
   return hashtags.filter((hashtag) =>
     hashtag.tag.toLowerCase().includes(lowerQuery)

@@ -51,21 +51,36 @@ const Search: React.FC = () => {
         onFilterChange={handleFilterChange}
       />
 
+      {/* Empty State - When no search query */}
+      {!searchQuery.trim() && (
+        <div className="mt-16 text-center">
+          <div className="mb-4 text-7xl">🔍</div>
+          <h3 className="mb-2 text-2xl font-semibold text-gray-900">
+            Search SocialHub
+          </h3>
+          <p className="text-gray-600">
+            Start typing to search for people, posts, and hashtags
+          </p>
+        </div>
+      )}
+
       {/* Search Results */}
-      <div className="space-y-5">
-        <PeopleResults
-          isVisible={activeFilter === "all" || activeFilter === "people"}
-        />
-        <PostsResults
-          isVisible={activeFilter === "all" || activeFilter === "posts"}
-        />
-        <HashtagsResults
-          isVisible={activeFilter === "all" || activeFilter === "hashtags"}
-        />
-      </div>
+      {searchQuery.trim() && (
+        <div className="space-y-5">
+          <PeopleResults
+            isVisible={activeFilter === "all" || activeFilter === "people"}
+          />
+          <PostsResults
+            isVisible={activeFilter === "all" || activeFilter === "posts"}
+          />
+          <HashtagsResults
+            isVisible={activeFilter === "all" || activeFilter === "hashtags"}
+          />
+        </div>
+      )}
 
       {/* No Results */}
-      {searchQuery && !hasResults && (
+      {searchQuery.trim() && !hasResults && (
         <div className="mt-12 text-center">
           <div className="mb-4 text-6xl">🔍</div>
           <h3 className="mb-2 text-xl font-semibold text-gray-900">
