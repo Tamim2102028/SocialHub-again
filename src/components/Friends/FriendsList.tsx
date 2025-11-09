@@ -8,7 +8,7 @@ import {
   removeFriendship,
 } from "../../store/slices/friendsSlice";
 import type { RootState } from "../../store/store";
-import confirm from "../../utils/confirm";
+import confirm from "../../utils/sweetAlert";
 
 const FriendsList: React.FC = () => {
   const dispatch = useAppDispatch();

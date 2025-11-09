@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import confirm from "../../../utils/confirm";
+import confirm from "../../../utils/sweetAlert";
 import type { Room } from "../../../data/rooms-data/roomsData";
 import type { UserData } from "../../../data/profile-data/userData";
 

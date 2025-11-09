@@ -7,8 +7,14 @@ import {
   FaFile,
   FaPlus,
 } from "react-icons/fa";
-import Swal from "sweetalert2";
 import { useAppSelector, useAppDispatch } from "../../../store/hooks";
+import {
+  showSuccess,
+  confirmDelete,
+  inputFolderName,
+  inputRename,
+  showUploadSuccess,
+} from "../../../utils/sweetAlert";
 import FileActionButton from "../../shared/FileActionButtons";
 import {
   selectTheoryCourses,
@@ -105,38 +111,7 @@ const FolderSection: React.FC = () => {
   };
 
   const handleCreateFolder = async () => {
-    const { value: folderName } = await Swal.fire<string>({
-      title: "Create New Folder",
-      input: "text",
-      inputPlaceholder: "Enter folder name",
-      showCancelButton: true,
-      confirmButtonText: "Create Folder",
-      cancelButtonText: "Cancel",
-      cancelButtonColor: "#d33",
-      inputAttributes: {
-        maxlength: "50",
-        autocapitalize: "off",
-        autocorrect: "off",
-      },
-      preConfirm: (value) => {
-        if (!value || !value.trim()) {
-          Swal.showValidationMessage("Folder name is required");
-          return null;
-        }
-        const invalidChars = /[<>:"/\\|?*]/;
-        if (invalidChars.test(value)) {
-          Swal.showValidationMessage("Folder name contains invalid characters");
-          return null;
-        }
-        if (value.trim().length > 50) {
-          Swal.showValidationMessage(
-            "Folder name must be less than 50 characters"
-          );
-          return null;
-        }
-        return value.trim();
-      },
-    });
+    const folderName = await inputFolderName();
 
     if (folderName && currentFolderId) {
       // Dispatch action to create folder in current location
@@ -147,12 +122,9 @@ const FolderSection: React.FC = () => {
         })
       );
 
-      Swal.fire({
-        icon: "success",
+      showSuccess({
         title: "Folder created",
         text: `"${folderName}" has been created successfully`,
-        timer: 500,
-        showConfirmButton: false,
       });
     }
   };
@@ -174,59 +146,32 @@ const FolderSection: React.FC = () => {
     link.download = file.name;
     link.click();
 
-    Swal.fire({
-      icon: "success",
+    showSuccess({
       title: "Download started",
       text: `Downloading ${file.name}`,
-      timer: 500,
-      showConfirmButton: false,
     });
   };
 
   const handleRename = async (file: FileItem) => {
-    const { value: newName } = await Swal.fire<string>({
-      title: "Rename File",
-      input: "text",
-      inputValue: file.name,
-      inputPlaceholder: "Enter new name",
-      showCancelButton: true,
-      confirmButtonText: "Rename",
-      cancelButtonText: "Cancel",
-      cancelButtonColor: "#d33",
-    });
+    const newName = await inputRename(file.name);
 
     if (newName && newName !== file.name) {
       // TODO: Implement rename in Redux
-      Swal.fire({
-        icon: "success",
+      showSuccess({
         title: "Renamed",
         text: `File renamed to "${newName}"`,
-        timer: 500,
-        showConfirmButton: false,
       });
     }
   };
 
   const handleDelete = async (file: FileItem) => {
-    const result = await Swal.fire({
-      title: "Delete File?",
-      text: `Are you sure you want to delete "${file.name}"?`,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Yes, delete it",
-      cancelButtonText: "Cancel",
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#6b7280",
-    });
+    const confirmed = await confirmDelete(file.name);
 
-    if (result.isConfirmed) {
+    if (confirmed) {
       // TODO: Implement delete in Redux
-      Swal.fire({
-        icon: "success",
+      showSuccess({
         title: "Deleted",
         text: "File deleted successfully",
-        timer: 500,
-        showConfirmButton: false,
       });
     }
   };
@@ -253,13 +198,7 @@ const FolderSection: React.FC = () => {
       })
     );
 
-    Swal.fire({
-      icon: "success",
-      title: "Files uploaded",
-      text: `${files.length} file(s) uploaded successfully`,
-      timer: 500,
-      showConfirmButton: false,
-    });
+    showUploadSuccess(files.length);
   };
 
   // Get folders and files from Redux store

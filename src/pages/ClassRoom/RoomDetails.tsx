@@ -21,7 +21,7 @@ import {
   rejectFriendRequest,
   removeFriendship,
 } from "../../store/slices/friendsSlice";
-import confirm from "../../utils/confirm";
+import confirm from "../../utils/sweetAlert";
 import {
   updateRoom,
   makeAdmin,
