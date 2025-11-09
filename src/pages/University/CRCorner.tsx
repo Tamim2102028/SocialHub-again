@@ -18,6 +18,8 @@ interface Poll {
   question: string;
   options: { id: number; text: string; votes: number }[];
   totalVotes: number;
+  isEnded?: boolean;
+  endedAt?: string;
 }
 
 interface Announcement {
@@ -67,6 +69,31 @@ const CRCorner: React.FC = () => {
         { id: 3, text: "Neutral/Don't care", votes: 12 },
       ],
       totalVotes: 80,
+    },
+    {
+      id: 2,
+      question: "Should we organize a class trip this semester?",
+      options: [
+        { id: 1, text: "Yes, definitely!", votes: 67 },
+        { id: 2, text: "Maybe next semester", votes: 28 },
+        { id: 3, text: "Not interested", votes: 15 },
+      ],
+      totalVotes: 110,
+      isEnded: true,
+      endedAt: "Nov 5, 2025",
+    },
+    {
+      id: 3,
+      question: "Which topic should we focus on for the study group?",
+      options: [
+        { id: 1, text: "Data Structures", votes: 42 },
+        { id: 2, text: "Algorithms", votes: 38 },
+        { id: 3, text: "Database Systems", votes: 25 },
+        { id: 4, text: "Operating Systems", votes: 20 },
+      ],
+      totalVotes: 125,
+      isEnded: true,
+      endedAt: "Nov 3, 2025",
     },
   ]);
 
@@ -299,6 +326,11 @@ const CRCorner: React.FC = () => {
   // which poll menu is open
   const [pollMenuOpenFor, setPollMenuOpenFor] = useState<number | null>(null);
 
+  // which ended polls are expanded (full view)
+  const [expandedPolls, setExpandedPolls] = useState<Record<number, boolean>>(
+    {}
+  );
+
   const toggleMenu = (id: number) => {
     setMenuOpenFor((prev) => (prev === id ? null : id));
   };
@@ -312,6 +344,29 @@ const CRCorner: React.FC = () => {
   const handleDeletePoll = (id: number) => {
     setPolls((prev) => prev.filter((p) => p.id !== id));
     if (pollMenuOpenFor === id) setPollMenuOpenFor(null);
+  };
+
+  const handleEndPoll = (id: number) => {
+    setPolls((prev) =>
+      prev.map((p) =>
+        p.id === id
+          ? {
+              ...p,
+              isEnded: true,
+              endedAt: new Date().toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              }),
+            }
+          : p
+      )
+    );
+    setPollMenuOpenFor(null);
+  };
+
+  const toggleExpandPoll = (id: number) => {
+    setExpandedPolls((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
   return (
@@ -682,126 +737,250 @@ const CRCorner: React.FC = () => {
             </button>
           </div>
         ) : (
-          // Render polls
-          polls.map((poll) => (
-            <div
-              key={poll.id}
-              className="relative mb-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
-            >
-              {/* 3-dot menu , cancel button & count */}
-              <div className="absolute top-3 right-3 flex items-center justify-center gap-2">
-                <div className="text-sm text-gray-500">
-                  {poll.totalVotes} vote{poll.totalVotes !== 1 ? "s" : ""}
-                </div>
-                {selectedPolls[poll.id] != null && (
-                  <button
-                    onClick={() => handleCancelVote(poll.id)}
-                    className="rounded-md border border-red-300 bg-red-50 px-3 py-1.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-100"
-                  >
-                    Cancel Vote
-                  </button>
-                )}
-                <button
-                  onClick={() =>
-                    setPollMenuOpenFor((prev) =>
-                      prev === poll.id ? null : poll.id
-                    )
-                  }
-                  className="cursor-pointer rounded-full p-1 text-gray-600 hover:bg-gray-100"
-                  aria-label="Open poll menu"
-                >
-                  <BsThreeDots className="h-5 w-5" />
-                </button>
-
-                {pollMenuOpenFor === poll.id && (
-                  <div className="absolute top-8 right-0 z-20 w-40 rounded-md border border-gray-200 bg-white shadow-lg">
-                    <button
-                      onClick={() => {
-                        setPollMenuOpenFor(null);
-                        alert("Edit poll not implemented yet");
-                      }}
-                      className="w-full px-3 py-2 text-left text-sm hover:bg-gray-50"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDeletePoll(poll.id)}
-                      className="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-gray-50"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                )}
-              </div>
-              <div className="mb-3 flex items-start justify-between">
-                <h3 className="text-base font-medium text-gray-900">
-                  {poll.question}
-                </h3>
-              </div>
-
-              <div className="space-y-3">
-                {poll.options.map((option) => {
-                  const percentage = poll.totalVotes
-                    ? ((option.votes / poll.totalVotes) * 100).toFixed(1)
-                    : "0.0";
-                  const isSelected =
-                    (selectedPolls[poll.id] ?? null) === option.id;
-
-                  return (
+          // Render polls - separate active and ended
+          <>
+            {/* Active Polls */}
+            {polls.filter((p) => !p.isEnded).length > 0 && (
+              <div className="space-y-4">
+                {polls
+                  .filter((p) => !p.isEnded)
+                  .map((poll) => (
                     <div
-                      key={option.id}
-                      className={`relative w-full cursor-pointer overflow-hidden rounded-md border p-4 transition-all ${
-                        isSelected
-                          ? "border-blue-500 bg-blue-50"
-                          : "border-gray-200 bg-white hover:border-blue-300 hover:bg-blue-50"
-                      }`}
-                      onClick={() => handleVote(poll.id, option.id)}
+                      key={poll.id}
+                      className="relative mb-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
                     >
-                      <div className="relative flex items-center justify-between">
-                        <span className="text-base font-medium text-gray-900">
-                          {option.text}
-                        </span>
-                        <span className="text-sm font-semibold text-blue-600">
-                          {percentage}% ({option.votes} votes)
-                        </span>
+                      {/* 3-dot menu , cancel button & count */}
+                      <div className="absolute top-3 right-3 flex items-center justify-center gap-2">
+                        <div className="text-sm text-gray-500">
+                          {poll.totalVotes} vote
+                          {poll.totalVotes !== 1 ? "s" : ""}
+                        </div>
+                        {selectedPolls[poll.id] != null && (
+                          <button
+                            onClick={() => handleCancelVote(poll.id)}
+                            className="rounded-md border border-red-300 bg-red-50 px-3 py-1.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-100"
+                          >
+                            Cancel Vote
+                          </button>
+                        )}
+                        <button
+                          onClick={() =>
+                            setPollMenuOpenFor((prev) =>
+                              prev === poll.id ? null : poll.id
+                            )
+                          }
+                          className="cursor-pointer rounded-full p-1 text-gray-600 hover:bg-gray-100"
+                          aria-label="Open poll menu"
+                        >
+                          <BsThreeDots className="h-5 w-5" />
+                        </button>
+
+                        {pollMenuOpenFor === poll.id && (
+                          <div className="absolute top-8 right-0 z-20 w-40 rounded-md border border-gray-200 bg-white shadow-lg">
+                            {isCurrentUserCr && (
+                              <button
+                                onClick={() => handleEndPoll(poll.id)}
+                                className="w-full px-3 py-2 text-left text-sm text-orange-600 hover:bg-gray-50"
+                              >
+                                End Poll
+                              </button>
+                            )}
+                            <button
+                              onClick={() => handleDeletePoll(poll.id)}
+                              className="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-gray-50"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                      <div className="mb-3 flex items-start justify-between">
+                        <h3 className="text-base font-medium text-gray-900">
+                          {poll.question}
+                        </h3>
+                      </div>
+
+                      <div className="space-y-3">
+                        {poll.options.map((option) => {
+                          const percentage = poll.totalVotes
+                            ? ((option.votes / poll.totalVotes) * 100).toFixed(
+                                1
+                              )
+                            : "0.0";
+                          const isSelected =
+                            (selectedPolls[poll.id] ?? null) === option.id;
+
+                          return (
+                            <div
+                              key={option.id}
+                              className={`relative w-full cursor-pointer overflow-hidden rounded-md border p-4 transition-all ${
+                                isSelected
+                                  ? "border-blue-500 bg-blue-50"
+                                  : "border-gray-200 bg-white hover:border-blue-300 hover:bg-blue-50"
+                              }`}
+                              onClick={() => handleVote(poll.id, option.id)}
+                            >
+                              <div className="relative flex items-center justify-between">
+                                <span className="text-base font-medium text-gray-900">
+                                  {option.text}
+                                </span>
+                                <span className="text-sm font-semibold text-blue-600">
+                                  {percentage}% ({option.votes} votes)
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {/* Poll Feedback Section */}
+                      <div className="mt-6 rounded-lg border border-gray-200 bg-gray-50 p-4">
+                        <div className="mb-3 flex items-center gap-2">
+                          <FaComments className="h-4 w-4 text-blue-600" />
+                          <h4 className="text-base font-semibold text-gray-900">
+                            Share Your Thoughts on This Poll
+                          </h4>
+                        </div>
+
+                        <textarea
+                          value={feedback}
+                          onChange={(e) => setFeedback(e.target.value)}
+                          className="w-full rounded-md border border-gray-300 p-3 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-700 focus:outline-none"
+                          rows={3}
+                          placeholder="Share your opinion, concerns, or suggestions about this poll..."
+                        />
+
+                        <div className="mt-3 flex items-center justify-between">
+                          <p className="text-sm text-gray-500">
+                            Your feedback will be sent anonymously
+                          </p>
+                          <button
+                            onClick={handleSendFeedback}
+                            disabled={!feedback.trim()}
+                            className="rounded-md bg-blue-600 px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-300"
+                          >
+                            Send Feedback
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  );
-                })}
+                  ))}
               </div>
+            )}
 
-              {/* Poll Feedback Section */}
-              <div className="mt-6 rounded-lg border border-gray-200 bg-gray-50 p-4">
-                <div className="mb-3 flex items-center gap-2">
-                  <FaComments className="h-4 w-4 text-blue-600" />
-                  <h4 className="text-base font-semibold text-gray-900">
-                    Share Your Thoughts on This Poll
-                  </h4>
-                </div>
+            {/* Ended Polls - Compact View */}
+            {polls.filter((p) => p.isEnded).length > 0 && (
+              <div className="mt-6">
+                <h3 className="mb-3 text-sm font-semibold text-gray-600">
+                  Ended Polls ({polls.filter((p) => p.isEnded).length})
+                </h3>
+                <div className="space-y-2">
+                  {polls
+                    .filter((p) => p.isEnded)
+                    .map((poll) => {
+                      const isExpanded = expandedPolls[poll.id];
+                      const winningOption = poll.options.reduce(
+                        (prev, current) =>
+                          prev.votes > current.votes ? prev : current
+                      );
 
-                <textarea
-                  value={feedback}
-                  onChange={(e) => setFeedback(e.target.value)}
-                  className="w-full rounded-md border border-gray-300 p-3 text-sm text-gray-900 placeholder-gray-500 focus:outline-none focus:border-blue-700"
-                  rows={3}
-                  placeholder="Share your opinion, concerns, or suggestions about this poll..."
-                />
+                      return (
+                        <div
+                          key={poll.id}
+                          className="rounded-lg border border-gray-200 bg-gray-50 p-3"
+                        >
+                          {!isExpanded ? (
+                            // Compact View
+                            <div
+                              onClick={() => toggleExpandPoll(poll.id)}
+                              className="cursor-pointer"
+                            >
+                              <div className="flex items-start justify-between gap-3">
+                                <div className="min-w-0 flex-1">
+                                  <h4 className="truncate text-sm font-medium text-gray-900">
+                                    {poll.question}
+                                  </h4>
+                                  <p className="mt-1 text-xs text-gray-500">
+                                    Ended on {poll.endedAt} · {poll.totalVotes}{" "}
+                                    votes
+                                  </p>
+                                  <p className="mt-1 text-xs font-medium text-blue-600">
+                                    Winner: {winningOption.text} (
+                                    {winningOption.votes} votes)
+                                  </p>
+                                </div>
+                                <span className="flex-shrink-0 text-xs text-gray-400">
+                                  Click to expand
+                                </span>
+                              </div>
+                            </div>
+                          ) : (
+                            // Expanded View
+                            <div>
+                              <div className="mb-3 flex items-start justify-between">
+                                <div className="flex-1">
+                                  <h4 className="text-base font-medium text-gray-900">
+                                    {poll.question}
+                                  </h4>
+                                  <p className="mt-1 text-xs text-gray-500">
+                                    Ended on {poll.endedAt} · {poll.totalVotes}{" "}
+                                    total votes
+                                  </p>
+                                </div>
+                                <button
+                                  onClick={() => toggleExpandPoll(poll.id)}
+                                  className="flex-shrink-0 text-sm text-blue-600 hover:text-blue-800"
+                                >
+                                  Collapse
+                                </button>
+                              </div>
 
-                <div className="mt-3 flex items-center justify-between">
-                  <p className="text-sm text-gray-500">
-                    Your feedback will be sent anonymously
-                  </p>
-                  <button
-                    onClick={handleSendFeedback}
-                    disabled={!feedback.trim()}
-                    className="rounded-md bg-blue-600 px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-300"
-                  >
-                    Send Feedback
-                  </button>
+                              <div className="space-y-2">
+                                {poll.options.map((option) => {
+                                  const percentage = poll.totalVotes
+                                    ? (
+                                        (option.votes / poll.totalVotes) *
+                                        100
+                                      ).toFixed(1)
+                                    : "0.0";
+                                  const isWinner =
+                                    option.id === winningOption.id;
+
+                                  return (
+                                    <div
+                                      key={option.id}
+                                      className={`rounded-md border p-3 ${
+                                        isWinner
+                                          ? "border-green-300 bg-green-50"
+                                          : "border-gray-200 bg-white"
+                                      }`}
+                                    >
+                                      <div className="flex items-center justify-between">
+                                        <span className="text-sm font-medium text-gray-900">
+                                          {option.text}
+                                          {isWinner && (
+                                            <span className="ml-2 text-xs font-semibold text-green-600">
+                                              WINNER
+                                            </span>
+                                          )}
+                                        </span>
+                                        <span className="text-xs font-semibold text-gray-600">
+                                          {percentage}% ({option.votes})
+                                        </span>
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
                 </div>
               </div>
-            </div>
-          ))
+            )}
+          </>
         )}
       </div>
     </div>
