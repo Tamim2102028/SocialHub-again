@@ -2,7 +2,8 @@ import React from "react";
 import FriendCard from "../../shared/FriendCard";
 import { type UserData } from "../../../data/profile-data/userData";
 import { BsThreeDots } from "react-icons/bs";
-import Swal from "sweetalert2";
+import Swal from "sweetalert2"; // Keep for custom HTML modal
+import { showError } from "../../../utils/sweetAlert";
 import { useAppSelector } from "../../../store/hooks";
 import type { RootState } from "../../../store/store";
 import {
@@ -115,10 +116,9 @@ const GroupMembersTab: React.FC<Props> = ({
         const onMakeAdminClick = () => {
           // only owner can make/remove admins
           if (!currentUser || currentUser.id !== owner) {
-            Swal.fire({
+            showError({
               title: "Not allowed",
               text: "Only the group owner can change admin status.",
-              icon: "error",
             });
             return;
           }

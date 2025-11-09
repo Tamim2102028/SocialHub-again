@@ -5,7 +5,7 @@ import Breadcrumb from "./PersonalFiles/Breadcrumb";
 import EmptyState from "./PersonalFiles/EmptyState";
 import FilesList from "./PersonalFiles/FilesList";
 import UploadModal from "./PersonalFiles/UploadModal";
-import Swal from "sweetalert2";
+import { inputFolderName, showSuccess } from "../../utils/sweetAlert";
 import { formatPostDate, formatPostClock } from "../../utils/dateUtils";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
@@ -48,47 +48,11 @@ const PersonalFiles: React.FC = () => {
   // File management functions using Redux actions
 
   const handleOpenNewFolder = async () => {
-    const { value: folderName } = await Swal.fire<string>({
-      title: "Create New Folder",
-      input: "text",
-      inputPlaceholder: "Enter folder name",
-      showCancelButton: true,
-      confirmButtonText: "Create Folder",
-      cancelButtonText: "Cancel",
-      cancelButtonColor: "#d33",
-      inputAttributes: {
-        maxlength: "50",
-        autocapitalize: "off",
-        autocorrect: "off",
-      },
-      preConfirm: (value) => {
-        if (!value || !value.trim()) {
-          Swal.showValidationMessage("Folder name is required");
-          return null;
-        }
-        const invalidChars = /[<>:"/\\|?*]/;
-        if (invalidChars.test(value)) {
-          Swal.showValidationMessage("Folder name contains invalid characters");
-          return null;
-        }
-        if (value.trim().length > 50) {
-          Swal.showValidationMessage(
-            "Folder name must be less than 50 characters"
-          );
-          return null;
-        }
-        return value.trim();
-      },
-    });
+    const folderName = await inputFolderName();
 
     if (folderName) {
       dispatch(createFolder(folderName));
-      Swal.fire({
-        icon: "success",
-        title: "Folder created",
-        timer: 500,
-        showConfirmButton: false,
-      });
+      showSuccess({ title: "Folder created" });
     }
   };
 

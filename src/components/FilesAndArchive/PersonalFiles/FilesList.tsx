@@ -10,7 +10,11 @@ import {
   FaGlobe,
   FaLock,
 } from "react-icons/fa";
-import Swal from "sweetalert2";
+import {
+  inputRename,
+  showSuccess,
+  confirmDelete,
+} from "../../../utils/sweetAlert";
 import { useAppDispatch } from "../../../store/hooks";
 import {
   renameItem,
@@ -117,34 +121,11 @@ const FilesList: React.FC<FilesListProps> = ({
   };
 
   const handleRename = async (item: FileItem) => {
-    const { value: newName } = await Swal.fire({
-      title: "Rename",
-      input: "text",
-      inputLabel: `Enter new name for "${item.name}"`,
-      inputValue: item.name,
-      showCancelButton: true,
-      confirmButtonText: "Rename",
-      cancelButtonText: "Cancel",
-      cancelButtonColor: "#6b7280",
-      inputValidator: (value) => {
-        if (!value || !value.trim()) {
-          return "Name cannot be empty";
-        }
-        if (value.trim() === item.name) {
-          return "Please enter a different name";
-        }
-        return null;
-      },
-    });
+    const newName = await inputRename(item.name);
 
-    if (newName && newName.trim() !== item.name) {
-      dispatch(renameItem({ itemId: item.id, newName: newName.trim() }));
-      Swal.fire({
-        icon: "success",
-        title: "Renamed successfully!",
-        timer: 500,
-        showConfirmButton: false,
-      });
+    if (newName && newName !== item.name) {
+      dispatch(renameItem({ itemId: item.id, newName }));
+      showSuccess({ title: "Renamed successfully!" });
     }
   };
 
@@ -153,25 +134,11 @@ const FilesList: React.FC<FilesListProps> = ({
   };
 
   const handleDelete = async (item: FileItem) => {
-    const result = await Swal.fire({
-      title: "Delete Confirmation",
-      text: `Are you sure you want to delete "${item.name}"?`,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#6b7280",
-      confirmButtonText: "Yes, delete it!",
-      cancelButtonText: "Cancel",
-    });
-
-    if (result.isConfirmed) {
+    if (await confirmDelete(item.name)) {
       dispatch(deleteItem(item.id));
-      Swal.fire({
+      showSuccess({
         title: "Deleted!",
         text: `${item.name} has been deleted.`,
-        icon: "success",
-        timer: 500,
-        showConfirmButton: false,
       });
     }
   };

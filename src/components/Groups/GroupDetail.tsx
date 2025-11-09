@@ -25,7 +25,7 @@ import { leaveGroup } from "../../store/slices/groupSlice";
 import GroupPostList from "./GroupPostList";
 import { BsPostcard } from "react-icons/bs";
 import { findGroupById } from "../../data/group-data/groupResolver";
-import Swal from "sweetalert2";
+import { confirm, showSuccess } from "../../utils/sweetAlert";
 import GroupMembersTab from "./group-tabs/GroupMembersTab";
 import { usersData } from "../../data/profile-data/userData";
 import {
@@ -148,29 +148,22 @@ const GroupDetail: React.FC = () => {
     dispatch(removeAdmin({ groupId, userId }));
   };
 
-  const handleRemoveMember = (userId: string) => {
+  const handleRemoveMember = async (userId: string) => {
     if (!groupId) return;
 
-    Swal.fire({
-      title: "Are you sure?",
-      text: "This member will be removed from the group.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, remove member!",
-    }).then((result) => {
-      if (result.isConfirmed && groupId) {
-        dispatch(removeMember({ groupId, userId }));
-        Swal.fire({
-          title: "Removed!",
-          text: "Member has been removed from the group.",
-          icon: "success",
-          timer: 500,
-          showConfirmButton: false,
-        });
-      }
-    });
+    if (
+      await confirm({
+        title: "Are you sure?",
+        text: "This member will be removed from the group.",
+        confirmButtonText: "Yes, remove member!",
+      })
+    ) {
+      dispatch(removeMember({ groupId, userId }));
+      showSuccess({
+        title: "Removed!",
+        text: "Member has been removed from the group.",
+      });
+    }
   };
 
   // cancel handler removed (not used in this layout)
@@ -283,20 +276,16 @@ const GroupDetail: React.FC = () => {
                         </div>
                       ) : (
                         <button
-                          onClick={() => {
-                            Swal.fire({
-                              title: "Are you sure?",
-                              text: "You will leave this group and will need to join again.",
-                              icon: "warning",
-                              showCancelButton: true,
-                              confirmButtonColor: "#3085d6",
-                              cancelButtonColor: "#d33",
-                              confirmButtonText: "Yes, leave group!",
-                            }).then((result) => {
-                              if (result.isConfirmed) {
-                                dispatch(leaveGroup(group.id));
-                              }
-                            });
+                          onClick={async () => {
+                            if (
+                              await confirm({
+                                title: "Are you sure?",
+                                text: "You will leave this group and will need to join again.",
+                                confirmButtonText: "Yes, leave group!",
+                              })
+                            ) {
+                              dispatch(leaveGroup(group.id));
+                            }
                           }}
                           className="rounded-lg bg-gray-200 px-6 py-2.5 font-semibold text-gray-700 transition hover:bg-gray-300"
                         >

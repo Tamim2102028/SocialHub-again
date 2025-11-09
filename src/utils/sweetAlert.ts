@@ -211,5 +211,212 @@ export const inputRename = (currentName: string) =>
     maxLength: 100,
   });
 
+export const inputGroupName = () =>
+  showInput({
+    title: "Create New Group",
+    inputPlaceholder: "Enter group name",
+    confirmButtonText: "Create",
+    maxLength: 100,
+  });
+
+export const inputRoomName = () =>
+  showInput({
+    title: "Create New Room",
+    inputPlaceholder: "Enter room name",
+    confirmButtonText: "Create",
+    maxLength: 100,
+  });
+
+export const inputPostTitle = () =>
+  showInput({
+    title: "Post Title",
+    inputPlaceholder: "Enter post title",
+    confirmButtonText: "Continue",
+    maxLength: 200,
+  });
+
+// ============================================
+// 🎮 MORE COMMON ACTIONS
+// ============================================
+
+// Leave/Exit confirmations
+export const confirmLeave = (itemName: string) =>
+  confirm({
+    title: "Leave?",
+    text: `Are you sure you want to leave "${itemName}"?`,
+    icon: "warning",
+    confirmButtonText: "Yes, leave",
+    isDanger: true,
+  });
+
+export const confirmExit = () =>
+  confirm({
+    title: "Discard Changes?",
+    text: "Your changes will not be saved",
+    icon: "warning",
+    confirmButtonText: "Yes, discard",
+    isDanger: true,
+  });
+
+// Block/Unblock confirmations
+export const confirmBlock = (userName: string) =>
+  confirm({
+    title: "Block User?",
+    text: `Are you sure you want to block ${userName}?`,
+    icon: "warning",
+    confirmButtonText: "Yes, block",
+    isDanger: true,
+  });
+
+export const confirmUnblock = (userName: string) =>
+  confirm({
+    title: "Unblock User?",
+    text: `Unblock ${userName}?`,
+    icon: "question",
+    confirmButtonText: "Yes, unblock",
+  });
+
+// Report confirmation
+export const confirmReport = (itemType: string) =>
+  confirm({
+    title: "Report?",
+    text: `Are you sure you want to report this ${itemType}?`,
+    icon: "warning",
+    confirmButtonText: "Yes, report",
+    isDanger: true,
+  });
+
+// Join/Accept confirmations
+export const confirmJoin = (itemName: string) =>
+  confirm({
+    title: "Join?",
+    text: `Do you want to join "${itemName}"?`,
+    icon: "question",
+    confirmButtonText: "Yes, join",
+  });
+
+export const confirmAccept = (userName: string) =>
+  confirm({
+    title: "Accept Request?",
+    text: `Accept friend request from ${userName}?`,
+    icon: "question",
+    confirmButtonText: "Accept",
+  });
+
+// Save/Submit success messages
+export const showSaveSuccess = () =>
+  showSuccess({
+    title: "Saved!",
+    text: "Your changes have been saved",
+  });
+
+export const showSubmitSuccess = () =>
+  showSuccess({
+    title: "Submitted!",
+    text: "Your submission was successful",
+  });
+
+export const showSendSuccess = () =>
+  showSuccess({
+    title: "Sent!",
+    text: "Message sent successfully",
+  });
+
+// Specific action success messages
+export const showJoinSuccess = (itemName: string) =>
+  showSuccess({
+    title: "Joined!",
+    text: `You joined "${itemName}"`,
+  });
+
+export const showLeaveSuccess = (itemName: string) =>
+  showSuccess({
+    title: "Left!",
+    text: `You left "${itemName}"`,
+  });
+
+export const showBlockSuccess = (userName: string) =>
+  showSuccess({
+    title: "Blocked!",
+    text: `${userName} has been blocked`,
+  });
+
+export const showReportSuccess = () =>
+  showSuccess({
+    title: "Reported!",
+    text: "Thank you for reporting",
+  });
+
+// ============================================
+// 🚨 COMMON ERROR MESSAGES
+// ============================================
+
+export const showNetworkError = () =>
+  showError({
+    title: "Network Error",
+    text: "Please check your internet connection",
+  });
+
+export const showAuthError = () =>
+  showError({
+    title: "Authentication Failed",
+    text: "Please login again",
+  });
+
+export const showPermissionError = () =>
+  showError({
+    title: "Permission Denied",
+    text: "You don't have permission to perform this action",
+  });
+
+export const showValidationError = (message?: string) =>
+  showError({
+    title: "Validation Error",
+    text: message ?? "Please check your input",
+  });
+
+export const showServerError = () =>
+  showError({
+    title: "Server Error",
+    text: "Something went wrong. Please try again later",
+  });
+
+// ============================================
+// ℹ️ INFO MESSAGE
+// ============================================
+export interface InfoOptions {
+  title: string;
+  text?: string;
+  confirmButtonText?: string;
+}
+
+export const showInfo = async (opts: InfoOptions) => {
+  return Swal.fire({
+    icon: "info",
+    title: opts.title,
+    text: opts.text,
+    confirmButtonText: opts.confirmButtonText ?? "OK",
+    confirmButtonColor: "#3085d6",
+  });
+};
+
+// ============================================
+// ⏳ LOADING MESSAGE (Manual close)
+// ============================================
+export const showLoading = (message: string = "Please wait...") => {
+  Swal.fire({
+    title: message,
+    allowOutsideClick: false,
+    allowEscapeKey: false,
+    didOpen: () => {
+      Swal.showLoading();
+    },
+  });
+};
+
+export const closeLoading = () => {
+  Swal.close();
+};
+
 // Default export for backwards compatibility
 export default confirm;

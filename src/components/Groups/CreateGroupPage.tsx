@@ -7,7 +7,7 @@ import {
   FaBook,
   FaArrowLeft,
 } from "react-icons/fa";
-import Swal from "sweetalert2";
+import { showSuccess, showError } from "../../utils/sweetAlert";
 import type { Group } from "../../data/group-data/preGroupData";
 import { addMemberToGroup } from "../../data/group-data/groupMembers";
 import { useAppSelector, useAppDispatch } from "../../store/hooks";
@@ -108,26 +108,17 @@ const CreateGroupPage: React.FC = () => {
 
     // Validation
     if (!formData.name.trim()) {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Group name is required!",
-      });
+      showError({ title: "Oops...", text: "Group name is required!" });
       return;
     }
 
     if (!formData.description.trim()) {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Group description is required!",
-      });
+      showError({ title: "Oops...", text: "Group description is required!" });
       return;
     }
 
     if (!currentUserId) {
-      Swal.fire({
-        icon: "error",
+      showError({
         title: "Oops...",
         text: "You must be logged in to create a group!",
       });
@@ -196,17 +187,14 @@ const CreateGroupPage: React.FC = () => {
     dispatch(createGroup(newGroup as Group));
 
     // Show success message
-    Swal.fire({
-      icon: "success",
+    showSuccess({
       title: "Group Created!",
       text: `${formData.name} has been created successfully.`,
-      timer: 500,
-      showConfirmButton: false,
-    }).then(() => {
-      console.log("New Group:", newGroup);
-      console.log("Owner added to groupMembers with ID:", currentUserId);
-      navigate("/groups");
     });
+
+    console.log("New Group:", newGroup);
+    console.log("Owner added to groupMembers with ID:", currentUserId);
+    navigate("/groups");
   };
 
   return (
