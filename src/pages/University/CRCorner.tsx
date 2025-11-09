@@ -5,7 +5,6 @@ import { selectUserById } from "../../store/slices/profileSlice";
 import type { RootState } from "../../store/store";
 import {
   FaPoll,
-  FaComments,
   FaPlus,
   FaBullhorn,
   FaFile,
@@ -40,7 +39,6 @@ const CRCorner: React.FC = () => {
   const [selectedPolls, setSelectedPolls] = useState<
     Record<number, number | null>
   >({});
-  const [feedback, setFeedback] = useState("");
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [postTitle, setPostTitle] = useState("");
   const [postContent, setPostContent] = useState("");
@@ -205,13 +203,6 @@ const CRCorner: React.FC = () => {
     );
 
     setSelectedPolls((prev) => ({ ...prev, [pollId]: null }));
-  };
-
-  const handleSendFeedback = () => {
-    if (feedback.trim()) {
-      alert("Feedback sent successfully!");
-      setFeedback("");
-    }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -820,49 +811,28 @@ const CRCorner: React.FC = () => {
                             </button>
                           )}
                           {isCurrentUserCr && (
-                            <button
-                              onClick={() => handleEndPoll(poll.id)}
-                              className="rounded-md border border-orange-300 bg-orange-50 px-3 py-1.5 text-sm font-medium text-orange-600 transition-colors hover:bg-orange-100"
-                            >
-                              End Poll
-                            </button>
+                            <>
+                              <button
+                                onClick={() =>
+                                  alert("Edit poll feature coming soon!")
+                                }
+                                className="rounded-md border border-blue-300 bg-blue-50 px-3 py-1.5 text-sm font-medium text-blue-600 transition-colors hover:bg-blue-100"
+                              >
+                                Edit Poll
+                              </button>
+                              <button
+                                onClick={() => handleEndPoll(poll.id)}
+                                className="rounded-md border border-orange-300 bg-orange-50 px-3 py-1.5 text-sm font-medium text-orange-600 transition-colors hover:bg-orange-100"
+                              >
+                                End Poll
+                              </button>
+                            </>
                           )}
                           <button
                             onClick={() => handleDeletePoll(poll.id)}
                             className="rounded-md border border-red-300 bg-red-50 px-3 py-1.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-100"
                           >
                             Delete
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* Poll Feedback Section */}
-                      <div className="mt-6 rounded-lg border border-gray-200 bg-gray-50 p-4">
-                        <div className="mb-3 flex items-center gap-2">
-                          <FaComments className="h-4 w-4 text-blue-600" />
-                          <h4 className="text-base font-semibold text-gray-900">
-                            Share Your Thoughts on This Poll
-                          </h4>
-                        </div>
-
-                        <textarea
-                          value={feedback}
-                          onChange={(e) => setFeedback(e.target.value)}
-                          className="w-full rounded-md border border-gray-300 p-3 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-700 focus:outline-none"
-                          rows={3}
-                          placeholder="Share your opinion, concerns, or suggestions about this poll..."
-                        />
-
-                        <div className="mt-3 flex items-center justify-between">
-                          <p className="text-sm text-gray-500">
-                            Your feedback will be sent anonymously
-                          </p>
-                          <button
-                            onClick={handleSendFeedback}
-                            disabled={!feedback.trim()}
-                            className="rounded-md bg-blue-600 px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-300"
-                          >
-                            Send Feedback
                           </button>
                         </div>
                       </div>
