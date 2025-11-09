@@ -2,26 +2,7 @@
 export interface Folder {
   id: string;
   name: string;
-  type: "lectures" | "questions" | "solutions" | "videos" | "notes";
-  fileCount: number;
-}
-
-export interface Course {
-  id: string;
-  name: string;
-  code: string;
-  type: "theory" | "sessional";
-  fileCount: number;
-  level: string;
-  term: string;
-  folders: Folder[];
-}
-
-// Types
-export interface Folder {
-  id: string;
-  name: string;
-  type: "lectures" | "questions" | "solutions" | "videos" | "notes";
+  type: "lectures" | "videos" | "notes" | "previous-year" | "others";
   fileCount: number;
 }
 
@@ -42,32 +23,32 @@ const generateCourseFolders = (courseId: string): Folder[] => [
     id: `${courseId}-lectures`,
     name: "Lecture Slides",
     type: "lectures",
-    fileCount: Math.floor(Math.random() * 15) + 5 // 5-20 files
-  },
-  {
-    id: `${courseId}-questions`,
-    name: "Previous Year Questions",
-    type: "questions",
-    fileCount: Math.floor(Math.random() * 10) + 3 // 3-13 files
-  },
-  {
-    id: `${courseId}-solutions`,
-    name: "Question Solutions",
-    type: "solutions",
-    fileCount: Math.floor(Math.random() * 8) + 2 // 2-10 files
+    fileCount: Math.floor(Math.random() * 15) + 5, // 5-20 files
   },
   {
     id: `${courseId}-videos`,
     name: "Recorded Videos",
     type: "videos",
-    fileCount: Math.floor(Math.random() * 12) + 2 // 2-14 files
+    fileCount: Math.floor(Math.random() * 12) + 2, // 2-14 files
   },
   {
     id: `${courseId}-notes`,
     name: "Hand Notes",
     type: "notes",
-    fileCount: Math.floor(Math.random() * 20) + 5 // 5-25 files
-  }
+    fileCount: Math.floor(Math.random() * 20) + 5, // 5-25 files
+  },
+  {
+    id: `${courseId}-previous-year`,
+    name: "Previous Year Q&A",
+    type: "previous-year",
+    fileCount: Math.floor(Math.random() * 15) + 3, // 3-18 files
+  },
+  {
+    id: `${courseId}-others`,
+    name: "Others",
+    type: "others",
+    fileCount: Math.floor(Math.random() * 10) + 2, // 2-12 files
+  },
 ];
 
 // Complete list of all courses by level and term
@@ -81,7 +62,7 @@ export const coursesData: Course[] = [
     fileCount: 28,
     level: "Level 1",
     term: "Term 1",
-    folders: generateCourseFolders("l1t1-theory-1")
+    folders: generateCourseFolders("l1t1-theory-1"),
   },
   {
     id: "l1t1-theory-2",
@@ -91,7 +72,7 @@ export const coursesData: Course[] = [
     fileCount: 16,
     level: "Level 1",
     term: "Term 1",
-    folders: generateCourseFolders("l1t1-theory-2")
+    folders: generateCourseFolders("l1t1-theory-2"),
   },
   {
     id: "l1t1-theory-3",
@@ -101,7 +82,7 @@ export const coursesData: Course[] = [
     fileCount: 22,
     level: "Level 1",
     term: "Term 1",
-    folders: generateCourseFolders("l1t1-theory-3")
+    folders: generateCourseFolders("l1t1-theory-3"),
   },
   {
     id: "l1t1-theory-4",
@@ -111,7 +92,7 @@ export const coursesData: Course[] = [
     fileCount: 12,
     level: "Level 1",
     term: "Term 1",
-    folders: generateCourseFolders("l1t1-theory-4")
+    folders: generateCourseFolders("l1t1-theory-4"),
   },
   {
     id: "l1t1-theory-5",
@@ -121,7 +102,7 @@ export const coursesData: Course[] = [
     fileCount: 18,
     level: "Level 1",
     term: "Term 1",
-    folders: generateCourseFolders("l1t1-theory-5")
+    folders: generateCourseFolders("l1t1-theory-5"),
   },
 
   // Level 1, Term 1 - Sessional Courses
@@ -133,7 +114,7 @@ export const coursesData: Course[] = [
     fileCount: 15,
     level: "Level 1",
     term: "Term 1",
-    folders: generateCourseFolders("l1t1-sessional-1")
+    folders: generateCourseFolders("l1t1-sessional-1"),
   },
   {
     id: "l1t1-sessional-2",
@@ -143,7 +124,7 @@ export const coursesData: Course[] = [
     fileCount: 8,
     level: "Level 1",
     term: "Term 1",
-    folders: generateCourseFolders("l1t1-sessional-2")
+    folders: generateCourseFolders("l1t1-sessional-2"),
   },
   {
     id: "l1t1-sessional-3",
@@ -153,7 +134,7 @@ export const coursesData: Course[] = [
     fileCount: 10,
     level: "Level 1",
     term: "Term 1",
-    folders: generateCourseFolders("l1t1-sessional-3")
+    folders: generateCourseFolders("l1t1-sessional-3"),
   },
 
   // Level 1, Term 2 - Theory Courses
@@ -165,7 +146,7 @@ export const coursesData: Course[] = [
     fileCount: 25,
     level: "Level 1",
     term: "Term 2",
-    folders: generateCourseFolders("l1t2-theory-1")
+    folders: generateCourseFolders("l1t2-theory-1"),
   },
   {
     id: "l1t2-theory-2",
@@ -175,7 +156,7 @@ export const coursesData: Course[] = [
     fileCount: 20,
     level: "Level 1",
     term: "Term 2",
-    folders: generateCourseFolders("l1t2-theory-2")
+    folders: generateCourseFolders("l1t2-theory-2"),
   },
   {
     id: "l1t2-theory-3",
@@ -185,7 +166,7 @@ export const coursesData: Course[] = [
     fileCount: 19,
     level: "Level 1",
     term: "Term 2",
-    folders: generateCourseFolders("l1t2-theory-3")
+    folders: generateCourseFolders("l1t2-theory-3"),
   },
   {
     id: "l1t2-theory-4",
@@ -195,7 +176,7 @@ export const coursesData: Course[] = [
     fileCount: 23,
     level: "Level 1",
     term: "Term 2",
-    folders: generateCourseFolders("l1t2-theory-4")
+    folders: generateCourseFolders("l1t2-theory-4"),
   },
   {
     id: "l1t2-theory-5",
@@ -205,7 +186,7 @@ export const coursesData: Course[] = [
     fileCount: 14,
     level: "Level 1",
     term: "Term 2",
-    folders: generateCourseFolders("l1t2-theory-5")
+    folders: generateCourseFolders("l1t2-theory-5"),
   },
 
   // Level 1, Term 2 - Sessional Courses
@@ -217,7 +198,7 @@ export const coursesData: Course[] = [
     fileCount: 12,
     level: "Level 1",
     term: "Term 2",
-    folders: generateCourseFolders("l1t2-sessional-1")
+    folders: generateCourseFolders("l1t2-sessional-1"),
   },
   {
     id: "l1t2-sessional-2",
@@ -227,7 +208,7 @@ export const coursesData: Course[] = [
     fileCount: 9,
     level: "Level 1",
     term: "Term 2",
-    folders: generateCourseFolders("l1t2-sessional-2")
+    folders: generateCourseFolders("l1t2-sessional-2"),
   },
   {
     id: "l1t2-sessional-3",
@@ -237,7 +218,7 @@ export const coursesData: Course[] = [
     fileCount: 11,
     level: "Level 1",
     term: "Term 2",
-    folders: generateCourseFolders("l1t2-sessional-3")
+    folders: generateCourseFolders("l1t2-sessional-3"),
   },
 
   // Level 2, Term 1 - Theory Courses
@@ -249,7 +230,7 @@ export const coursesData: Course[] = [
     fileCount: 24,
     level: "Level 2",
     term: "Term 1",
-    folders: generateCourseFolders("l2t1-theory-1")
+    folders: generateCourseFolders("l2t1-theory-1"),
   },
   {
     id: "l2t1-theory-2",
@@ -259,7 +240,7 @@ export const coursesData: Course[] = [
     fileCount: 21,
     level: "Level 2",
     term: "Term 1",
-    folders: generateCourseFolders("l2t1-theory-2")
+    folders: generateCourseFolders("l2t1-theory-2"),
   },
   {
     id: "l2t1-theory-3",
@@ -269,7 +250,7 @@ export const coursesData: Course[] = [
     fileCount: 15,
     level: "Level 2",
     term: "Term 1",
-    folders: generateCourseFolders("l2t1-theory-3")
+    folders: generateCourseFolders("l2t1-theory-3"),
   },
   {
     id: "l2t1-theory-4",
@@ -279,7 +260,7 @@ export const coursesData: Course[] = [
     fileCount: 17,
     level: "Level 2",
     term: "Term 1",
-    folders: generateCourseFolders("l2t1-theory-4")
+    folders: generateCourseFolders("l2t1-theory-4"),
   },
   {
     id: "l2t1-theory-5",
@@ -289,7 +270,7 @@ export const coursesData: Course[] = [
     fileCount: 19,
     level: "Level 2",
     term: "Term 1",
-    folders: generateCourseFolders("l2t1-theory-5")
+    folders: generateCourseFolders("l2t1-theory-5"),
   },
 
   // Level 2, Term 1 - Sessional Courses
@@ -301,7 +282,7 @@ export const coursesData: Course[] = [
     fileCount: 6,
     level: "Level 2",
     term: "Term 1",
-    folders: generateCourseFolders("l2t1-sessional-1")
+    folders: generateCourseFolders("l2t1-sessional-1"),
   },
   {
     id: "l2t1-sessional-2",
@@ -311,7 +292,7 @@ export const coursesData: Course[] = [
     fileCount: 9,
     level: "Level 2",
     term: "Term 1",
-    folders: generateCourseFolders("l2t1-sessional-2")
+    folders: generateCourseFolders("l2t1-sessional-2"),
   },
   {
     id: "l2t1-sessional-3",
@@ -321,7 +302,7 @@ export const coursesData: Course[] = [
     fileCount: 11,
     level: "Level 2",
     term: "Term 1",
-    folders: generateCourseFolders("l2t1-sessional-3")
+    folders: generateCourseFolders("l2t1-sessional-3"),
   },
 
   // Level 2, Term 2 - Theory Courses
@@ -333,7 +314,7 @@ export const coursesData: Course[] = [
     fileCount: 22,
     level: "Level 2",
     term: "Term 2",
-    folders: generateCourseFolders("l2t2-theory-1")
+    folders: generateCourseFolders("l2t2-theory-1"),
   },
   {
     id: "l2t2-theory-2",
@@ -343,7 +324,7 @@ export const coursesData: Course[] = [
     fileCount: 26,
     level: "Level 2",
     term: "Term 2",
-    folders: generateCourseFolders("l2t2-theory-2")
+    folders: generateCourseFolders("l2t2-theory-2"),
   },
   {
     id: "l2t2-theory-3",
@@ -353,7 +334,7 @@ export const coursesData: Course[] = [
     fileCount: 19,
     level: "Level 2",
     term: "Term 2",
-    folders: generateCourseFolders("l2t2-theory-3")
+    folders: generateCourseFolders("l2t2-theory-3"),
   },
   {
     id: "l2t2-theory-4",
@@ -363,7 +344,7 @@ export const coursesData: Course[] = [
     fileCount: 16,
     level: "Level 2",
     term: "Term 2",
-    folders: generateCourseFolders("l2t2-theory-4")
+    folders: generateCourseFolders("l2t2-theory-4"),
   },
   {
     id: "l2t2-theory-5",
@@ -373,7 +354,7 @@ export const coursesData: Course[] = [
     fileCount: 14,
     level: "Level 2",
     term: "Term 2",
-    folders: generateCourseFolders("l2t2-theory-5")
+    folders: generateCourseFolders("l2t2-theory-5"),
   },
 
   // Level 2, Term 2 - Sessional Courses
@@ -385,7 +366,7 @@ export const coursesData: Course[] = [
     fileCount: 8,
     level: "Level 2",
     term: "Term 2",
-    folders: generateCourseFolders("l2t2-sessional-1")
+    folders: generateCourseFolders("l2t2-sessional-1"),
   },
   {
     id: "l2t2-sessional-2",
@@ -395,7 +376,7 @@ export const coursesData: Course[] = [
     fileCount: 10,
     level: "Level 2",
     term: "Term 2",
-    folders: generateCourseFolders("l2t2-sessional-2")
+    folders: generateCourseFolders("l2t2-sessional-2"),
   },
   {
     id: "l2t2-sessional-3",
@@ -405,7 +386,7 @@ export const coursesData: Course[] = [
     fileCount: 7,
     level: "Level 2",
     term: "Term 2",
-    folders: generateCourseFolders("l2t2-sessional-3")
+    folders: generateCourseFolders("l2t2-sessional-3"),
   },
 
   // Level 3, Term 1 - Theory Courses
@@ -417,7 +398,7 @@ export const coursesData: Course[] = [
     fileCount: 20,
     level: "Level 3",
     term: "Term 1",
-    folders: generateCourseFolders("l3t1-theory-1")
+    folders: generateCourseFolders("l3t1-theory-1"),
   },
   {
     id: "l3t1-theory-2",
@@ -427,7 +408,7 @@ export const coursesData: Course[] = [
     fileCount: 24,
     level: "Level 3",
     term: "Term 1",
-    folders: generateCourseFolders("l3t1-theory-2")
+    folders: generateCourseFolders("l3t1-theory-2"),
   },
   {
     id: "l3t1-theory-3",
@@ -437,7 +418,7 @@ export const coursesData: Course[] = [
     fileCount: 18,
     level: "Level 3",
     term: "Term 1",
-    folders: generateCourseFolders("l3t1-theory-3")
+    folders: generateCourseFolders("l3t1-theory-3"),
   },
   {
     id: "l3t1-theory-4",
@@ -447,7 +428,7 @@ export const coursesData: Course[] = [
     fileCount: 15,
     level: "Level 3",
     term: "Term 1",
-    folders: generateCourseFolders("l3t1-theory-4")
+    folders: generateCourseFolders("l3t1-theory-4"),
   },
   {
     id: "l3t1-theory-5",
@@ -457,7 +438,7 @@ export const coursesData: Course[] = [
     fileCount: 17,
     level: "Level 3",
     term: "Term 1",
-    folders: generateCourseFolders("l3t1-theory-5")
+    folders: generateCourseFolders("l3t1-theory-5"),
   },
 
   // Level 3, Term 1 - Sessional Courses
@@ -469,7 +450,7 @@ export const coursesData: Course[] = [
     fileCount: 9,
     level: "Level 3",
     term: "Term 1",
-    folders: generateCourseFolders("l3t1-sessional-1")
+    folders: generateCourseFolders("l3t1-sessional-1"),
   },
   {
     id: "l3t1-sessional-2",
@@ -479,7 +460,7 @@ export const coursesData: Course[] = [
     fileCount: 12,
     level: "Level 3",
     term: "Term 1",
-    folders: generateCourseFolders("l3t1-sessional-2")
+    folders: generateCourseFolders("l3t1-sessional-2"),
   },
   {
     id: "l3t1-sessional-3",
@@ -489,7 +470,7 @@ export const coursesData: Course[] = [
     fileCount: 8,
     level: "Level 3",
     term: "Term 1",
-    folders: generateCourseFolders("l3t1-sessional-3")
+    folders: generateCourseFolders("l3t1-sessional-3"),
   },
 
   // Level 3, Term 2 - Theory Courses
@@ -501,7 +482,7 @@ export const coursesData: Course[] = [
     fileCount: 21,
     level: "Level 3",
     term: "Term 2",
-    folders: generateCourseFolders("l3t2-theory-1")
+    folders: generateCourseFolders("l3t2-theory-1"),
   },
   {
     id: "l3t2-theory-2",
@@ -511,7 +492,7 @@ export const coursesData: Course[] = [
     fileCount: 28,
     level: "Level 3",
     term: "Term 2",
-    folders: generateCourseFolders("l3t2-theory-2")
+    folders: generateCourseFolders("l3t2-theory-2"),
   },
   {
     id: "l3t2-theory-3",
@@ -521,7 +502,7 @@ export const coursesData: Course[] = [
     fileCount: 19,
     level: "Level 3",
     term: "Term 2",
-    folders: generateCourseFolders("l3t2-theory-3")
+    folders: generateCourseFolders("l3t2-theory-3"),
   },
   {
     id: "l3t2-theory-4",
@@ -531,7 +512,7 @@ export const coursesData: Course[] = [
     fileCount: 16,
     level: "Level 3",
     term: "Term 2",
-    folders: generateCourseFolders("l3t2-theory-4")
+    folders: generateCourseFolders("l3t2-theory-4"),
   },
   {
     id: "l3t2-theory-5",
@@ -541,7 +522,7 @@ export const coursesData: Course[] = [
     fileCount: 18,
     level: "Level 3",
     term: "Term 2",
-    folders: generateCourseFolders("l3t2-theory-5")
+    folders: generateCourseFolders("l3t2-theory-5"),
   },
 
   // Level 3, Term 2 - Sessional Courses
@@ -553,7 +534,7 @@ export const coursesData: Course[] = [
     fileCount: 10,
     level: "Level 3",
     term: "Term 2",
-    folders: generateCourseFolders("l3t2-sessional-1")
+    folders: generateCourseFolders("l3t2-sessional-1"),
   },
   {
     id: "l3t2-sessional-2",
@@ -563,7 +544,7 @@ export const coursesData: Course[] = [
     fileCount: 14,
     level: "Level 3",
     term: "Term 2",
-    folders: generateCourseFolders("l3t2-sessional-2")
+    folders: generateCourseFolders("l3t2-sessional-2"),
   },
   {
     id: "l3t2-sessional-3",
@@ -573,7 +554,7 @@ export const coursesData: Course[] = [
     fileCount: 9,
     level: "Level 3",
     term: "Term 2",
-    folders: generateCourseFolders("l3t2-sessional-3")
+    folders: generateCourseFolders("l3t2-sessional-3"),
   },
 
   // Level 4, Term 1 - Theory Courses
@@ -585,7 +566,7 @@ export const coursesData: Course[] = [
     fileCount: 25,
     level: "Level 4",
     term: "Term 1",
-    folders: generateCourseFolders("l4t1-theory-1")
+    folders: generateCourseFolders("l4t1-theory-1"),
   },
   {
     id: "l4t1-theory-2",
@@ -595,7 +576,7 @@ export const coursesData: Course[] = [
     fileCount: 30,
     level: "Level 4",
     term: "Term 1",
-    folders: generateCourseFolders("l4t1-theory-2")
+    folders: generateCourseFolders("l4t1-theory-2"),
   },
   {
     id: "l4t1-theory-3",
@@ -605,7 +586,7 @@ export const coursesData: Course[] = [
     fileCount: 22,
     level: "Level 4",
     term: "Term 1",
-    folders: generateCourseFolders("l4t1-theory-3")
+    folders: generateCourseFolders("l4t1-theory-3"),
   },
   {
     id: "l4t1-theory-4",
@@ -615,7 +596,7 @@ export const coursesData: Course[] = [
     fileCount: 18,
     level: "Level 4",
     term: "Term 1",
-    folders: generateCourseFolders("l4t1-theory-4")
+    folders: generateCourseFolders("l4t1-theory-4"),
   },
   {
     id: "l4t1-theory-5",
@@ -625,7 +606,7 @@ export const coursesData: Course[] = [
     fileCount: 20,
     level: "Level 4",
     term: "Term 1",
-    folders: generateCourseFolders("l4t1-theory-5")
+    folders: generateCourseFolders("l4t1-theory-5"),
   },
 
   // Level 4, Term 1 - Sessional Courses
@@ -637,7 +618,7 @@ export const coursesData: Course[] = [
     fileCount: 12,
     level: "Level 4",
     term: "Term 1",
-    folders: generateCourseFolders("l4t1-sessional-1")
+    folders: generateCourseFolders("l4t1-sessional-1"),
   },
   {
     id: "l4t1-sessional-2",
@@ -647,7 +628,7 @@ export const coursesData: Course[] = [
     fileCount: 15,
     level: "Level 4",
     term: "Term 1",
-    folders: generateCourseFolders("l4t1-sessional-2")
+    folders: generateCourseFolders("l4t1-sessional-2"),
   },
   {
     id: "l4t1-sessional-3",
@@ -657,7 +638,7 @@ export const coursesData: Course[] = [
     fileCount: 11,
     level: "Level 4",
     term: "Term 1",
-    folders: generateCourseFolders("l4t1-sessional-3")
+    folders: generateCourseFolders("l4t1-sessional-3"),
   },
 
   // Level 4, Term 2 - Theory Courses
@@ -669,7 +650,7 @@ export const coursesData: Course[] = [
     fileCount: 23,
     level: "Level 4",
     term: "Term 2",
-    folders: generateCourseFolders("l4t2-theory-1")
+    folders: generateCourseFolders("l4t2-theory-1"),
   },
   {
     id: "l4t2-theory-2",
@@ -679,7 +660,7 @@ export const coursesData: Course[] = [
     fileCount: 32,
     level: "Level 4",
     term: "Term 2",
-    folders: generateCourseFolders("l4t2-theory-2")
+    folders: generateCourseFolders("l4t2-theory-2"),
   },
   {
     id: "l4t2-theory-3",
@@ -689,7 +670,7 @@ export const coursesData: Course[] = [
     fileCount: 24,
     level: "Level 4",
     term: "Term 2",
-    folders: generateCourseFolders("l4t2-theory-3")
+    folders: generateCourseFolders("l4t2-theory-3"),
   },
   {
     id: "l4t2-theory-4",
@@ -699,7 +680,7 @@ export const coursesData: Course[] = [
     fileCount: 19,
     level: "Level 4",
     term: "Term 2",
-    folders: generateCourseFolders("l4t2-theory-4")
+    folders: generateCourseFolders("l4t2-theory-4"),
   },
   {
     id: "l4t2-theory-5",
@@ -709,7 +690,7 @@ export const coursesData: Course[] = [
     fileCount: 21,
     level: "Level 4",
     term: "Term 2",
-    folders: generateCourseFolders("l4t2-theory-5")
+    folders: generateCourseFolders("l4t2-theory-5"),
   },
 
   // Level 4, Term 2 - Sessional Courses
@@ -721,7 +702,7 @@ export const coursesData: Course[] = [
     fileCount: 13,
     level: "Level 4",
     term: "Term 2",
-    folders: generateCourseFolders("l4t2-sessional-1")
+    folders: generateCourseFolders("l4t2-sessional-1"),
   },
   {
     id: "l4t2-sessional-2",
@@ -731,7 +712,7 @@ export const coursesData: Course[] = [
     fileCount: 16,
     level: "Level 4",
     term: "Term 2",
-    folders: generateCourseFolders("l4t2-sessional-2")
+    folders: generateCourseFolders("l4t2-sessional-2"),
   },
   {
     id: "l4t2-sessional-3",
@@ -741,6 +722,6 @@ export const coursesData: Course[] = [
     fileCount: 12,
     level: "Level 4",
     term: "Term 2",
-    folders: generateCourseFolders("l4t2-sessional-3")
-  }
+    folders: generateCourseFolders("l4t2-sessional-3"),
+  },
 ];

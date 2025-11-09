@@ -32,6 +32,12 @@ export interface CommunityStudyArchiveState {
       type: "folder" | "file";
       fileCount?: number;
       size?: string;
+      uploadedBy?: string;
+      uploadDate?: string;
+      description?: string;
+      url?: string;
+      downloads?: number;
+      views?: number;
     }>
   >; // Dynamic folder/file contents
 }
@@ -135,7 +141,7 @@ const communityStudyArchiveSlice = createSlice({
     navigateToBreadcrumb: (state, action: PayloadAction<number>) => {
       const index = action.payload;
       if (index === 0) {
-        // Navigate back to course list
+        // Navigate back to course list (clicking "Courses")
         state.currentFolder = {
           courseId: null,
           courseName: null,
@@ -143,10 +149,19 @@ const communityStudyArchiveSlice = createSlice({
           folderName: null,
         };
         state.folderPath = [];
+      } else if (index === 1) {
+        // Navigate back to course main folder (clicking course name)
+        // Keep only the first folder in path (main course folder)
+        state.folderPath = state.folderPath.slice(0, 1);
+        const mainFolder = state.folderPath[0];
+        state.currentFolder.folderId = mainFolder.id;
+        state.currentFolder.folderName = mainFolder.name;
       } else {
-        // Navigate to specific folder in breadcrumb
-        state.folderPath = state.folderPath.slice(0, index + 1);
-        const targetFolder = state.folderPath[index];
+        // Navigate to specific sub-folder in breadcrumb
+        // Adjust index because breadcrumb includes "Courses" and "Course Name"
+        const folderIndex = index - 2;
+        state.folderPath = state.folderPath.slice(0, folderIndex + 1);
+        const targetFolder = state.folderPath[folderIndex];
         state.currentFolder.folderId = targetFolder.id;
         state.currentFolder.folderName = targetFolder.name;
       }
@@ -197,13 +212,20 @@ const communityStudyArchiveSlice = createSlice({
         state.folderContents[folderId] = [];
       }
 
-      // Add files to folder
+      // Add files to folder with metadata
+      const currentDate = new Date().toLocaleDateString();
       files.forEach((file) => {
         state.folderContents[folderId].push({
           id: `${folderId}-file-${Date.now()}-${Math.random()}`,
           name: file.name,
           type: "file",
           size: file.size,
+          uploadedBy: "Current User", // TODO: Get from auth context
+          uploadDate: currentDate,
+          description: "",
+          url: `/files/${file.name}`, // Placeholder URL
+          downloads: 0,
+          views: 0,
         });
       });
     },
