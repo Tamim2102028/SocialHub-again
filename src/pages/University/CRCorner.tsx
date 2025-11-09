@@ -3,12 +3,14 @@ import { useAppSelector, useAppDispatch } from "../../store/hooks";
 import { selectUserById } from "../../store/slices/profileSlice";
 import type { RootState } from "../../store/store";
 import { confirm } from "../../utils/sweetAlert";
-import { FaPoll, FaPlus, FaBullhorn, FaTimes, FaFile } from "react-icons/fa";
+import { FaPoll, FaPlus, FaBullhorn } from "react-icons/fa";
 import dayjs from "dayjs";
 import {
   PollCard,
   EndedPollCard,
   AnnouncementCard,
+  AnnouncementForm,
+  PollForm,
   type Poll,
   type Announcement,
 } from "../../components/CRCorner";
@@ -373,218 +375,47 @@ const CRCorner: React.FC = () => {
 
       {/* Create Post Form - Full Width */}
       {showCreatePost && (
-        <div className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
-          <div className="mb-4 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <FaBullhorn className="h-5 w-5 text-blue-600" />
-              <h3 className="text-lg font-semibold text-gray-900">
-                {editingAnnouncementId
-                  ? "Edit Announcement"
-                  : "New Announcement"}
-              </h3>
-            </div>
-            <button
-              onClick={() => {
-                setShowCreatePost(false);
-                setEditingAnnouncementId(null);
-                setPostTitle("");
-                setPostContent("");
-                setAttachedFiles([]);
-                setExistingFiles([]);
-              }}
-              className="rounded p-1 text-gray-500 hover:bg-gray-100"
-            >
-              <FaTimes className="h-5 w-5" />
-            </button>
-          </div>
-
-          <div className="space-y-4">
-            <input
-              type="text"
-              placeholder="Announcement Title"
-              value={postTitle}
-              onChange={(e) => setPostTitle(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-4 py-3 text-base focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-            />
-
-            <textarea
-              placeholder="Write your announcement here..."
-              value={postContent}
-              onChange={(e) => setPostContent(e.target.value)}
-              rows={4}
-              className="w-full resize-none rounded-md border border-gray-300 px-4 py-3 text-base focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-            />
-
-            {/* File Attachments */}
-            <div className="space-y-2">
-              {/* Display existing files */}
-              {existingFiles.map((file) => (
-                <div
-                  key={file.id}
-                  className="flex items-center justify-between rounded-md border border-gray-300 bg-gray-50 p-3"
-                >
-                  <div className="flex items-center gap-2">
-                    <FaFile className="h-4 w-4 text-blue-600" />
-                    <span className="text-sm text-gray-700">
-                      {file.name}
-                      <span className="ml-2 text-xs text-gray-500">
-                        (Existing file)
-                      </span>
-                    </span>
-                  </div>
-                  <button
-                    onClick={() => handleRemoveExistingFile(file.id)}
-                    className="rounded p-1 text-red-500 hover:bg-red-50"
-                  >
-                    <FaTimes className="h-4 w-4" />
-                  </button>
-                </div>
-              ))}
-
-              {/* Display newly attached files */}
-              {attachedFiles.map((file, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between rounded-md border border-gray-300 bg-blue-50 p-3"
-                >
-                  <div className="flex items-center gap-2">
-                    <FaFile className="h-4 w-4 text-blue-600" />
-                    <span className="text-sm text-gray-700">{file.name}</span>
-                  </div>
-                  <button
-                    onClick={() => handleRemoveFile(index)}
-                    className="rounded p-1 text-red-500 hover:bg-red-50"
-                  >
-                    <FaTimes className="h-4 w-4" />
-                  </button>
-                </div>
-              ))}
-
-              {/* Add file button */}
-              <label className="flex cursor-pointer items-center justify-center gap-2 rounded-md border-2 border-dashed border-gray-300 p-3 transition-colors hover:border-blue-400 hover:bg-blue-50">
-                <FaPlus className="h-4 w-4 text-gray-600" />
-                <span className="text-sm text-gray-600">
-                  {existingFiles.length + attachedFiles.length > 0
-                    ? "Add more files"
-                    : "Attach files (Notes, Assignment, etc.)"}
-                </span>
-                <input
-                  type="file"
-                  multiple
-                  onChange={handleFileChange}
-                  className="hidden"
-                  accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png"
-                />
-              </label>
-            </div>
-
-            <div className="flex gap-3">
-              <button
-                onClick={() => {
-                  setShowCreatePost(false);
-                  setEditingAnnouncementId(null);
-                  setPostTitle("");
-                  setPostContent("");
-                  setAttachedFiles([]);
-                  setExistingFiles([]);
-                }}
-                className="flex-1 rounded-md border border-gray-300 py-2.5 text-base font-medium text-gray-700 transition-colors hover:bg-gray-50"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleCreatePost}
-                disabled={!postTitle.trim() || !postContent.trim()}
-                className="flex-1 rounded-md bg-blue-600 py-2.5 text-base font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-300"
-              >
-                {editingAnnouncementId ? "Update" : "Post"}
-              </button>
-            </div>
-          </div>
-        </div>
+        <AnnouncementForm
+          isEditing={!!editingAnnouncementId}
+          title={postTitle}
+          content={postContent}
+          existingFiles={existingFiles}
+          attachedFiles={attachedFiles}
+          onTitleChange={setPostTitle}
+          onContentChange={setPostContent}
+          onFileChange={handleFileChange}
+          onRemoveExistingFile={handleRemoveExistingFile}
+          onRemoveFile={handleRemoveFile}
+          onSubmit={handleCreatePost}
+          onCancel={() => {
+            setShowCreatePost(false);
+            setEditingAnnouncementId(null);
+            setPostTitle("");
+            setPostContent("");
+            setAttachedFiles([]);
+            setExistingFiles([]);
+          }}
+        />
       )}
 
       {/* Create Poll Form (CR only) */}
       {showCreatePoll && isCurrentUserCr && (
-        <div className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
-          <div className="mb-4 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <FaPoll className="h-5 w-5 text-blue-600" />
-              <h3 className="text-lg font-semibold text-gray-900">
-                {editingPollId ? "Edit Poll" : "New Poll"}
-              </h3>
-            </div>
-            <button
-              onClick={() => {
-                setShowCreatePoll(false);
-                setEditingPollId(null);
-                setPollQuestion("");
-                setPollOptions(["", ""]);
-              }}
-              className="rounded p-1 text-gray-500 hover:bg-gray-100"
-            >
-              <FaTimes className="h-5 w-5" />
-            </button>
-          </div>
-
-          <div className="space-y-4">
-            <input
-              type="text"
-              placeholder="Poll question"
-              value={pollQuestion}
-              onChange={(e) => setPollQuestion(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-4 py-3 text-base focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-            />
-
-            <div className="space-y-2">
-              {pollOptions.map((opt, i) => (
-                <div key={i} className="flex items-center gap-2">
-                  <input
-                    value={opt}
-                    onChange={(e) => updatePollOption(i, e.target.value)}
-                    placeholder={`Option ${i + 1}`}
-                    className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-base focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-                  />
-                  <button
-                    onClick={() => removePollOption(i)}
-                    disabled={pollOptions.length <= 2}
-                    className="rounded-md border border-red-200 bg-red-50 px-4 py-2 text-sm font-medium text-red-600 transition-colors hover:border-red-300 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-red-200 disabled:hover:bg-red-50"
-                  >
-                    Remove
-                  </button>
-                </div>
-              ))}
-
-              <div>
-                <button
-                  onClick={addPollOption}
-                  className="rounded bg-blue-50 px-3 py-2 text-sm font-medium text-blue-600 hover:bg-blue-100"
-                >
-                  Add option
-                </button>
-              </div>
-            </div>
-
-            <div className="flex gap-3">
-              <button
-                onClick={() => setShowCreatePoll(false)}
-                className="flex-1 rounded-md border border-gray-300 py-2.5 text-base font-medium text-gray-700 transition-colors hover:bg-gray-50"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleCreatePoll}
-                disabled={
-                  !pollQuestion.trim() ||
-                  pollOptions.map((o) => o.trim()).filter(Boolean).length < 2
-                }
-                className="flex-1 rounded-md bg-blue-600 py-2.5 text-base font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-300"
-              >
-                {editingPollId ? "Update Poll" : "Create Poll"}
-              </button>
-            </div>
-          </div>
-        </div>
+        <PollForm
+          isEditing={!!editingPollId}
+          question={pollQuestion}
+          options={pollOptions}
+          onQuestionChange={setPollQuestion}
+          onOptionChange={updatePollOption}
+          onAddOption={addPollOption}
+          onRemoveOption={removePollOption}
+          onSubmit={handleCreatePoll}
+          onCancel={() => {
+            setShowCreatePoll(false);
+            setEditingPollId(null);
+            setPollQuestion("");
+            setPollOptions(["", ""]);
+          }}
+        />
       )}
 
       {/* CR Announcements - Full Width */}
