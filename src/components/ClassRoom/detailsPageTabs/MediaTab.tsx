@@ -5,7 +5,7 @@ import { usersData } from "../../../data/profile-data/userData";
 import { formatPostDate } from "../../../utils/dateUtils";
 import { FaEye, FaDownload } from "react-icons/fa";
 import { BsThreeDots } from "react-icons/bs";
-import Swal from "sweetalert2";
+import { showMediaMenu } from "../../../utils/customModals";
 
 interface Props {
   roomId: string;
@@ -44,62 +44,14 @@ const MediaTab: React.FC<Props> = ({
   };
 
   const handleFileMenu = async (file: (typeof roomFiles)[number]) => {
-    await Swal.fire({
-      title: "File options",
-      html: `
-        <div class="flex flex-col items-center gap-2 min-w-[160px]">
-          <button id="swal-rename" class="w-50 px-3 py-2 rounded border border-gray-200 bg-white text-gray-700 hover:bg-gray-50">Rename</button>
-          <button id="swal-del" class="w-50 px-3 py-2 rounded border border-red-100 bg-white text-red-600 hover:bg-red-50">Delete</button>
-        </div>
-      `,
-      showConfirmButton: false,
-      showCloseButton: true,
-      didOpen: () => {
-        const popup = Swal.getPopup();
-        if (!popup) return;
-        const renameBtn = popup.querySelector(
-          "#swal-rename"
-        ) as HTMLButtonElement | null;
-        const delBtn = popup.querySelector(
-          "#swal-del"
-        ) as HTMLButtonElement | null;
-
-        const onRename = async () => {
-          Swal.close();
-          const { value } = await Swal.fire({
-            title: "Rename file",
-            input: "text",
-            inputValue: file.fileName,
-            showCancelButton: true,
-            confirmButtonText: "Save",
-          });
-          if (value) {
-            setLocalFiles((s) =>
-              s.map((x) => (x.id === file.id ? { ...x, fileName: value } : x))
-            );
-          }
-        };
-
-        const onDel = () => {
-          setLocalFiles((s) => s.filter((x) => x.id !== file.id));
-          Swal.close();
-        };
-
-        renameBtn?.addEventListener("click", onRename);
-        delBtn?.addEventListener("click", onDel);
-
-        const removeListeners = () => {
-          renameBtn?.removeEventListener("click", onRename);
-          delBtn?.removeEventListener("click", onDel);
-        };
-
-        const observer = new MutationObserver(() => {
-          if (!document.contains(popup)) {
-            removeListeners();
-            observer.disconnect();
-          }
-        });
-        observer.observe(document, { childList: true, subtree: true });
+    await showMediaMenu(file.fileName, {
+      onRename: (newName) => {
+        setLocalFiles((s) =>
+          s.map((x) => (x.id === file.id ? { ...x, fileName: newName } : x))
+        );
+      },
+      onDelete: () => {
+        setLocalFiles((s) => s.filter((x) => x.id !== file.id));
       },
     });
   };
