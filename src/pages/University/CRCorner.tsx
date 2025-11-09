@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useAppSelector } from "../../store/hooks";
+import { useAppSelector, useAppDispatch } from "../../store/hooks";
 import { selectUserById } from "../../store/slices/profileSlice";
 import type { RootState } from "../../store/store";
 import { confirm } from "../../utils/sweetAlert";
@@ -12,8 +12,27 @@ import {
   type Poll,
   type Announcement,
 } from "../../components/CRCorner";
+import {
+  selectAllPolls,
+  selectActivePolls,
+  selectEndedPolls,
+  selectAllAnnouncements,
+  createPoll,
+  updatePoll,
+  deletePoll,
+  endPoll,
+  reopenPoll,
+  votePoll,
+  cancelVote,
+  createAnnouncement,
+  updateAnnouncement,
+  deleteAnnouncement,
+  toggleAnnouncementRead,
+} from "../../store/slices/classRoom/crCornerSlice";
 
 const CRCorner: React.FC = () => {
+  const dispatch = useAppDispatch();
+
   // track selected option per poll: { [pollId]: optionId }
   const [selectedPolls, setSelectedPolls] = useState<
     Record<number, number | null>
@@ -42,122 +61,30 @@ const CRCorner: React.FC = () => {
 
   const isCurrentUserCr = !!currentUser?.university?.isCr;
 
-  const [polls, setPolls] = useState<Poll[]>([
-    {
-      id: 1,
-      question: "Do you support the new midterm exam schedule?",
-      options: [
-        { id: 1, text: "Yes, it works for me", votes: 45 },
-        { id: 2, text: "No, needs adjustment", votes: 23 },
-        { id: 3, text: "Neutral/Don't care", votes: 12 },
-      ],
-      totalVotes: 80,
-    },
-    {
-      id: 2,
-      question: "Should we organize a class trip this semester?",
-      options: [
-        { id: 1, text: "Yes, definitely!", votes: 67 },
-        { id: 2, text: "Maybe next semester", votes: 28 },
-        { id: 3, text: "Not interested", votes: 15 },
-      ],
-      totalVotes: 110,
-      isEnded: true,
-      endedAt: "Nov 5, 2025 at 3:45 PM",
-    },
-    {
-      id: 3,
-      question: "Which topic should we focus on for the study group?",
-      options: [
-        { id: 1, text: "Data Structures", votes: 42 },
-        { id: 2, text: "Algorithms", votes: 38 },
-        { id: 3, text: "Database Systems", votes: 25 },
-        { id: 4, text: "Operating Systems", votes: 20 },
-      ],
-      totalVotes: 125,
-      isEnded: true,
-      endedAt: "Nov 3, 2025 at 10:30 AM",
-    },
-  ]);
-
-  const [announcements, setAnnouncements] = useState<Announcement[]>([
-    {
-      id: 1,
-      title: "Class Representative Meeting",
-      content:
-        "All CRs are requested to attend the monthly meeting in Room 301.",
-      date: dayjs("2025-10-05").format("MMM D, YYYY"),
-      postedBy: "Tamim Ahmed",
-      postedById: "tamim-id",
-      readBy: [],
-    },
-    {
-      id: 2,
-      title: "Circuit Analysis Notes - Shared by Sir",
-      content:
-        "Our professor has shared the complete lecture notes for Circuit Analysis. Download and study before the midterm exam.",
-      date: dayjs("2025-10-03").format("MMM D, YYYY"),
-      postedBy: "Sadia Rahman",
-      postedById: "sadia-id",
-      readBy: [],
-      hasFile: true,
-      fileName: "Circuit_Analysis_Notes.pdf",
-    },
-    {
-      id: 3,
-      title: "Assignment Deadline Extended",
-      content:
-        "Good news! The CSE 305 assignment deadline has been extended to Oct 15. Make sure to submit on time.",
-      date: dayjs("2025-10-02").format("MMM D, YYYY"),
-      postedBy: "Tamim Ahmed",
-      postedById: "tamim-id",
-      readBy: [],
-    },
-  ]);
+  // Get data from Redux store
+  const polls = useAppSelector(selectAllPolls);
+  const announcements = useAppSelector(selectAllAnnouncements);
+  const activePolls = useAppSelector(selectActivePolls);
+  const endedPolls = useAppSelector(selectEndedPolls);
 
   // Toggle read state for a given announcement for the current user
   const toggleRead = (id: number) => {
-    if (!currentUser?.id) return; // require logged-in user
-    const userId = currentUser.id;
-    setAnnouncements((prev) =>
-      prev.map((a) => {
-        if (a.id !== id) return a;
-        const readSet = new Set(a.readBy || []);
-        // Only add the user id (one-way). If already present, do nothing.
-        if (readSet.has(userId)) return a;
-        readSet.add(userId);
-        return { ...a, readBy: Array.from(readSet) };
-      })
-    );
+    if (!currentUser?.id) return;
+    dispatch(toggleAnnouncementRead({ id, userId: currentUser.id }));
   };
 
   const handleVote = (pollId: number, optionId: number) => {
     const prevSelected = selectedPolls[pollId] ?? null;
 
-    setPolls((prevPolls) =>
-      prevPolls.map((poll) => {
-        if (poll.id === pollId) {
-          const updatedOptions = poll.options.map((option) => {
-            // If this was previously selected and we're changing, decrease its count
-            if (option.id === prevSelected && prevSelected !== optionId) {
-              return { ...option, votes: option.votes - 1 };
-            }
-            // If this is the newly selected option, increase its count
-            if (option.id === optionId && prevSelected !== optionId) {
-              return { ...option, votes: option.votes + 1 };
-            }
-            return option;
-          });
+    // If changing vote, cancel previous vote first
+    if (prevSelected !== null && prevSelected !== optionId) {
+      dispatch(cancelVote({ pollId, optionId: prevSelected }));
+    }
 
-          // Update total votes only when voting for the first time for this poll
-          const totalVotes =
-            prevSelected === null ? poll.totalVotes + 1 : poll.totalVotes;
-
-          return { ...poll, options: updatedOptions, totalVotes };
-        }
-        return poll;
-      })
-    );
+    // Vote for new option if not already voted for it
+    if (prevSelected !== optionId) {
+      dispatch(votePoll({ pollId, optionId }));
+    }
 
     setSelectedPolls((prev) => ({ ...prev, [pollId]: optionId }));
   };
@@ -166,27 +93,7 @@ const CRCorner: React.FC = () => {
     const prevSelected = selectedPolls[pollId] ?? null;
     if (prevSelected === null) return;
 
-    setPolls((prevPolls) =>
-      prevPolls.map((poll) => {
-        if (poll.id === pollId) {
-          const updatedOptions = poll.options.map((option) => {
-            // Decrease vote count for the previously selected option
-            if (option.id === prevSelected) {
-              return { ...option, votes: option.votes - 1 };
-            }
-            return option;
-          });
-
-          return {
-            ...poll,
-            options: updatedOptions,
-            totalVotes: Math.max(0, poll.totalVotes - 1),
-          };
-        }
-        return poll;
-      })
-    );
-
+    dispatch(cancelVote({ pollId, optionId: prevSelected }));
     setSelectedPolls((prev) => ({ ...prev, [pollId]: null }));
   };
 
@@ -205,24 +112,19 @@ const CRCorner: React.FC = () => {
     if (postTitle.trim() && postContent.trim()) {
       if (editingAnnouncementId) {
         // Update existing announcement
-        setAnnouncements((prev) =>
-          prev.map((ann) =>
-            ann.id === editingAnnouncementId
-              ? {
-                  ...ann,
-                  title: postTitle.trim(),
-                  content: postContent.trim(),
-                  hasFile: !!attachedFile || !!existingFileName,
-                  fileName: attachedFile
-                    ? attachedFile.name
-                    : existingFileName || ann.fileName,
-                  fileUrl: attachedFile
-                    ? URL.createObjectURL(attachedFile)
-                    : ann.fileUrl,
-                }
-              : ann
-          )
-        );
+        const updates: Partial<Announcement> & { id: number } = {
+          id: editingAnnouncementId,
+          title: postTitle.trim(),
+          content: postContent.trim(),
+          hasFile: !!attachedFile || !!existingFileName,
+          fileName: attachedFile ? attachedFile.name : existingFileName,
+        };
+
+        if (attachedFile) {
+          updates.fileUrl = URL.createObjectURL(attachedFile);
+        }
+
+        dispatch(updateAnnouncement(updates));
       } else {
         // Create new announcement
         const newAnnouncement: Announcement = {
@@ -237,12 +139,11 @@ const CRCorner: React.FC = () => {
           readBy: [],
         };
 
-        // If there's an attached file, we store it in-memory using URL.createObjectURL
         if (attachedFile) {
           newAnnouncement.fileUrl = URL.createObjectURL(attachedFile);
         }
 
-        setAnnouncements((prev) => [newAnnouncement, ...prev]);
+        dispatch(createAnnouncement(newAnnouncement));
       }
 
       setPostTitle("");
@@ -276,23 +177,16 @@ const CRCorner: React.FC = () => {
 
     if (editingPollId) {
       // Update existing poll
-      setPolls((prev) =>
-        prev.map((poll) =>
-          poll.id === editingPollId
-            ? {
-                ...poll,
-                question: q,
-                options: opts.map((text, i) => {
-                  // Preserve existing option data if available, otherwise create new option
-                  const existingOption = poll.options[i];
-                  return existingOption
-                    ? { ...existingOption, text }
-                    : { id: poll.options.length + i + 1, text, votes: 0 };
-                }),
-              }
-            : poll
-        )
-      );
+      const poll = polls.find((p) => p.id === editingPollId);
+      if (poll) {
+        const updatedOptions = opts.map((text, i) => {
+          const existingOption = poll.options[i];
+          return existingOption
+            ? { ...existingOption, text }
+            : { id: poll.options.length + i + 1, text, votes: 0 };
+        });
+        dispatch(updatePoll({ id: editingPollId, question: q, options: updatedOptions }));
+      }
     } else {
       // Create new poll
       const newPoll: Poll = {
@@ -301,7 +195,7 @@ const CRCorner: React.FC = () => {
         options: opts.map((text, i) => ({ id: i + 1, text, votes: 0 })),
         totalVotes: 0,
       };
-      setPolls((prev) => [newPoll, ...prev]);
+      dispatch(createPoll(newPoll));
     }
 
     setPollQuestion("");
@@ -381,7 +275,7 @@ const CRCorner: React.FC = () => {
     });
 
     if (confirmed) {
-      setAnnouncements((prev) => prev.filter((a) => a.id !== id));
+      dispatch(deleteAnnouncement(id));
       // close menu if it was open
       if (menuOpenFor === id) setMenuOpenFor(null);
     }
@@ -397,22 +291,12 @@ const CRCorner: React.FC = () => {
     });
 
     if (confirmed) {
-      setPolls((prev) => prev.filter((p) => p.id !== id));
+      dispatch(deletePoll(id));
     }
   };
 
   const handleEndPoll = (id: number) => {
-    setPolls((prev) =>
-      prev.map((p) =>
-        p.id === id
-          ? {
-              ...p,
-              isEnded: true,
-              endedAt: dayjs().format("MMM D, YYYY [at] h:mm A"),
-            }
-          : p
-      )
-    );
+    dispatch(endPoll({ id, endedAt: dayjs().format("MMM D, YYYY [at] h:mm A") }));
   };
 
   const toggleExpandPoll = (id: number) => {
@@ -420,17 +304,7 @@ const CRCorner: React.FC = () => {
   };
 
   const handleReopenPoll = (id: number) => {
-    setPolls((prev) =>
-      prev.map((p) =>
-        p.id === id
-          ? {
-              ...p,
-              isEnded: false,
-              endedAt: undefined,
-            }
-          : p
-      )
-    );
+    dispatch(reopenPoll(id));
   };
 
   return (
@@ -724,45 +598,41 @@ const CRCorner: React.FC = () => {
           // Render polls - separate active and ended
           <>
             {/* Active Polls */}
-            {polls.filter((p) => !p.isEnded).length > 0 && (
+            {activePolls.length > 0 && (
               <div className="space-y-4">
-                {polls
-                  .filter((p) => !p.isEnded)
-                  .map((poll) => (
-                    <PollCard
-                      key={poll.id}
-                      poll={poll}
-                      isCurrentUserCr={isCurrentUserCr}
-                      selectedOption={selectedPolls[poll.id] ?? null}
-                      onVote={handleVote}
-                      onCancelVote={handleCancelVote}
-                      onEditPoll={handleEditPoll}
-                      onEndPoll={handleEndPoll}
-                      onDeletePoll={handleDeletePoll}
-                    />
-                  ))}
+                {activePolls.map((poll) => (
+                  <PollCard
+                    key={poll.id}
+                    poll={poll}
+                    isCurrentUserCr={isCurrentUserCr}
+                    selectedOption={selectedPolls[poll.id] ?? null}
+                    onVote={handleVote}
+                    onCancelVote={handleCancelVote}
+                    onEditPoll={handleEditPoll}
+                    onEndPoll={handleEndPoll}
+                    onDeletePoll={handleDeletePoll}
+                  />
+                ))}
               </div>
             )}
 
             {/* Ended Polls - Compact View */}
-            {polls.filter((p) => p.isEnded).length > 0 && (
+            {endedPolls.length > 0 && (
               <div className="mt-6">
                 <h3 className="mb-3 text-sm font-semibold text-gray-600">
-                  Ended Polls ({polls.filter((p) => p.isEnded).length})
+                  Ended Polls ({endedPolls.length})
                 </h3>
                 <div className="space-y-2">
-                  {polls
-                    .filter((p) => p.isEnded)
-                    .map((poll) => (
-                      <EndedPollCard
-                        key={poll.id}
-                        poll={poll}
-                        isCurrentUserCr={isCurrentUserCr}
-                        isExpanded={expandedPolls[poll.id] || false}
-                        onToggleExpand={toggleExpandPoll}
-                        onReopenPoll={handleReopenPoll}
-                      />
-                    ))}
+                  {endedPolls.map((poll) => (
+                    <EndedPollCard
+                      key={poll.id}
+                      poll={poll}
+                      isCurrentUserCr={isCurrentUserCr}
+                      isExpanded={expandedPolls[poll.id] || false}
+                      onToggleExpand={toggleExpandPoll}
+                      onReopenPoll={handleReopenPoll}
+                    />
+                  ))}
                 </div>
               </div>
             )}
