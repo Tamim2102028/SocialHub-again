@@ -86,7 +86,7 @@ const PersonalFiles: React.FC = () => {
       Swal.fire({
         icon: "success",
         title: "Folder created",
-        timer: 1000,
+        timer: 500,
         showConfirmButton: false,
       });
     }

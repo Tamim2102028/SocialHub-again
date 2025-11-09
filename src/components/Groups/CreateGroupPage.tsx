@@ -200,7 +200,7 @@ const CreateGroupPage: React.FC = () => {
       icon: "success",
       title: "Group Created!",
       text: `${formData.name} has been created successfully.`,
-      timer: 2000,
+      timer: 500,
       showConfirmButton: false,
     }).then(() => {
       console.log("New Group:", newGroup);

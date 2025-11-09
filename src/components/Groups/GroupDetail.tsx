@@ -150,7 +150,7 @@ const GroupDetail: React.FC = () => {
 
   const handleRemoveMember = (userId: string) => {
     if (!groupId) return;
-    
+
     Swal.fire({
       title: "Are you sure?",
       text: "This member will be removed from the group.",
@@ -166,7 +166,7 @@ const GroupDetail: React.FC = () => {
           title: "Removed!",
           text: "Member has been removed from the group.",
           icon: "success",
-          timer: 2000,
+          timer: 500,
           showConfirmButton: false,
         });
       }
@@ -413,15 +413,15 @@ const GroupDetail: React.FC = () => {
                   <h3 className="mb-2 font-bold text-gray-900">Description</h3>
                   <p className="text-gray-700">{group.description}</p>
                 </div>
-                
+
                 <div>
                   <h3 className="mb-2 font-bold text-gray-900">Privacy</h3>
                   <p className="text-gray-700">
                     {group.privacy === "public"
                       ? "Public - Anyone can see posts and members"
                       : group.privacy === "private"
-                      ? "Private - Only members can see posts"
-                      : "Closed - Invitation only"}
+                        ? "Private - Only members can see posts"
+                        : "Closed - Invitation only"}
                   </p>
                 </div>
 
@@ -430,8 +430,11 @@ const GroupDetail: React.FC = () => {
                   <h3 className="mb-3 font-bold text-gray-900">Creator</h3>
                   {(() => {
                     const owner = usersData.find((u) => u.id === groupOwner);
-                    if (!owner) return <p className="text-gray-500 text-sm">Owner not found</p>;
-                    
+                    if (!owner)
+                      return (
+                        <p className="text-sm text-gray-500">Owner not found</p>
+                      );
+
                     return (
                       <div className="flex items-center gap-3 rounded-lg border border-gray-200 bg-gray-50 p-3">
                         <img
@@ -440,8 +443,12 @@ const GroupDetail: React.FC = () => {
                           className="h-12 w-12 rounded-full object-cover"
                         />
                         <div className="flex-1">
-                          <p className="font-semibold text-gray-900">{owner.name}</p>
-                          <p className="text-sm text-gray-500">@{owner.username}</p>
+                          <p className="font-semibold text-gray-900">
+                            {owner.name}
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            @{owner.username}
+                          </p>
                         </div>
                         <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-700">
                           Owner
@@ -461,9 +468,9 @@ const GroupDetail: React.FC = () => {
                       {groupAdmins.map((adminId) => {
                         const admin = usersData.find((u) => u.id === adminId);
                         if (!admin) return null;
-                        
+
                         const isOwner = adminId === groupOwner;
-                        
+
                         return (
                           <div
                             key={adminId}
@@ -475,8 +482,12 @@ const GroupDetail: React.FC = () => {
                               className="h-12 w-12 rounded-full object-cover"
                             />
                             <div className="flex-1">
-                              <p className="font-semibold text-gray-900">{admin.name}</p>
-                              <p className="text-sm text-gray-500">@{admin.username}</p>
+                              <p className="font-semibold text-gray-900">
+                                {admin.name}
+                              </p>
+                              <p className="text-sm text-gray-500">
+                                @{admin.username}
+                              </p>
                             </div>
                             <div className="flex gap-2">
                               {isOwner && (
