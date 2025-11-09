@@ -51,7 +51,7 @@ const RoomCard: React.FC<Props> = ({
     <div className="overflow-hidden rounded-lg shadow-sm">
       <Link
         to={`/classroom/rooms/${room.id}`}
-        className="relative block h-30 w-full bg-gray-100"
+        className="relative block h-36 w-full bg-gray-100"
       >
         <img
           src={cover}

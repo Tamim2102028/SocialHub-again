@@ -9,6 +9,10 @@ import {
   FaImage,
   FaInfoCircle,
   FaThumbtack,
+  FaUserSlash,
+  FaFlag,
+  FaCog,
+  FaLink,
 } from "react-icons/fa";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
@@ -72,6 +76,7 @@ const GroupDetail: React.FC = () => {
   const [activeTab, setActiveTab] = useState<
     "posts" | "pinned" | "members" | "media" | "about"
   >("posts");
+  const [showMenu, setShowMenu] = useState(false);
 
   const handleJoin = () => {
     if (!groupId) return;
@@ -240,9 +245,66 @@ const GroupDetail: React.FC = () => {
                         Public Group · {memberCount} members
                       </p>
                     </div>
-                    <button className="text-gray-400 hover:text-gray-600">
-                      <FaEllipsisH className="h-6 w-6" />
-                    </button>
+
+                    {/* 3-dot menu */}
+                    <div className="relative">
+                      <button
+                        onClick={() => setShowMenu(!showMenu)}
+                        className="rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-200"
+                        title="More actions"
+                      >
+                        <FaEllipsisH className="h-4 w-4" />
+                      </button>
+
+                      {showMenu && (
+                        <div className="absolute top-full right-0 z-50 mt-1 w-56 rounded-lg border border-gray-200 bg-white shadow-lg">
+                          <div className="py-1">
+                            {isMember && (
+                              <button className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-gray-700 transition-colors hover:bg-gray-50">
+                                <FaCog className="h-4 w-4 flex-shrink-0" />
+                                <span className="font-medium">
+                                  Group Settings
+                                </span>
+                              </button>
+                            )}
+                            <button className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-gray-700 transition-colors hover:bg-gray-50">
+                              <FaLink className="h-4 w-4 flex-shrink-0" />
+                              <span className="font-medium">
+                                Copy Group Link
+                              </span>
+                            </button>
+                            {isMember && (
+                              <button
+                                onClick={async () => {
+                                  setShowMenu(false);
+                                  if (
+                                    await confirm({
+                                      title: "Leave Group?",
+                                      text: "Are you sure you want to leave this group?",
+                                      confirmButtonText: "Yes, leave",
+                                    })
+                                  ) {
+                                    dispatch(leaveGroup(group.id));
+                                  }
+                                }}
+                                className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-red-600 transition-colors hover:bg-gray-50"
+                              >
+                                <FaUserSlash className="h-4 w-4 flex-shrink-0" />
+                                <span className="font-medium">Leave Group</span>
+                              </button>
+                            )}
+                            {!isMember && (
+                              <button className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-red-600 transition-colors hover:bg-gray-50">
+                                <FaFlag className="h-4 w-4 flex-shrink-0" />
+                                <span className="font-medium">
+                                  Report Group
+                                </span>
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   <p className="mt-4 text-gray-700">{group.description}</p>
