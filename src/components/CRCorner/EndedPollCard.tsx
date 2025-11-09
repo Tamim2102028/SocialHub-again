@@ -34,7 +34,7 @@ export const EndedPollCard: React.FC<EndedPollCardProps> = ({
                 Ended on {poll.endedAt} · {poll.totalVotes} votes
               </p>
               <p className="mt-1 text-xs font-medium text-blue-600">
-                Winner: {winningOption.text} ({winningOption.votes} votes)
+                {winningOption.text} ({winningOption.votes} votes)
               </p>
             </div>
             <span className="flex-shrink-0 text-sm font-medium text-blue-600">

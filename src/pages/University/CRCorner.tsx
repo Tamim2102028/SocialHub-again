@@ -3,13 +3,7 @@ import { useAppSelector } from "../../store/hooks";
 import { selectUserById } from "../../store/slices/profileSlice";
 import type { RootState } from "../../store/store";
 import { confirm } from "../../utils/sweetAlert";
-import {
-  FaPoll,
-  FaPlus,
-  FaBullhorn,
-  FaTimes,
-  FaFile,
-} from "react-icons/fa";
+import { FaPoll, FaPlus, FaBullhorn, FaTimes, FaFile } from "react-icons/fa";
 import {
   PollCard,
   EndedPollCard,
@@ -306,10 +300,20 @@ const CRCorner: React.FC = () => {
     setMenuOpenFor((prev) => (prev === id ? null : id));
   };
 
-  const handleDeleteAnnouncement = (id: number) => {
-    setAnnouncements((prev) => prev.filter((a) => a.id !== id));
-    // close menu if it was open
-    if (menuOpenFor === id) setMenuOpenFor(null);
+  const handleDeleteAnnouncement = async (id: number) => {
+    const confirmed = await confirm({
+      title: "Delete Announcement?",
+      text: "Are you sure you want to delete this announcement? This action cannot be undone.",
+      icon: "warning",
+      confirmButtonText: "Yes, delete it",
+      isDanger: true,
+    });
+
+    if (confirmed) {
+      setAnnouncements((prev) => prev.filter((a) => a.id !== id));
+      // close menu if it was open
+      if (menuOpenFor === id) setMenuOpenFor(null);
+    }
   };
 
   const handleDeletePoll = async (id: number) => {
