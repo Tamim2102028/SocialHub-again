@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../store/hooks";
 import { selectUserById } from "../../store/slices/profileSlice";
 import type { RootState } from "../../store/store";
@@ -8,34 +7,16 @@ import {
   FaPoll,
   FaPlus,
   FaBullhorn,
-  FaFile,
   FaTimes,
-  FaEdit,
-  FaTrash,
-  FaEllipsisH,
+  FaFile,
 } from "react-icons/fa";
-
-interface Poll {
-  id: number;
-  question: string;
-  options: { id: number; text: string; votes: number }[];
-  totalVotes: number;
-  isEnded?: boolean;
-  endedAt?: string;
-}
-
-interface Announcement {
-  id: number;
-  title: string;
-  content: string;
-  date: string;
-  postedBy: string;
-  postedById?: string;
-  hasFile?: boolean;
-  fileName?: string;
-  fileUrl?: string;
-  readBy?: string[]; // list of userIds who have marked this announcement as read
-}
+import {
+  PollCard,
+  EndedPollCard,
+  AnnouncementCard,
+  type Poll,
+  type Announcement,
+} from "../../components/CRCorner";
 
 const CRCorner: React.FC = () => {
   // track selected option per poll: { [pollId]: optionId }
@@ -56,7 +37,6 @@ const CRCorner: React.FC = () => {
   const currentUser = useAppSelector((s: RootState) =>
     selectUserById(s, s.profile.id)
   );
-  const navigate = useNavigate();
 
   const isCurrentUserCr = !!currentUser?.university?.isCr;
 
@@ -602,137 +582,24 @@ const CRCorner: React.FC = () => {
               </button>
             </div>
           ) : (
-            announcements.map((announcement) => {
-              return (
-                <div
-                  key={announcement.id}
-                  className={`relative flex flex-col overflow-visible rounded-md border p-3 transition-shadow hover:shadow-sm ${
-                    (announcement.readBy || []).includes(currentUser!.id)
-                      ? "border-gray-200 bg-gray-100 text-gray-500"
-                      : "border-gray-500 bg-blue-100"
-                  }`}
-                >
-                  {/* 3-dot menu button */}
-                  <div className="absolute top-3 right-3">
-                    <button
-                      onClick={() => toggleMenu(announcement.id)}
-                      className="rounded-lg p-2 
-                      bg-blue-100 text-gray-600 cursor-pointer transition-colors hover:bg-blue-50"
-                      aria-label="Open menu"
-                    >
-                      <FaEllipsisH className="h-4 w-4" />
-                    </button>
-
-                    {/* menu popup */}
-                    {menuOpenFor === announcement.id && (
-                      <div className="absolute top-full right-0 z-50 mt-1 w-48 rounded-lg border border-gray-200 bg-white shadow-lg">
-                        <div className="py-1">
-                          <button
-                            onClick={() => {
-                              /* placeholder edit */
-                              setMenuOpenFor(null);
-                              alert("Edit not implemented yet");
-                            }}
-                            className="flex w-full items-center gap-3 px-4 py-2 text-left text-sm text-gray-700 transition-colors hover:bg-gray-50"
-                          >
-                            <FaEdit className="h-4 w-4" />
-                            <span className="font-medium">Edit</span>
-                          </button>
-                          <button
-                            onClick={() =>
-                              handleDeleteAnnouncement(announcement.id)
-                            }
-                            className="flex w-full items-center gap-3 px-4 py-2 text-left text-sm text-red-600 transition-colors hover:bg-gray-50"
-                          >
-                            <FaTrash className="h-4 w-4" />
-                            <span className="font-medium">Delete</span>
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                  <h4 className="mb-2 line-clamp-2 text-base font-semibold text-gray-900">
-                    {announcement.title}
-                  </h4>
-                  <div className="mb-3 text-sm leading-relaxed text-gray-700">
-                    <p
-                      className={`text-justify text-sm leading-relaxed text-gray-700 ${
-                        expanded[announcement.id] ? "" : "line-clamp-3"
-                      }`}
-                    >
-                      {announcement.content}
-                    </p>
-
-                    {/* See more / See less toggle */}
-                    {announcement.content &&
-                      announcement.content.split("\n").join(" ").length >
-                        180 && (
-                        <button
-                          onClick={() => toggleExpanded(announcement.id)}
-                          className="mt-2 text-sm font-medium text-blue-600 hover:text-blue-800"
-                        >
-                          {expanded[announcement.id] ? "See less" : "See more"}
-                        </button>
-                      )}
-                  </div>
-
-                  {/* File Attachment Display */}
-                  {announcement.hasFile && (
-                    <div className="mb-3 flex items-center justify-between rounded bg-blue-50 px-3 py-2">
-                      <div className="flex min-w-0 flex-1 items-center gap-2">
-                        <FaFile className="h-4 w-4 flex-shrink-0 text-blue-600" />
-                        <span className="truncate text-sm font-medium text-blue-700">
-                          {announcement.fileName}
-                        </span>
-                      </div>
-                      <button
-                        onClick={() => handleDownload(announcement)}
-                        className="ml-2 flex-shrink-0 text-sm font-semibold text-blue-600 hover:text-blue-800"
-                      >
-                        Download
-                      </button>
-                    </div>
-                  )}
-
-                  <div className="flex items-center justify-between border-t border-gray-200 pt-3 text-sm text-gray-500">
-                    <span className="truncate font-medium">
-                      {announcement.postedById ? (
-                        <button
-                          onClick={() =>
-                            navigate(`/profile/${announcement.postedById}`)
-                          }
-                          className="cursor-pointer text-sm font-medium text-gray-900 transition-colors hover:text-blue-600 hover:underline"
-                        >
-                          {announcement.postedBy}
-                        </button>
-                      ) : (
-                        announcement.postedBy
-                      )}
-                    </span>
-                    <div className="ml-2 flex items-center gap-3">
-                      <span className="flex-shrink-0">{announcement.date}</span>
-
-                      {/* Render mark-as-read toggle only for non-CR posters */}
-                      <button
-                        onClick={() => toggleRead(announcement.id)}
-                        disabled={(announcement.readBy || []).includes(
-                          currentUser!.id
-                        )}
-                        className={`cursor-pointer rounded px-2 py-0.5 text-sm font-medium transition-colors disabled:cursor-not-allowed ${
-                          (announcement.readBy || []).includes(currentUser!.id)
-                            ? "bg-gray-200 text-gray-700"
-                            : "bg-red-50 text-red-700"
-                        }`}
-                      >
-                        {(announcement.readBy || []).includes(currentUser!.id)
-                          ? "Marked"
-                          : "Mark as read"}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              );
-            })
+            announcements.map((announcement) => (
+              <AnnouncementCard
+                key={announcement.id}
+                announcement={announcement}
+                currentUserId={currentUser!.id}
+                isExpanded={expanded[announcement.id] || false}
+                isMenuOpen={menuOpenFor === announcement.id}
+                onToggleExpanded={toggleExpanded}
+                onToggleMenu={toggleMenu}
+                onToggleRead={toggleRead}
+                onEdit={() => {
+                  setMenuOpenFor(null);
+                  alert("Edit not implemented yet");
+                }}
+                onDelete={handleDeleteAnnouncement}
+                onDownload={handleDownload}
+              />
+            ))
           )}
         </div>
       </div>
@@ -771,90 +638,17 @@ const CRCorner: React.FC = () => {
                 {polls
                   .filter((p) => !p.isEnded)
                   .map((poll) => (
-                    <div
+                    <PollCard
                       key={poll.id}
-                      className="mb-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
-                    >
-                      <div className="mb-3">
-                        <h3 className="text-base font-medium text-gray-900">
-                          {poll.question}
-                        </h3>
-                      </div>
-
-                      <div className="space-y-3">
-                        {poll.options.map((option) => {
-                          const percentage = poll.totalVotes
-                            ? ((option.votes / poll.totalVotes) * 100).toFixed(
-                                1
-                              )
-                            : "0.0";
-                          const isSelected =
-                            (selectedPolls[poll.id] ?? null) === option.id;
-
-                          return (
-                            <div
-                              key={option.id}
-                              className={`relative w-full cursor-pointer overflow-hidden rounded-md border p-4 transition-all ${
-                                isSelected
-                                  ? "border-blue-500 bg-blue-50"
-                                  : "border-gray-200 bg-white hover:border-blue-300 hover:bg-blue-50"
-                              }`}
-                              onClick={() => handleVote(poll.id, option.id)}
-                            >
-                              <div className="relative flex items-center justify-between">
-                                <span className="text-base font-medium text-gray-900">
-                                  {option.text}
-                                </span>
-                                <span className="text-sm font-semibold text-blue-600">
-                                  {percentage}% ({option.votes} votes)
-                                </span>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-
-                      {/* Vote count and Action buttons */}
-                      <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-gray-200 pt-4">
-                        <div className="text-sm font-medium text-gray-600">
-                          Total Votes: {poll.totalVotes}
-                        </div>
-                        <div className="flex flex-wrap items-center gap-2">
-                          {selectedPolls[poll.id] != null && (
-                            <button
-                              onClick={() => handleCancelVote(poll.id)}
-                              className="rounded-md border border-red-300 bg-red-50 px-3 py-1.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-100"
-                            >
-                              Cancel Vote
-                            </button>
-                          )}
-                          {isCurrentUserCr && (
-                            <>
-                              <button
-                                onClick={() =>
-                                  alert("Edit poll feature coming soon!")
-                                }
-                                className="rounded-md border border-blue-300 bg-blue-50 px-3 py-1.5 text-sm font-medium text-blue-600 transition-colors hover:bg-blue-100"
-                              >
-                                Edit Poll
-                              </button>
-                              <button
-                                onClick={() => handleEndPoll(poll.id)}
-                                className="rounded-md border border-orange-300 bg-orange-50 px-3 py-1.5 text-sm font-medium text-orange-600 transition-colors hover:bg-orange-100"
-                              >
-                                End Poll
-                              </button>
-                            </>
-                          )}
-                          <button
-                            onClick={() => handleDeletePoll(poll.id)}
-                            className="rounded-md border border-red-300 bg-red-50 px-3 py-1.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-100"
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </div>
-                    </div>
+                      poll={poll}
+                      isCurrentUserCr={isCurrentUserCr}
+                      selectedOption={selectedPolls[poll.id] ?? null}
+                      onVote={handleVote}
+                      onCancelVote={handleCancelVote}
+                      onEditPoll={() => alert("Edit poll feature coming soon!")}
+                      onEndPoll={handleEndPoll}
+                      onDeletePoll={handleDeletePoll}
+                    />
                   ))}
               </div>
             )}
@@ -868,116 +662,16 @@ const CRCorner: React.FC = () => {
                 <div className="space-y-2">
                   {polls
                     .filter((p) => p.isEnded)
-                    .map((poll) => {
-                      const isExpanded = expandedPolls[poll.id];
-                      const winningOption = poll.options.reduce(
-                        (prev, current) =>
-                          prev.votes > current.votes ? prev : current
-                      );
-
-                      return (
-                        <div
-                          key={poll.id}
-                          className="rounded-lg border border-gray-200 bg-gray-50 p-3"
-                        >
-                          {!isExpanded ? (
-                            // Compact View
-                            <div
-                              onClick={() => toggleExpandPoll(poll.id)}
-                              className="cursor-pointer"
-                            >
-                              <div className="flex items-start justify-between gap-3">
-                                <div className="min-w-0 flex-1">
-                                  <h4 className="truncate text-sm font-medium text-gray-900">
-                                    {poll.question}
-                                  </h4>
-                                  <p className="mt-1 text-xs text-gray-500">
-                                    Ended on {poll.endedAt} · {poll.totalVotes}{" "}
-                                    votes
-                                  </p>
-                                  <p className="mt-1 text-xs font-medium text-blue-600">
-                                    Winner: {winningOption.text} (
-                                    {winningOption.votes} votes)
-                                  </p>
-                                </div>
-                                <span className="flex-shrink-0 text-sm font-medium text-blue-600">
-                                  Click to expand
-                                </span>
-                              </div>
-                            </div>
-                          ) : (
-                            // Expanded View
-                            <div>
-                              <div className="mb-3 flex items-start justify-between">
-                                <div className="flex-1">
-                                  <h4 className="text-base font-medium text-gray-900">
-                                    {poll.question}
-                                  </h4>
-                                  <p className="mt-1 text-xs text-gray-500">
-                                    Ended on {poll.endedAt} · {poll.totalVotes}{" "}
-                                    total votes
-                                  </p>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  {isCurrentUserCr && (
-                                    <button
-                                      onClick={() => handleReopenPoll(poll.id)}
-                                      className="flex-shrink-0 rounded-md border border-green-200 bg-green-50 px-3 py-1.5 text-sm font-medium text-green-600 transition-colors hover:border-green-300 hover:bg-green-100"
-                                    >
-                                      Reopen Poll
-                                    </button>
-                                  )}
-                                  <button
-                                    onClick={() => toggleExpandPoll(poll.id)}
-                                    className="flex-shrink-0 rounded-md border border-blue-200 bg-blue-50 px-3 py-1.5 text-sm font-medium text-blue-600 transition-colors hover:border-blue-300 hover:bg-blue-100"
-                                  >
-                                    Collapse
-                                  </button>
-                                </div>
-                              </div>
-
-                              <div className="space-y-2">
-                                {poll.options.map((option) => {
-                                  const percentage = poll.totalVotes
-                                    ? (
-                                        (option.votes / poll.totalVotes) *
-                                        100
-                                      ).toFixed(1)
-                                    : "0.0";
-                                  const isWinner =
-                                    option.id === winningOption.id;
-
-                                  return (
-                                    <div
-                                      key={option.id}
-                                      className={`rounded-md border p-3 ${
-                                        isWinner
-                                          ? "border-green-300 bg-green-50"
-                                          : "border-gray-200 bg-white"
-                                      }`}
-                                    >
-                                      <div className="flex items-center justify-between">
-                                        <span className="text-sm font-medium text-gray-900">
-                                          {option.text}
-                                          {isWinner && (
-                                            <span className="ml-2 text-xs font-semibold text-green-600">
-                                              WINNER
-                                            </span>
-                                          )}
-                                        </span>
-                                        <span className="text-xs font-semibold text-gray-600">
-                                          {percentage}% ({option.votes})
-                                        </span>
-                                      </div>
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
+                    .map((poll) => (
+                      <EndedPollCard
+                        key={poll.id}
+                        poll={poll}
+                        isCurrentUserCr={isCurrentUserCr}
+                        isExpanded={expandedPolls[poll.id] || false}
+                        onToggleExpand={toggleExpandPoll}
+                        onReopenPoll={handleReopenPoll}
+                      />
+                    ))}
                 </div>
               </div>
             )}
