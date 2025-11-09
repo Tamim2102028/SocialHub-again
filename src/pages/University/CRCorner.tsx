@@ -323,9 +323,6 @@ const CRCorner: React.FC = () => {
   // which announcement menu is open (id -> boolean)
   const [menuOpenFor, setMenuOpenFor] = useState<number | null>(null);
 
-  // which poll menu is open
-  const [pollMenuOpenFor, setPollMenuOpenFor] = useState<number | null>(null);
-
   // which ended polls are expanded (full view)
   const [expandedPolls, setExpandedPolls] = useState<Record<number, boolean>>(
     {}
@@ -343,7 +340,6 @@ const CRCorner: React.FC = () => {
 
   const handleDeletePoll = (id: number) => {
     setPolls((prev) => prev.filter((p) => p.id !== id));
-    if (pollMenuOpenFor === id) setPollMenuOpenFor(null);
   };
 
   const handleEndPoll = (id: number) => {
@@ -370,11 +366,24 @@ const CRCorner: React.FC = () => {
           : p
       )
     );
-    setPollMenuOpenFor(null);
   };
 
   const toggleExpandPoll = (id: number) => {
     setExpandedPolls((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const handleReopenPoll = (id: number) => {
+    setPolls((prev) =>
+      prev.map((p) =>
+        p.id === id
+          ? {
+              ...p,
+              isEnded: false,
+              endedAt: undefined,
+            }
+          : p
+      )
+    );
   };
 
   return (
@@ -755,54 +764,9 @@ const CRCorner: React.FC = () => {
                   .map((poll) => (
                     <div
                       key={poll.id}
-                      className="relative mb-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
+                      className="mb-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
                     >
-                      {/* 3-dot menu , cancel button & count */}
-                      <div className="absolute top-3 right-3 flex items-center justify-center gap-2">
-                        <div className="text-sm text-gray-500">
-                          {poll.totalVotes} vote
-                          {poll.totalVotes !== 1 ? "s" : ""}
-                        </div>
-                        {selectedPolls[poll.id] != null && (
-                          <button
-                            onClick={() => handleCancelVote(poll.id)}
-                            className="rounded-md border border-red-300 bg-red-50 px-3 py-1.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-100"
-                          >
-                            Cancel Vote
-                          </button>
-                        )}
-                        <button
-                          onClick={() =>
-                            setPollMenuOpenFor((prev) =>
-                              prev === poll.id ? null : poll.id
-                            )
-                          }
-                          className="cursor-pointer rounded-full p-1 text-gray-600 hover:bg-gray-100"
-                          aria-label="Open poll menu"
-                        >
-                          <BsThreeDots className="h-5 w-5" />
-                        </button>
-
-                        {pollMenuOpenFor === poll.id && (
-                          <div className="absolute top-8 right-0 z-20 w-40 rounded-md border border-gray-200 bg-white shadow-lg">
-                            {isCurrentUserCr && (
-                              <button
-                                onClick={() => handleEndPoll(poll.id)}
-                                className="w-full px-3 py-2 text-left text-sm text-orange-600 hover:bg-gray-50"
-                              >
-                                End Poll
-                              </button>
-                            )}
-                            <button
-                              onClick={() => handleDeletePoll(poll.id)}
-                              className="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-gray-50"
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                      <div className="mb-3 flex items-start justify-between">
+                      <div className="mb-3">
                         <h3 className="text-base font-medium text-gray-900">
                           {poll.question}
                         </h3>
@@ -839,6 +803,37 @@ const CRCorner: React.FC = () => {
                             </div>
                           );
                         })}
+                      </div>
+
+                      {/* Vote count and Action buttons */}
+                      <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-gray-200 pt-4">
+                        <div className="text-sm font-medium text-gray-600">
+                          Total Votes: {poll.totalVotes}
+                        </div>
+                        <div className="flex flex-wrap items-center gap-2">
+                          {selectedPolls[poll.id] != null && (
+                            <button
+                              onClick={() => handleCancelVote(poll.id)}
+                              className="rounded-md border border-red-300 bg-red-50 px-3 py-1.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-100"
+                            >
+                              Cancel Vote
+                            </button>
+                          )}
+                          {isCurrentUserCr && (
+                            <button
+                              onClick={() => handleEndPoll(poll.id)}
+                              className="rounded-md border border-orange-300 bg-orange-50 px-3 py-1.5 text-sm font-medium text-orange-600 transition-colors hover:bg-orange-100"
+                            >
+                              End Poll
+                            </button>
+                          )}
+                          <button
+                            onClick={() => handleDeletePoll(poll.id)}
+                            className="rounded-md border border-red-300 bg-red-50 px-3 py-1.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-100"
+                          >
+                            Delete
+                          </button>
+                        </div>
                       </div>
 
                       {/* Poll Feedback Section */}
@@ -935,12 +930,22 @@ const CRCorner: React.FC = () => {
                                     total votes
                                   </p>
                                 </div>
-                                <button
-                                  onClick={() => toggleExpandPoll(poll.id)}
-                                  className="flex-shrink-0 rounded-md border border-blue-200 bg-blue-50 px-3 py-1.5 text-sm font-medium text-blue-600 transition-colors hover:border-blue-300 hover:bg-blue-100"
-                                >
-                                  Collapse
-                                </button>
+                                <div className="flex items-center gap-2">
+                                  {isCurrentUserCr && (
+                                    <button
+                                      onClick={() => handleReopenPoll(poll.id)}
+                                      className="flex-shrink-0 rounded-md border border-green-200 bg-green-50 px-3 py-1.5 text-sm font-medium text-green-600 transition-colors hover:border-green-300 hover:bg-green-100"
+                                    >
+                                      Reopen Poll
+                                    </button>
+                                  )}
+                                  <button
+                                    onClick={() => toggleExpandPoll(poll.id)}
+                                    className="flex-shrink-0 rounded-md border border-blue-200 bg-blue-50 px-3 py-1.5 text-sm font-medium text-blue-600 transition-colors hover:border-blue-300 hover:bg-blue-100"
+                                  >
+                                    Collapse
+                                  </button>
+                                </div>
                               </div>
 
                               <div className="space-y-2">
