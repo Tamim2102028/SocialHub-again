@@ -252,7 +252,11 @@ const HomePostCard: React.FC<HomePostCardProps> = ({ post }) => {
                   .reverse()
                   .slice(0, displayedCommentsCount)
                   .map((comment) => (
-                    <CommentItem key={comment.commentId} comment={comment} />
+                    <CommentItem
+                      key={comment.commentId}
+                      comment={comment}
+                      postOwnerId={post.userId}
+                    />
                   ))}
 
                 {/* Show More Comments Button - Inside scrollable area */}

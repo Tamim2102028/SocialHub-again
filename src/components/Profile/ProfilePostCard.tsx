@@ -274,7 +274,11 @@ const ProfilePostCard: React.FC<ProfilePostCardProps> = ({
                   .reverse()
                   .slice(0, displayedCommentsCount)
                   .map((comment) => (
-                    <CommentItem key={comment.commentId} comment={comment} />
+                    <CommentItem
+                      key={comment.commentId}
+                      comment={comment}
+                      postOwnerId={post.author.id}
+                    />
                   ))}
 
                 {/* Show More Comments Button - Inside scrollable area */}

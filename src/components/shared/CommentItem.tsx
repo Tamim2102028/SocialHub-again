@@ -1,22 +1,45 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { useAppSelector } from "../../store/hooks";
+import { useAppSelector, useAppDispatch } from "../../store/hooks";
 import { selectUserById } from "../../store/slices/profileSlice";
+import { deleteComment } from "../../store/slices/commentsSlice";
 import { formatPostDate, formatPostClock } from "../../utils/dateUtils";
+import { confirmDelete, showSuccess } from "../../utils/sweetAlert";
 import type { CommentData } from "../../data/profile-data/profilePostCommentsData";
 
 interface CommentItemProps {
   comment: CommentData;
+  postOwnerId: string; // ID of the post owner
 }
 
-const CommentItem: React.FC<CommentItemProps> = ({ comment }) => {
+const CommentItem: React.FC<CommentItemProps> = ({ comment, postOwnerId }) => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
+  const currentUserId = useAppSelector((state) => state.auth.user?.id);
   const commentUser = useAppSelector((state) =>
     selectUserById(state, comment.userId)
   );
 
+  // Check if current user can delete this comment
+  // (either the comment creator or the post owner)
+  const canDelete =
+    currentUserId === comment.userId || currentUserId === postOwnerId;
+
   const handleProfileClick = () => {
     navigate(`/profile/${comment.userId}`);
+  };
+
+  const handleDelete = async () => {
+    const result = await confirmDelete("this comment");
+
+    if (result) {
+      dispatch(deleteComment(comment.commentId));
+      await showSuccess({
+        title: "Deleted!",
+        text: "Comment deleted successfully",
+      });
+    }
   };
 
   return (
@@ -45,6 +68,19 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment }) => {
           <button className="hover:underline">Like</button>
           <span className="h-1 w-1 rounded-full bg-gray-400" />
           <button className="hover:underline">Reply</button>
+
+          {/* Delete button - only visible for comment creator or post owner */}
+          {canDelete && (
+            <>
+              <span className="h-1 w-1 rounded-full bg-gray-400" />
+              <button
+                onClick={handleDelete}
+                className="font-medium text-red-600 hover:underline"
+              >
+                Delete
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>
