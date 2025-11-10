@@ -86,6 +86,16 @@ const postsSlice = createSlice({
       }
     },
 
+    // Increment comment count
+    incrementCommentCount: (state, action: PayloadAction<string>) => {
+      const post = state.posts.find(
+        (p: PostData) => p.postId === action.payload
+      );
+      if (post) {
+        post.comments += 1;
+      }
+    },
+
     // Update share count
     updateShareCount: (
       state,
@@ -124,6 +134,7 @@ export const {
   toggleLikePost,
   toggleBookmarkPost,
   updateCommentCount,
+  incrementCommentCount,
   updateShareCount,
   deletePost,
   clearPostsError,

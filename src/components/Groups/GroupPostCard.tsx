@@ -19,6 +19,7 @@ import {
   addComment,
   selectCommentsByPostId,
 } from "../../store/slices/commentsSlice";
+import { incrementCommentCount } from "../../store/slices/postsSlice";
 import CommentItem from "../shared/CommentItem";
 
 type Props = {
@@ -39,6 +40,13 @@ const GroupPostCardSimple: React.FC<Props> = ({ post }) => {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [commentText, setCommentText] = useState("");
+  const [displayedCommentsCount, setDisplayedCommentsCount] = useState(15); // Initially show 15 comments
+
+  // Get actual post from Redux store for comment count
+  const reduxPost = useAppSelector((state) =>
+    state.posts.posts.find((p) => p.postId === post.postId)
+  );
+  const commentsCount = reduxPost?.comments || postComments.length;
 
   const handleLike = () => {
     setIsLiked(!isLiked);
@@ -182,7 +190,7 @@ const GroupPostCardSimple: React.FC<Props> = ({ post }) => {
           <div className="flex items-center space-x-3">
             <span>{likesCount} likes</span>
             <span className="text-gray-300">•</span>
-            <span>{0} comments</span>
+            <span>{commentsCount} comments</span>
             <span className="text-gray-300">•</span>
             <span>{post.sharesBy?.length || 0} shares</span>
           </div>
@@ -223,63 +231,87 @@ const GroupPostCardSimple: React.FC<Props> = ({ post }) => {
         </div>
       </div>
 
-      {/* Comments Section */}
-      {postComments.length > 0 && (
-        <div className="border-t border-gray-100 px-4 py-3">
-          <div className="space-y-3">
-            {postComments.map((comment) => (
-              <CommentItem key={comment.commentId} comment={comment} />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Quick Comment Input */}
+      {/* Comments Section & Input - Show only when comment button is clicked */}
       {showCommentBox && (
-        <div className="border-t border-gray-100 px-4 pb-4">
-          <div className="mt-3 flex items-center space-x-3">
-            <img
-              src={currentUser.avatar || "https://via.placeholder.com/32"}
-              alt="Your avatar"
-              className="h-8 w-8 rounded-full bg-gray-300 object-cover"
-            />
-            <input
-              type="text"
-              value={commentText}
-              onChange={(e) => setCommentText(e.target.value)}
-              placeholder="Write a comment..."
-              className="flex-1 rounded-full border border-gray-300 px-3 py-2 text-sm focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              onKeyPress={(e) => {
-                if (e.key === "Enter" && commentText.trim()) {
-                  dispatch(
-                    addComment({
-                      postId: post.postId,
-                      userId: currentUser.id,
-                      content: commentText.trim(),
-                    })
-                  );
-                  setCommentText("");
-                }
-              }}
-            />
-            <button
-              onClick={() => {
-                if (commentText.trim()) {
-                  dispatch(
-                    addComment({
-                      postId: post.postId,
-                      userId: currentUser.id,
-                      content: commentText.trim(),
-                    })
-                  );
-                  setCommentText("");
-                }
-              }}
-              disabled={!commentText.trim()}
-              className="rounded-full bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              Send
-            </button>
+        <div className="border-t border-gray-100">
+          {/* Comments List - Scrollable */}
+          {postComments.length > 0 && (
+            <div className="px-2.5 py-3">
+              <div className="max-h-[400px] space-y-3 overflow-y-auto">
+                {/* Display limited comments based on displayedCommentsCount - Newest first */}
+                {[...postComments]
+                  .reverse()
+                  .slice(0, displayedCommentsCount)
+                  .map((comment) => (
+                    <CommentItem key={comment.commentId} comment={comment} />
+                  ))}
+
+                {/* Show More Comments Button - Inside scrollable area */}
+                {postComments.length > displayedCommentsCount && (
+                  <div className="flex justify-center pt-2">
+                    <button
+                      onClick={() =>
+                        setDisplayedCommentsCount((prev) => prev + 15)
+                      }
+                      className="rounded-lg px-4 py-2 text-sm font-medium text-blue-600 transition-colors hover:bg-blue-50"
+                    >
+                      Show more comments (
+                      {postComments.length - displayedCommentsCount} remaining)
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Create Comment Input */}
+          <div className="border-t border-gray-100 px-4 pb-4">
+            <div className="mt-3 flex items-center space-x-3">
+              <img
+                src={currentUser.avatar || "https://via.placeholder.com/32"}
+                alt="Your avatar"
+                className="h-8 w-8 rounded-full bg-gray-300 object-cover"
+              />
+              <input
+                type="text"
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                placeholder="Write a comment..."
+                className="flex-1 rounded-full border border-gray-300 px-3 py-2 text-sm focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                onKeyPress={(e) => {
+                  if (e.key === "Enter" && commentText.trim()) {
+                    dispatch(
+                      addComment({
+                        postId: post.postId,
+                        userId: currentUser.id,
+                        content: commentText.trim(),
+                      })
+                    );
+                    dispatch(incrementCommentCount(post.postId));
+                    setCommentText("");
+                  }
+                }}
+              />
+              <button
+                onClick={() => {
+                  if (commentText.trim()) {
+                    dispatch(
+                      addComment({
+                        postId: post.postId,
+                        userId: currentUser.id,
+                        content: commentText.trim(),
+                      })
+                    );
+                    dispatch(incrementCommentCount(post.postId));
+                    setCommentText("");
+                  }
+                }}
+                disabled={!commentText.trim()}
+                className="rounded-full bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Send
+              </button>
+            </div>
           </div>
         </div>
       )}

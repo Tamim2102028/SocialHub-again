@@ -29,12 +29,12 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment }) => {
       />
       <div className="flex-1">
         <div className="rounded-lg bg-gray-100 px-3 py-2">
-          <p
+          <span
             className="cursor-pointer text-sm font-semibold text-gray-900 transition-colors hover:text-blue-600 hover:underline"
             onClick={handleProfileClick}
           >
             {commentUser?.name || "User"}
-          </p>
+          </span>
           <p className="text-sm text-gray-700">{comment.content}</p>
         </div>
         <div className="mt-1 flex items-center space-x-2 text-xs text-gray-500">

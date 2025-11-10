@@ -23,7 +23,7 @@ export const postData: PostData[] = [
       "Excited to join SocialHubs! 🚀 This platform looks amazing and I can't wait to connect with everyone. The interface is so clean and user-friendly!",
     createdAt: "2024-06-01T10:00:00Z",
     updatedAt: "2024-06-01T12:00:00Z",
-    comments: 2,
+    comments: 20,
     sharesBy: ["5", "8", "12", "17"],
     likedBy: ["2", "3", "4", "6", "7", "9", "11", "13", "15", "18", "20"],
     images: [
