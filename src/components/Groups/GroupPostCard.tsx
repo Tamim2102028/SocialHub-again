@@ -23,11 +23,13 @@ type Props = {
 const GroupPostCardSimple: React.FC<Props> = ({ post }) => {
   const navigate = useNavigate();
   const author = useAppSelector((s) => selectUserById(s, post.createdBy));
+  const currentUser = useAppSelector((state) => state.profile);
   const [showCommentBox, setShowCommentBox] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(post.likedBy?.length || 0);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const [commentText, setCommentText] = useState("");
 
   const handleLike = () => {
     setIsLiked(!isLiked);
@@ -217,15 +219,35 @@ const GroupPostCardSimple: React.FC<Props> = ({ post }) => {
         <div className="border-t border-gray-100 px-4 pb-4">
           <div className="mt-3 flex items-center space-x-3">
             <img
-              src={author?.avatar}
+              src={currentUser.avatar || "https://via.placeholder.com/32"}
               alt="Your avatar"
-              className="h-8 w-8 rounded-full bg-gray-300"
+              className="h-8 w-8 rounded-full bg-gray-300 object-cover"
             />
             <input
               type="text"
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
               placeholder="Write a comment..."
               className="flex-1 rounded-full border border-gray-300 px-3 py-2 text-sm focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              onKeyPress={(e) => {
+                if (e.key === "Enter" && commentText.trim()) {
+                  console.log("Comment posted:", commentText);
+                  setCommentText("");
+                }
+              }}
             />
+            <button
+              onClick={() => {
+                if (commentText.trim()) {
+                  console.log("Comment posted:", commentText);
+                  setCommentText("");
+                }
+              }}
+              disabled={!commentText.trim()}
+              className="rounded-full bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Send
+            </button>
           </div>
         </div>
       )}

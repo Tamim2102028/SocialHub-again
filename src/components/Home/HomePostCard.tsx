@@ -30,13 +30,17 @@ const HomePostCard: React.FC<HomePostCardProps> = ({ post }) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [showCommentBox, setShowCommentBox] = useState(false);
+  const [commentText, setCommentText] = useState("");
   const [imageError, setImageError] = useState(false);
   const showMenu = useAppSelector(
     (state) => state.ui.menus.postMenus[post.postId] || false
   );
 
   // Get user data for the post author via selector
-  const userData = useAppSelector((s) => selectUserById(s, post.userId));
+  const userData = useAppSelector((state) =>
+    selectUserById(state, post.userId)
+  );
+  const currentUser = useAppSelector((state) => state.profile);
   const isLiked = post.likedBy.includes("1"); // Current user ID
 
   const handleLike = () => {
@@ -231,15 +235,35 @@ const HomePostCard: React.FC<HomePostCardProps> = ({ post }) => {
         <div className="border-t border-gray-100 px-4 pb-4">
           <div className="mt-3 flex items-center space-x-3">
             <img
-              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face"
+              src={currentUser.avatar || "https://via.placeholder.com/32"}
               alt="Your avatar"
-              className="h-8 w-8 rounded-full bg-gray-300"
+              className="h-8 w-8 rounded-full bg-gray-300 object-cover"
             />
             <input
               type="text"
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
               placeholder="Write a comment..."
               className="flex-1 rounded-full border border-gray-300 px-3 py-2 text-sm focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              onKeyPress={(e) => {
+                if (e.key === "Enter" && commentText.trim()) {
+                  console.log("Comment posted:", commentText);
+                  setCommentText("");
+                }
+              }}
             />
+            <button
+              onClick={() => {
+                if (commentText.trim()) {
+                  console.log("Comment posted:", commentText);
+                  setCommentText("");
+                }
+              }}
+              disabled={!commentText.trim()}
+              className="rounded-full bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Send
+            </button>
           </div>
         </div>
       )}
