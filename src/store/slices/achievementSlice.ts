@@ -68,7 +68,6 @@ const achievementSlice = createSlice({
         id: `ticket-${Date.now()}`,
         userId,
         tournamentId,
-        wonDate: new Date().toISOString(),
         isUsed: false,
       };
       state.userTickets.push(newTicket);

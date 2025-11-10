@@ -29,7 +29,7 @@ const ProfileEdit: React.FC = () => {
     if (profileData.id) {
       setFormData({
         name: profileData.name,
-        bio: profileData.bio,
+        bio: profileData.bio || "",
         avatar: profileData.avatar,
       });
     }
