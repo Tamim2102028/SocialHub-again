@@ -238,6 +238,17 @@ const HomePostCard: React.FC<HomePostCardProps> = ({ post }) => {
         </div>
       </div>
 
+      {/* Comments Section */}
+      {postComments.length > 0 && (
+        <div className="border-t border-gray-100 px-4 py-3">
+          <div className="space-y-3">
+            {postComments.map((comment) => (
+              <CommentItem key={comment.commentId} comment={comment} />
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Quick Comment Input - Show only when comment button is clicked */}
       {showCommentBox && (
         <div className="border-t border-gray-100 px-4 pb-4">
@@ -285,15 +296,6 @@ const HomePostCard: React.FC<HomePostCardProps> = ({ post }) => {
               Send
             </button>
           </div>
-
-          {/* Display Comments */}
-          {postComments.length > 0 && (
-            <div className="mt-4 space-y-3">
-              {postComments.map((comment) => (
-                <CommentItem key={comment.commentId} comment={comment} />
-              ))}
-            </div>
-          )}
         </div>
       )}
     </div>
