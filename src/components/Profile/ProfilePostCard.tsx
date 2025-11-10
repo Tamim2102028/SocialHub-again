@@ -14,7 +14,12 @@ import {
   FaFlag,
 } from "react-icons/fa";
 import { formatPostDate, formatPostClock } from "../../utils/dateUtils";
-import { useAppSelector } from "../../store/hooks";
+import { useAppSelector, useAppDispatch } from "../../store/hooks";
+import {
+  addComment,
+  selectCommentsByPostId,
+} from "../../store/slices/commentsSlice";
+import CommentItem from "../shared/CommentItem";
 
 interface Author {
   id: string;
@@ -45,6 +50,7 @@ const ProfilePostCard: React.FC<ProfilePostCardProps> = ({
   post,
   isOwnProfile,
 }) => {
+  const dispatch = useAppDispatch();
   const [showCommentBox, setShowCommentBox] = useState(false);
   const [isLiked, setIsLiked] = useState(post.isLiked);
   const [likesCount, setLikesCount] = useState(post.likes);
@@ -52,6 +58,9 @@ const ProfilePostCard: React.FC<ProfilePostCardProps> = ({
   const [showMenu, setShowMenu] = useState(false);
   const [commentText, setCommentText] = useState("");
   const currentUser = useAppSelector((state) => state.profile);
+  const postComments = useAppSelector((state) =>
+    selectCommentsByPostId(state, post.id)
+  );
 
   const handleLike = () => {
     setIsLiked(!isLiked);
@@ -263,7 +272,13 @@ const ProfilePostCard: React.FC<ProfilePostCardProps> = ({
               className="flex-1 rounded-full border border-gray-300 px-3 py-2 text-sm focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
               onKeyPress={(e) => {
                 if (e.key === "Enter" && commentText.trim()) {
-                  console.log("Comment posted:", commentText);
+                  dispatch(
+                    addComment({
+                      postId: post.id,
+                      userId: currentUser.id,
+                      content: commentText.trim(),
+                    })
+                  );
                   setCommentText("");
                 }
               }}
@@ -271,7 +286,13 @@ const ProfilePostCard: React.FC<ProfilePostCardProps> = ({
             <button
               onClick={() => {
                 if (commentText.trim()) {
-                  console.log("Comment posted:", commentText);
+                  dispatch(
+                    addComment({
+                      postId: post.id,
+                      userId: currentUser.id,
+                      content: commentText.trim(),
+                    })
+                  );
                   setCommentText("");
                 }
               }}
@@ -281,6 +302,15 @@ const ProfilePostCard: React.FC<ProfilePostCardProps> = ({
               Send
             </button>
           </div>
+
+          {/* Display Comments */}
+          {postComments.length > 0 && (
+            <div className="mt-4 space-y-3">
+              {postComments.map((comment) => (
+                <CommentItem key={comment.commentId} comment={comment} />
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>

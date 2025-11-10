@@ -21,6 +21,11 @@ import {
 import type { PostData } from "../../data/profile-data/profilePostData";
 import { selectUserById } from "../../store/slices/profileSlice";
 import { formatPostDate, formatPostClock } from "../../utils/dateUtils";
+import {
+  addComment,
+  selectCommentsByPostId,
+} from "../../store/slices/commentsSlice";
+import CommentItem from "../shared/CommentItem";
 
 interface HomePostCardProps {
   post: PostData;
@@ -41,6 +46,9 @@ const HomePostCard: React.FC<HomePostCardProps> = ({ post }) => {
     selectUserById(state, post.userId)
   );
   const currentUser = useAppSelector((state) => state.profile);
+  const postComments = useAppSelector((state) =>
+    selectCommentsByPostId(state, post.postId)
+  );
   const isLiked = post.likedBy.includes("1"); // Current user ID
 
   const handleLike = () => {
@@ -247,7 +255,13 @@ const HomePostCard: React.FC<HomePostCardProps> = ({ post }) => {
               className="flex-1 rounded-full border border-gray-300 px-3 py-2 text-sm focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
               onKeyPress={(e) => {
                 if (e.key === "Enter" && commentText.trim()) {
-                  console.log("Comment posted:", commentText);
+                  dispatch(
+                    addComment({
+                      postId: post.postId,
+                      userId: currentUser.id,
+                      content: commentText.trim(),
+                    })
+                  );
                   setCommentText("");
                 }
               }}
@@ -255,7 +269,13 @@ const HomePostCard: React.FC<HomePostCardProps> = ({ post }) => {
             <button
               onClick={() => {
                 if (commentText.trim()) {
-                  console.log("Comment posted:", commentText);
+                  dispatch(
+                    addComment({
+                      postId: post.postId,
+                      userId: currentUser.id,
+                      content: commentText.trim(),
+                    })
+                  );
                   setCommentText("");
                 }
               }}
@@ -265,6 +285,15 @@ const HomePostCard: React.FC<HomePostCardProps> = ({ post }) => {
               Send
             </button>
           </div>
+
+          {/* Display Comments */}
+          {postComments.length > 0 && (
+            <div className="mt-4 space-y-3">
+              {postComments.map((comment) => (
+                <CommentItem key={comment.commentId} comment={comment} />
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>

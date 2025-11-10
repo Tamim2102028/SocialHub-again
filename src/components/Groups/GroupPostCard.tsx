@@ -12,9 +12,14 @@ import {
   FaFlag,
 } from "react-icons/fa";
 import type { GroupPost } from "../../data/group-data/groupPostsData";
-import { useAppSelector } from "../../store/hooks";
+import { useAppSelector, useAppDispatch } from "../../store/hooks";
 import { selectUserById } from "../../store/slices/profileSlice";
 import { formatPostDate, formatPostClock } from "../../utils/dateUtils";
+import {
+  addComment,
+  selectCommentsByPostId,
+} from "../../store/slices/commentsSlice";
+import CommentItem from "../shared/CommentItem";
 
 type Props = {
   post: GroupPost;
@@ -22,8 +27,12 @@ type Props = {
 
 const GroupPostCardSimple: React.FC<Props> = ({ post }) => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const author = useAppSelector((s) => selectUserById(s, post.createdBy));
   const currentUser = useAppSelector((state) => state.profile);
+  const postComments = useAppSelector((state) =>
+    selectCommentsByPostId(state, post.postId)
+  );
   const [showCommentBox, setShowCommentBox] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(post.likedBy?.length || 0);
@@ -231,7 +240,13 @@ const GroupPostCardSimple: React.FC<Props> = ({ post }) => {
               className="flex-1 rounded-full border border-gray-300 px-3 py-2 text-sm focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
               onKeyPress={(e) => {
                 if (e.key === "Enter" && commentText.trim()) {
-                  console.log("Comment posted:", commentText);
+                  dispatch(
+                    addComment({
+                      postId: post.postId,
+                      userId: currentUser.id,
+                      content: commentText.trim(),
+                    })
+                  );
                   setCommentText("");
                 }
               }}
@@ -239,7 +254,13 @@ const GroupPostCardSimple: React.FC<Props> = ({ post }) => {
             <button
               onClick={() => {
                 if (commentText.trim()) {
-                  console.log("Comment posted:", commentText);
+                  dispatch(
+                    addComment({
+                      postId: post.postId,
+                      userId: currentUser.id,
+                      content: commentText.trim(),
+                    })
+                  );
                   setCommentText("");
                 }
               }}
@@ -249,6 +270,15 @@ const GroupPostCardSimple: React.FC<Props> = ({ post }) => {
               Send
             </button>
           </div>
+
+          {/* Display Comments */}
+          {postComments.length > 0 && (
+            <div className="mt-4 space-y-3">
+              {postComments.map((comment) => (
+                <CommentItem key={comment.commentId} comment={comment} />
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>
