@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../store/hooks";
 import { selectUserById } from "../../store/slices/profileSlice";
 import { formatPostDate, formatPostClock } from "../../utils/dateUtils";
@@ -9,20 +10,29 @@ interface CommentItemProps {
 }
 
 const CommentItem: React.FC<CommentItemProps> = ({ comment }) => {
+  const navigate = useNavigate();
   const commentUser = useAppSelector((state) =>
     selectUserById(state, comment.userId)
   );
+
+  const handleProfileClick = () => {
+    navigate(`/profile/${comment.userId}`);
+  };
 
   return (
     <div className="flex space-x-3">
       <img
         src={commentUser?.avatar || "https://via.placeholder.com/32"}
         alt={commentUser?.name || "User"}
-        className="h-8 w-8 rounded-full bg-gray-300 object-cover"
+        className="h-8 w-8 cursor-pointer rounded-full bg-gray-300 object-cover transition-all hover:ring-2 hover:ring-blue-300"
+        onClick={handleProfileClick}
       />
       <div className="flex-1">
         <div className="rounded-lg bg-gray-100 px-3 py-2">
-          <p className="text-sm font-semibold text-gray-900">
+          <p
+            className="cursor-pointer text-sm font-semibold text-gray-900 transition-colors hover:text-blue-600 hover:underline"
+            onClick={handleProfileClick}
+          >
             {commentUser?.name || "User"}
           </p>
           <p className="text-sm text-gray-700">{comment.content}</p>
