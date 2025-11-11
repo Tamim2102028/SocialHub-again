@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../../store/hooks";
 import { selectUserById } from "../../store/slices/profileSlice";
-import { deleteComment } from "../../store/slices/commentsSlice";
+import { deleteCommentAndDecrement } from "../../store/slices/commentsSlice";
 import { formatPostDate, formatPostClock } from "../../utils/dateUtils";
 import { confirmDelete, showSuccess } from "../../utils/sweetAlert";
 import type { CommentData } from "../../data/profile-data/profilePostCommentsData";
@@ -34,7 +34,7 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, postOwnerId }) => {
     const result = await confirmDelete("this comment");
 
     if (result) {
-      dispatch(deleteComment(comment.commentId));
+      dispatch(deleteCommentAndDecrement(comment.commentId));
       await showSuccess({
         title: "Deleted!",
         text: "Comment deleted successfully",
@@ -53,7 +53,7 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, postOwnerId }) => {
       <div className="flex-1">
         <div className="rounded-lg bg-gray-100 px-3 py-2">
           <span
-            className="cursor-pointer text-sm font-semibold text-gray-900 ing-sition-colors hover:text-blue-600 hover:underline"
+            className="ing-sition-colors cursor-pointer text-sm font-semibold text-gray-900 hover:text-blue-600 hover:underline"
             onClick={handleProfileClick}
           >
             {commentUser?.name || "User"}

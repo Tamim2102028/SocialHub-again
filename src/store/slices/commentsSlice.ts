@@ -3,7 +3,8 @@ import {
   commentsData,
   type CommentData,
 } from "../../data/profile-data/profilePostCommentsData";
-import type { RootState } from "../store";
+import type { RootState, AppDispatch } from "../store";
+import { decrementCommentCount } from "./postsSlice";
 
 interface CommentsState {
   comments: CommentData[];
@@ -61,6 +62,22 @@ const commentsSlice = createSlice({
 export const { addComment, deleteComment, updateComment } =
   commentsSlice.actions;
 export default commentsSlice.reducer;
+
+// Thunk: delete comment and decrement the parent post's comment count
+export const deleteCommentAndDecrement =
+  (commentId: string) => (dispatch: AppDispatch, getState: () => RootState) => {
+    const state = getState();
+    const comment = state.comments.comments.find(
+      (c) => c.commentId === commentId
+    );
+    // delete comment first
+    dispatch(deleteComment(commentId));
+
+    // if we know the postId, decrement its comment count
+    if (comment && comment.postId) {
+      dispatch(decrementCommentCount(comment.postId));
+    }
+  };
 
 // Selectors
 export const selectCommentsByPostId = (state: RootState, postId: string) =>
