@@ -31,8 +31,22 @@ const repliesSlice = createSlice({
         userId: action.payload.userId,
         content: action.payload.content,
         createdAt: new Date().toISOString(),
+        likedBy: [],
       };
       state.replies.push(newReply);
+    },
+
+    toggleLikeReply(
+      state,
+      action: PayloadAction<{ replyId: string; userId: string }>
+    ) {
+      const { replyId, userId } = action.payload;
+      const r = state.replies.find((x) => x.replyId === replyId);
+      if (!r) return;
+      if (!r.likedBy) r.likedBy = [];
+      const idx = r.likedBy.indexOf(userId);
+      if (idx === -1) r.likedBy.push(userId);
+      else r.likedBy.splice(idx, 1);
     },
 
     deleteReply(state, action: PayloadAction<string>) {
@@ -49,7 +63,7 @@ const repliesSlice = createSlice({
   },
 });
 
-export const { addReply, deleteReply, updateReply } = repliesSlice.actions;
+export const { addReply, deleteReply, updateReply, toggleLikeReply } = repliesSlice.actions;
 export default repliesSlice.reducer;
 
 // selectors

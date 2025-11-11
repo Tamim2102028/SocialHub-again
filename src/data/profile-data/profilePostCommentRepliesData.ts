@@ -4,6 +4,7 @@ export interface ReplyData {
   userId: string;
   content: string;
   createdAt: string;
+  likedBy?: string[];
 }
 
 export const repliesData: ReplyData[] = [
@@ -14,6 +15,7 @@ export const repliesData: ReplyData[] = [
     userId: "1",
     content: "Thanks! Glad you liked it 😊",
     createdAt: "2024-06-01T10:06:00Z",
+    likedBy: [],
   },
   {
     replyId: "rp2",
@@ -21,6 +23,7 @@ export const repliesData: ReplyData[] = [
     userId: "6",
     content: "Totally agree — great work!",
     createdAt: "2024-06-01T10:19:00Z",
+    likedBy: [],
   },
   {
     replyId: "rp3",
@@ -28,6 +31,7 @@ export const repliesData: ReplyData[] = [
     userId: "1",
     content: "Welcome aboard! 🙌",
     createdAt: "2024-06-01T10:13:00Z",
+    likedBy: [],
   },
 
   // Replies for comments on post p4
@@ -37,6 +41,7 @@ export const repliesData: ReplyData[] = [
     userId: "2",
     content: "Thanks! Highly recommend it.",
     createdAt: "2024-06-04T11:08:00Z",
+    likedBy: [],
   },
   {
     replyId: "rp5",
@@ -44,6 +49,7 @@ export const repliesData: ReplyData[] = [
     userId: "9",
     content: "I added it to my reading list too!",
     createdAt: "2024-06-04T11:21:00Z",
+    likedBy: [],
   },
 ];
 

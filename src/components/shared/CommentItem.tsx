@@ -10,6 +10,8 @@ import {
 import {
   addReply,
   selectRepliesByCommentId,
+  deleteReply,
+  toggleLikeReply,
 } from "../../store/slices/repliesSlice";
 import { formatPostDate, formatPostClock } from "../../utils/dateUtils";
 import { confirmDelete, showSuccess } from "../../utils/sweetAlert";
@@ -86,6 +88,17 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, postOwnerId }) => {
     dispatch(addReply({ commentId: comment.commentId, userId, content: text }));
     setReplyText("");
     setShowReplyInput(false);
+  };
+
+  const handleDeleteReply = async (replyId: string) => {
+    const result = await confirmDelete("this reply");
+    if (result) {
+      dispatch(deleteReply(replyId));
+      await showSuccess({
+        title: "Deleted!",
+        text: "Reply deleted successfully",
+      });
+    }
   };
 
   return (
@@ -198,6 +211,13 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, postOwnerId }) => {
           <div className="mt-2 space-y-2 pl-10">
             {replies.map((r) => {
               const replyUser = replyUsersMap[r.userId];
+              const isReplyLiked =
+                !!currentUserId &&
+                !!r.likedBy &&
+                r.likedBy.includes(currentUserId);
+              const replyLikesCount = r.likedBy ? r.likedBy.length : 0;
+              const canDeleteReply =
+                currentUserId === r.userId || currentUserId === postOwnerId;
               return (
                 <div
                   key={r.replyId}
@@ -216,6 +236,30 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, postOwnerId }) => {
                     <div className="mt-1 text-xs text-gray-400">
                       {formatPostDate(r.createdAt)} •{" "}
                       {formatPostClock(r.createdAt)}
+                    </div>
+                    <div className="mt-1 flex items-center space-x-2 text-xs text-gray-500">
+                      <button
+                        onClick={() => {
+                          const userId = currentUserId || "1";
+                          dispatch(
+                            toggleLikeReply({ replyId: r.replyId, userId })
+                          );
+                        }}
+                        className={`cursor-pointer hover:underline ${isReplyLiked ? "font-medium text-green-700" : "text-gray-600"}`}
+                      >
+                        Like{replyLikesCount > 0 ? ` · ${replyLikesCount}` : ""}
+                      </button>
+
+                      <span className="h-1 w-1 rounded-full bg-gray-400" />
+
+                      {canDeleteReply && (
+                        <button
+                          onClick={() => handleDeleteReply(r.replyId)}
+                          className="cursor-pointer font-medium text-red-600 hover:underline"
+                        >
+                          Delete
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
