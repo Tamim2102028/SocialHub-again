@@ -133,7 +133,7 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, postOwnerId }) => {
             onClick={() => setShowReplyInput((s) => !s)}
             className="cursor-pointer text-gray-600 hover:underline"
           >
-            Reply
+            {`Reply${replies && replies.length > 0 ? ` · ${replies.length}` : ""}`}
           </button>
 
           {canDelete && (
