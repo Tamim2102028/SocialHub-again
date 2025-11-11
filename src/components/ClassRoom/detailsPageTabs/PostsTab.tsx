@@ -152,6 +152,13 @@ const PostsTab: React.FC<Props> = ({
                       <span>{formatPostDate(p.createdAt)}</span>
                       <SeparatorDot ariaHidden />
                       <span>{formatPostClock(p.createdAt)}</span>
+                      <SeparatorDot ariaHidden />
+                      <button
+                        onClick={() => toggleReply(p.id)}
+                        className="cursor-pointer text-sm font-medium text-blue-600 hover:underline"
+                      >
+                        Reply
+                      </button>
                     </p>
                   </div>
 
@@ -278,15 +285,6 @@ const PostsTab: React.FC<Props> = ({
                     })()}
                   </div>
                 )}
-
-                <div className="mt-3 flex items-center gap-3">
-                  <button
-                    onClick={() => toggleReply(p.id)}
-                    className="cursor-pointer text-sm font-medium text-blue-600 hover:underline"
-                  >
-                    Reply
-                  </button>
-                </div>
 
                 {showReplyFor[p.id] && (
                   <div className="mt-2">
