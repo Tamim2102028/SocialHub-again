@@ -87,7 +87,7 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, postOwnerId }) => {
   return (
     <div className="flex space-x-3">
       <img
-        src={commentUser?.avatar || "https://via.placeholder.com/32"}
+        src={commentUser?.avatar || "https://api.dicebear.com/9.x/bottts/svg?seed=Tamim"}
         alt={commentUser?.name || "User"}
         className="h-8 w-8 cursor-pointer rounded-full bg-gray-300 object-cover transition-all hover:ring-2 hover:ring-blue-300"
         onClick={handleProfileClick}
