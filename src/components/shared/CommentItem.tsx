@@ -233,11 +233,12 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, postOwnerId }) => {
                       {replyUser?.name || "User"}
                     </div>
                     <div className="text-gray-700">{r.content}</div>
-                    <div className="mt-1 text-xs text-gray-400">
-                      {formatPostDate(r.createdAt)} •{" "}
-                      {formatPostClock(r.createdAt)}
-                    </div>
-                    <div className="mt-1 flex items-center space-x-2 text-xs text-gray-500">
+                    <div className="mt-1 flex items-center space-x-2 text-xs text-gray-400">
+                      <span>{formatPostDate(r.createdAt)}</span>
+                      <span className="h-1 w-1 rounded-full bg-gray-400" />
+                      <span>{formatPostClock(r.createdAt)}</span>
+                      <span className="h-1 w-1 rounded-full bg-gray-400" />
+
                       <button
                         onClick={() => {
                           const userId = currentUserId || "1";
