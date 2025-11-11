@@ -32,8 +32,24 @@ const commentsSlice = createSlice({
         userId: action.payload.userId,
         content: action.payload.content,
         createdAt: new Date().toISOString(),
+        likedBy: [],
       };
       state.comments.push(newComment);
+    },
+
+    // Toggle like for a comment by userId
+    toggleLikeComment(
+      state,
+      action: PayloadAction<{ commentId: string; userId: string }>
+    ) {
+      const { commentId, userId } = action.payload;
+      const comment = state.comments.find((c) => c.commentId === commentId);
+      if (comment) {
+        if (!comment.likedBy) comment.likedBy = [];
+        const idx = comment.likedBy.indexOf(userId);
+        if (idx > -1) comment.likedBy.splice(idx, 1);
+        else comment.likedBy.push(userId);
+      }
     },
 
     deleteComment(state, action: PayloadAction<string>) {
@@ -59,7 +75,7 @@ const commentsSlice = createSlice({
   },
 });
 
-export const { addComment, deleteComment, updateComment } =
+export const { addComment, deleteComment, updateComment, toggleLikeComment } =
   commentsSlice.actions;
 export default commentsSlice.reducer;
 

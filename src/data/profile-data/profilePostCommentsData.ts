@@ -4,6 +4,7 @@ export interface CommentData {
   userId: string;
   content: string;
   createdAt: string;
+  likedBy?: string[];
 }
 
 export const commentsData: CommentData[] = [
@@ -13,6 +14,7 @@ export const commentsData: CommentData[] = [
     userId: "2",
     content: "Great post, Tamim!",
     createdAt: "2024-06-01T10:05:00Z",
+    likedBy: ["3", "5"],
   },
   {
     commentId: "c2",
@@ -20,6 +22,7 @@ export const commentsData: CommentData[] = [
     userId: "3",
     content: "Welcome to SocialHub!",
     createdAt: "2024-06-01T10:10:00Z",
+    likedBy: ["1"],
   },
   {
     commentId: "c1001",
@@ -28,6 +31,7 @@ export const commentsData: CommentData[] = [
     content:
       "This is exactly what we needed! Can't wait to explore more features 😊",
     createdAt: "2024-06-01T10:15:00Z",
+    likedBy: ["2", "6"],
   },
   {
     commentId: "c1002",
@@ -56,6 +60,7 @@ export const commentsData: CommentData[] = [
     userId: "8",
     content: "The design is really impressive. How long did it take to build?",
     createdAt: "2024-06-01T10:35:00Z",
+    likedBy: ["1", "11"],
   },
   {
     commentId: "c1006",
@@ -83,7 +88,8 @@ export const commentsData: CommentData[] = [
     commentId: "c1009",
     postId: "p1",
     userId: "12",
-    content: "This platform has so much potential! When will you add dark mode?",
+    content:
+      "This platform has so much potential! When will you add dark mode?",
     createdAt: "2024-06-01T10:55:00Z",
   },
   {
@@ -104,15 +110,15 @@ export const commentsData: CommentData[] = [
     commentId: "c1012",
     postId: "p1",
     userId: "15",
-    content:
-      "Love how smooth everything runs. What tech stack did you use? 🤔",
+    content: "Love how smooth everything runs. What tech stack did you use? 🤔",
     createdAt: "2024-06-01T11:10:00Z",
   },
   {
     commentId: "c1013",
     postId: "p1",
     userId: "16",
-    content: "This is exactly what students need! Thank you for building this 🙏",
+    content:
+      "This is exactly what students need! Thank you for building this 🙏",
     createdAt: "2024-06-01T11:15:00Z",
   },
   {
@@ -126,7 +132,8 @@ export const commentsData: CommentData[] = [
     commentId: "c1015",
     postId: "p1",
     userId: "18",
-    content: "Can't believe this is still in development. Feels production-ready!",
+    content:
+      "Can't believe this is still in development. Feels production-ready!",
     createdAt: "2024-06-01T11:25:00Z",
   },
   {
@@ -158,6 +165,7 @@ export const commentsData: CommentData[] = [
     userId: "4",
     content: "Study sessions are the best.",
     createdAt: "2024-06-02T14:35:00Z",
+    likedBy: ["2"],
   },
   {
     commentId: "c4",
@@ -165,6 +173,7 @@ export const commentsData: CommentData[] = [
     userId: "5",
     content: "Keep it up!",
     createdAt: "2024-06-02T14:40:00Z",
+    likedBy: ["3"],
   },
   {
     commentId: "c5",
@@ -186,6 +195,7 @@ export const commentsData: CommentData[] = [
     userId: "8",
     content: "Awesome update!",
     createdAt: "2024-06-04T10:05:00Z",
+    likedBy: ["2", "9"],
   },
   {
     commentId: "c8",
@@ -193,6 +203,7 @@ export const commentsData: CommentData[] = [
     userId: "9",
     content: "Thanks for sharing.",
     createdAt: "2024-06-04T10:10:00Z",
+    likedBy: ["2"],
   },
   {
     commentId: "c9",

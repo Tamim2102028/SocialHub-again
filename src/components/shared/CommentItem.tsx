@@ -2,7 +2,10 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../../store/hooks";
 import { selectUserById } from "../../store/slices/profileSlice";
-import { deleteCommentAndDecrement } from "../../store/slices/commentsSlice";
+import {
+  deleteCommentAndDecrement,
+  toggleLikeComment,
+} from "../../store/slices/commentsSlice";
 import { formatPostDate, formatPostClock } from "../../utils/dateUtils";
 import { confirmDelete, showSuccess } from "../../utils/sweetAlert";
 import type { CommentData } from "../../data/profile-data/profilePostCommentsData";
@@ -25,6 +28,12 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, postOwnerId }) => {
   // (either the comment creator or the post owner)
   const canDelete =
     currentUserId === comment.userId || currentUserId === postOwnerId;
+
+  const isLiked =
+    !!currentUserId &&
+    !!comment.likedBy &&
+    comment.likedBy.includes(currentUserId);
+  const likesCount = comment.likedBy ? comment.likedBy.length : 0;
 
   const handleProfileClick = () => {
     navigate(`/profile/${comment.userId}`);
@@ -65,7 +74,17 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, postOwnerId }) => {
           <span className="h-1 w-1 rounded-full bg-gray-400" />
           <span>{formatPostClock(comment.createdAt)}</span>
           <span className="h-1 w-1 rounded-full bg-gray-400" />
-          <button className="hover:underline">Like</button>
+          <button
+            onClick={() => {
+              const userId = currentUserId || "1";
+              dispatch(
+                toggleLikeComment({ commentId: comment.commentId, userId })
+              );
+            }}
+            className={`cursor-pointer hover:underline ${isLiked ? "font-medium text-green-700" : "text-gray-600"}`}
+          >
+            Like{likesCount > 0 ? ` · ${likesCount}` : ""}
+          </button>
           {/* Reply removed as per request */}
 
           {/* Delete button - only visible for comment creator or post owner */}
@@ -74,7 +93,7 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, postOwnerId }) => {
               <span className="h-1 w-1 rounded-full bg-gray-400" />
               <button
                 onClick={handleDelete}
-                className="font-medium text-red-600 hover:underline"
+                className="cursor-pointer font-medium text-red-600 hover:underline"
               >
                 Delete
               </button>
