@@ -67,6 +67,8 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, postOwnerId }) => {
   const [showReplies, setShowReplies] = React.useState(false);
   const [replyText, setReplyText] = React.useState("");
 
+  const replyTextareaRef = React.useRef<HTMLTextAreaElement | null>(null);
+
   const replies = useAppSelector((state) =>
     selectRepliesByCommentId(state, comment.commentId)
   );
@@ -87,8 +89,11 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, postOwnerId }) => {
     if (!text) return;
     const userId = currentUserId || "1";
     dispatch(addReply({ commentId: comment.commentId, userId, content: text }));
+    // Keep the input open after sending; clear text and ensure replies list is visible
     setReplyText("");
-    setShowReplyInput(false);
+    setShowReplies(true);
+    // keep focus in the textarea so user can continue typing
+    setTimeout(() => replyTextareaRef.current?.focus(), 0);
   };
 
   const handleDeleteReply = async (replyId: string) => {
@@ -182,6 +187,7 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, postOwnerId }) => {
               <div className="flex-1">
                 <textarea
                   autoFocus
+                  ref={replyTextareaRef}
                   value={replyText}
                   onChange={(e) => setReplyText(e.target.value)}
                   rows={2}
