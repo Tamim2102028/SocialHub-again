@@ -60,11 +60,15 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, postOwnerId }) => {
 
   // Reply UI state
   const [showReplyInput, setShowReplyInput] = React.useState(false);
+  // control showing/hiding the replies list (toggle together with reply input)
+  const [showReplies, setShowReplies] = React.useState(false);
   const [replyText, setReplyText] = React.useState("");
 
   const replies = useAppSelector((state) =>
     selectRepliesByCommentId(state, comment.commentId)
   );
+
+  // Replies are hidden by default; clicking Reply toggles both input and the replies list.
 
   // Map of reply user data by id to avoid calling hooks inside loops
   const replyUsersMap = useAppSelector((state) => {
@@ -130,7 +134,10 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, postOwnerId }) => {
           <span className="h-1 w-1 rounded-full bg-gray-400" />
 
           <button
-            onClick={() => setShowReplyInput((s) => !s)}
+            onClick={() => {
+              setShowReplyInput((s) => !s);
+              setShowReplies((s) => !s);
+            }}
             className="cursor-pointer text-gray-600 hover:underline"
           >
             {`Reply${replies && replies.length > 0 ? ` · ${replies.length}` : ""}`}
@@ -187,7 +194,7 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, postOwnerId }) => {
         )}
 
         {/* Replies list (after the comment controls) */}
-        {replies && replies.length > 0 && (
+        {showReplies && replies && replies.length > 0 && (
           <div className="mt-2 space-y-2 pl-10">
             {replies.map((r) => {
               const replyUser = replyUsersMap[r.userId];
