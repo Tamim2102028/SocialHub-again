@@ -2,10 +2,15 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../../store/hooks";
 import { selectUserById } from "../../store/slices/profileSlice";
+import type { UserData } from "../../data/profile-data/userData";
 import {
   deleteCommentAndDecrement,
   toggleLikeComment,
 } from "../../store/slices/commentsSlice";
+import {
+  addReply,
+  selectRepliesByCommentId,
+} from "../../store/slices/repliesSlice";
 import { formatPostDate, formatPostClock } from "../../utils/dateUtils";
 import { confirmDelete, showSuccess } from "../../utils/sweetAlert";
 import type { CommentData } from "../../data/profile-data/profilePostCommentsData";
@@ -35,6 +40,8 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, postOwnerId }) => {
     comment.likedBy.includes(currentUserId);
   const likesCount = comment.likedBy ? comment.likedBy.length : 0;
 
+  const currentUser = useAppSelector((state) => state.profile);
+
   const handleProfileClick = () => {
     navigate(`/profile/${comment.userId}`);
   };
@@ -49,6 +56,32 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, postOwnerId }) => {
         text: "Comment deleted successfully",
       });
     }
+  };
+
+  // Reply UI state
+  const [showReplyInput, setShowReplyInput] = React.useState(false);
+  const [replyText, setReplyText] = React.useState("");
+
+  const replies = useAppSelector((state) =>
+    selectRepliesByCommentId(state, comment.commentId)
+  );
+
+  // Map of reply user data by id to avoid calling hooks inside loops
+  const replyUsersMap = useAppSelector((state) => {
+    const map: Record<string, UserData | null> = {};
+    replies.forEach((r) => {
+      map[r.userId] = selectUserById(state, r.userId);
+    });
+    return map;
+  });
+
+  const handleSendReply = () => {
+    const text = replyText.trim();
+    if (!text) return;
+    const userId = currentUserId || "1";
+    dispatch(addReply({ commentId: comment.commentId, userId, content: text }));
+    setReplyText("");
+    setShowReplyInput(false);
   };
 
   return (
@@ -69,6 +102,72 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, postOwnerId }) => {
           </span>
           <p className="text-sm text-gray-700">{comment.content}</p>
         </div>
+        {/* Replies list */}
+        {replies && replies.length > 0 && (
+          <div className="mt-2 space-y-2 pl-10">
+            {replies.map((r) => {
+              const replyUser = replyUsersMap[r.userId];
+              return (
+                <div
+                  key={r.replyId}
+                  className="flex items-start space-x-2 text-sm"
+                >
+                  <img
+                    src={replyUser?.avatar || "https://via.placeholder.com/24"}
+                    alt={replyUser?.name || "User"}
+                    className="h-6 w-6 rounded-full bg-gray-200 object-cover"
+                  />
+                  <div className="rounded-lg bg-gray-50 px-2 py-1">
+                    <div className="font-semibold text-gray-900">
+                      {replyUser?.name || "User"}
+                    </div>
+                    <div className="text-gray-700">{r.content}</div>
+                    <div className="mt-1 text-xs text-gray-400">
+                      {formatPostDate(r.createdAt)} •{" "}
+                      {formatPostClock(r.createdAt)}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Reply input */}
+        {showReplyInput && (
+          <div className="mt-2 pl-10">
+            <div className="flex items-start space-x-3">
+              <img
+                src={currentUser.avatar || "https://via.placeholder.com/32"}
+                alt={currentUser.name || "You"}
+                className="h-8 w-8 rounded-full bg-gray-300 object-cover"
+              />
+              <div className="flex-1">
+                <textarea
+                  value={replyText}
+                  onChange={(e) => setReplyText(e.target.value)}
+                  rows={2}
+                  className="w-full rounded border border-gray-200 p-2 text-sm"
+                  placeholder="Write a reply..."
+                />
+                <div className="mt-2 flex gap-2">
+                  <button
+                    onClick={handleSendReply}
+                    className="rounded bg-blue-600 px-3 py-1 text-sm font-medium text-white"
+                  >
+                    Reply
+                  </button>
+                  <button
+                    onClick={() => setShowReplyInput(false)}
+                    className="rounded border border-gray-300 px-3 py-1 text-sm"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
         <div className="mt-1 flex items-center space-x-2 text-xs text-gray-500">
           <span>{formatPostDate(comment.createdAt)}</span>
           <span className="h-1 w-1 rounded-full bg-gray-400" />
@@ -85,7 +184,13 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, postOwnerId }) => {
           >
             Like{likesCount > 0 ? ` · ${likesCount}` : ""}
           </button>
-          {/* Reply removed as per request */}
+          <span className="h-1 w-1 rounded-full bg-gray-400" />
+          <button
+            onClick={() => setShowReplyInput((s) => !s)}
+            className="cursor-pointer text-gray-600 hover:underline"
+          >
+            Reply
+          </button>
 
           {/* Delete button - only visible for comment creator or post owner */}
           {canDelete && (

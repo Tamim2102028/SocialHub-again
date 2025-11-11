@@ -18,6 +18,7 @@ import crCornerSlice from "./slices/university/crCornerSlice.js";
 import friendsSlice from "./slices/friendsSlice";
 import searchSlice from "./slices/search/searchSlice";
 import commentsSlice from "./slices/commentsSlice";
+import repliesSlice from "./slices/repliesSlice";
 
 export const store = configureStore({
   reducer: {
@@ -40,6 +41,7 @@ export const store = configureStore({
     friends: friendsSlice,
     search: searchSlice,
     comments: commentsSlice,
+    replies: repliesSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
