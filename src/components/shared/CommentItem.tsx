@@ -53,7 +53,7 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, postOwnerId }) => {
       <div className="flex-1">
         <div className="rounded-lg bg-gray-100 px-3 py-2">
           <span
-            className="cursor-pointer text-sm font-semibold text-gray-900 transition-colors hover:text-blue-600 hover:underline"
+            className="cursor-pointer text-sm font-semibold text-gray-900 ing-sition-colors hover:text-blue-600 hover:underline"
             onClick={handleProfileClick}
           >
             {commentUser?.name || "User"}
@@ -66,8 +66,7 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, postOwnerId }) => {
           <span>{formatPostClock(comment.createdAt)}</span>
           <span className="h-1 w-1 rounded-full bg-gray-400" />
           <button className="hover:underline">Like</button>
-          <span className="h-1 w-1 rounded-full bg-gray-400" />
-          <button className="hover:underline">Reply</button>
+          {/* Reply removed as per request */}
 
           {/* Delete button - only visible for comment creator or post owner */}
           {canDelete && (
