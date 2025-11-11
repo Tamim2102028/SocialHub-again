@@ -12,6 +12,7 @@ import { type UserData } from "../../../data/profile-data/userData";
 import { Link } from "react-router-dom";
 import { BsThreeDots } from "react-icons/bs";
 import { formatPostDate, formatPostClock } from "../../../utils/dateUtils";
+import SeparatorDot from "../../shared/SeparatorDot";
 import type { RoomPost } from "../../../data/rooms-data/roomPostData";
 import { showPostMenu } from "../../../utils/customModals";
 
@@ -141,15 +142,9 @@ const PinnedTab: React.FC<Props> = ({
                     </div>
                     <p className="flex items-center gap-2 text-sm text-gray-500">
                       <span>@{author?.username || "username"}</span>
-                      <span
-                        className="h-1 w-1 rounded-full bg-gray-400"
-                        aria-hidden
-                      />
+                      <SeparatorDot ariaHidden />
                       <span>{formatPostDate(p.createdAt)}</span>
-                      <span
-                        className="h-1 w-1 rounded-full bg-gray-400"
-                        aria-hidden
-                      />
+                      <SeparatorDot ariaHidden />
                       <span>{formatPostClock(p.createdAt)}</span>
                     </p>
                   </div>

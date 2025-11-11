@@ -14,6 +14,7 @@ import {
   toggleLikeReply,
 } from "../../store/slices/repliesSlice";
 import { formatPostDate, formatPostClock } from "../../utils/dateUtils";
+import SeparatorDot from "./SeparatorDot";
 import { confirmDelete, showSuccess } from "../../utils/sweetAlert";
 import type { CommentData } from "../../data/profile-data/profilePostCommentsData";
 
@@ -128,9 +129,9 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, postOwnerId }) => {
         {/* Date / Time and action buttons immediately under the comment */}
         <div className="mt-1 flex items-center space-x-2 text-xs text-gray-500">
           <span>{formatPostDate(comment.createdAt)}</span>
-          <span className="h-1 w-1 rounded-full bg-gray-400" />
+          <SeparatorDot />
           <span>{formatPostClock(comment.createdAt)}</span>
-          <span className="h-1 w-1 rounded-full bg-gray-400" />
+          <SeparatorDot />
 
           <button
             onClick={() => {
@@ -144,7 +145,7 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, postOwnerId }) => {
             Like{likesCount > 0 ? ` · ${likesCount}` : ""}
           </button>
 
-          <span className="h-1 w-1 rounded-full bg-gray-400" />
+          <SeparatorDot />
 
           <button
             onClick={() => {
@@ -158,7 +159,7 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, postOwnerId }) => {
 
           {canDelete && (
             <>
-              <span className="h-1 w-1 rounded-full bg-gray-400" />
+              <SeparatorDot />
               <button
                 onClick={handleDelete}
                 className="cursor-pointer font-medium text-red-600 hover:underline"
@@ -235,9 +236,10 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, postOwnerId }) => {
                     <div className="text-gray-700">{r.content}</div>
                     <div className="mt-1 flex items-center space-x-2 text-xs text-gray-400">
                       <span>{formatPostDate(r.createdAt)}</span>
-                      <span className="h-1 w-1 rounded-full bg-gray-400" />
+                      <SeparatorDot />
                       <span>{formatPostClock(r.createdAt)}</span>
-                      <span className="h-1 w-1 rounded-full bg-gray-400" />
+
+                      <SeparatorDot />
 
                       <button
                         onClick={() => {
@@ -251,7 +253,7 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, postOwnerId }) => {
                         Like{replyLikesCount > 0 ? ` · ${replyLikesCount}` : ""}
                       </button>
 
-                      <span className="h-1 w-1 rounded-full bg-gray-400" />
+                      <SeparatorDot />
 
                       {canDeleteReply && (
                         <button

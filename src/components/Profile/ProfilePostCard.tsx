@@ -14,6 +14,7 @@ import {
   FaFlag,
 } from "react-icons/fa";
 import { formatPostDate, formatPostClock } from "../../utils/dateUtils";
+import SeparatorDot from "../shared/SeparatorDot";
 import { useAppSelector, useAppDispatch } from "../../store/hooks";
 import {
   addComment,
@@ -93,9 +94,9 @@ const ProfilePostCard: React.FC<ProfilePostCardProps> = ({
             <h3 className="font-semibold text-gray-900">{post.author.name}</h3>
             <p className="flex items-center gap-2 text-sm text-gray-500">
               <span>@{post.author.username}</span>
-              <span className="h-1 w-1 rounded-full bg-gray-400" aria-hidden />
+              <SeparatorDot ariaHidden />
               <span>{formatPostDate(post.timestamp)}</span>
-              <span className="h-1 w-1 rounded-full bg-gray-400" aria-hidden />
+              <SeparatorDot ariaHidden />
               <span>{formatPostClock(post.timestamp)}</span>
             </p>
           </div>

@@ -22,6 +22,7 @@ import {
 import type { PostData } from "../../data/profile-data/profilePostData";
 import { selectUserById } from "../../store/slices/profileSlice";
 import { formatPostDate, formatPostClock } from "../../utils/dateUtils";
+import SeparatorDot from "../shared/SeparatorDot";
 import {
   addComment,
   selectCommentsByPostId,
@@ -95,9 +96,9 @@ const HomePostCard: React.FC<HomePostCardProps> = ({ post }) => {
                   {userData?.username || "username"}
                 </span>
               </span>
-              <span className="h-1 w-1 rounded-full bg-gray-400" aria-hidden />
+              <SeparatorDot ariaHidden />
               <span>{formatPostDate(post.createdAt)}</span>
-              <span className="h-1 w-1 rounded-full bg-gray-400" aria-hidden />
+              <SeparatorDot ariaHidden />
               <span>{formatPostClock(post.createdAt)}</span>
             </p>
           </div>

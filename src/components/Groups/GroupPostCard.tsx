@@ -15,6 +15,7 @@ import type { GroupPost } from "../../data/group-data/groupPostsData";
 import { useAppSelector, useAppDispatch } from "../../store/hooks";
 import { selectUserById } from "../../store/slices/profileSlice";
 import { formatPostDate, formatPostClock } from "../../utils/dateUtils";
+import SeparatorDot from "../shared/SeparatorDot";
 import {
   addComment,
   selectCommentsByPostId,
@@ -83,9 +84,9 @@ const GroupPostCardSimple: React.FC<Props> = ({ post }) => {
                   {author?.username || post.createdBy}
                 </span>
               </span>
-              <span className="h-1 w-1 rounded-full bg-gray-400" aria-hidden />
+              <SeparatorDot ariaHidden />
               <span>{formatPostDate(post.createdAt)}</span>
-              <span className="h-1 w-1 rounded-full bg-gray-400" aria-hidden />
+              <SeparatorDot ariaHidden />
               <span>{formatPostClock(post.createdAt)}</span>
             </p>
           </div>
