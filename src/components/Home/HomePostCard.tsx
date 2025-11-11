@@ -199,9 +199,9 @@ const HomePostCard: React.FC<HomePostCardProps> = ({ post }) => {
         <div className="flex items-center justify-between text-sm text-gray-500">
           <div className="flex items-center space-x-3">
             <span>{post.likedBy.length} likes</span>
-            <span className="text-gray-300">•</span>
+            <SeparatorDot />
             <span>{post.comments} comments</span>
-            <span className="text-gray-300">•</span>
+            <SeparatorDot />
             <span>{post.sharesBy.length} shares</span>
           </div>
         </div>

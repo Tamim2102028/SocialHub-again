@@ -190,9 +190,9 @@ const GroupPostCardSimple: React.FC<Props> = ({ post }) => {
         <div className="flex items-center justify-between text-sm text-gray-500">
           <div className="flex items-center space-x-3">
             <span>{likesCount} likes</span>
-            <span className="text-gray-300">•</span>
+            <SeparatorDot />
             <span>{commentsCount} comments</span>
-            <span className="text-gray-300">•</span>
+            <SeparatorDot />
             <span>{post.sharesBy?.length || 0} shares</span>
           </div>
         </div>
