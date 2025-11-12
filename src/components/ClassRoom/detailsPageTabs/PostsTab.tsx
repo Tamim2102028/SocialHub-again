@@ -328,6 +328,12 @@ const PostsTab: React.FC<Props> = ({
                           const rauthor = users.find(
                             (u) => u.id === r.authorId
                           );
+                          const isReplyAuthor =
+                            !!currentUserId && currentUserId === r.authorId;
+                          const isCreator =
+                            !!currentUserId && currentUserId === creatorId;
+                          const canEditReply = isReplyAuthor; // Only author can edit
+                          const canDeleteReply = isReplyAuthor || isCreator; // Author or creator can delete
                           return (
                             <div key={r.id} className="flex items-start gap-3">
                               <img
@@ -352,12 +358,50 @@ const PostsTab: React.FC<Props> = ({
                                         "Unknown"
                                       )}
                                     </div>
-                                    <div className="text-xs text-gray-500">
+                                    <div className="mt-1 flex items-center space-x-2 text-xs text-gray-400">
                                       <span>{formatPostDate(r.createdAt)}</span>
-                                      <span className="mx-2">•</span>
+                                      <SeparatorDot ariaHidden />
                                       <span>
                                         {formatPostClock(r.createdAt)}
                                       </span>
+
+                                      {(canEditReply || canDeleteReply) && (
+                                        <>
+                                          <SeparatorDot ariaHidden />
+                                          {canEditReply && (
+                                            <button
+                                              onClick={() => {
+                                                setReplyEditing({
+                                                  postId: p.id,
+                                                  replyId: r.id,
+                                                });
+                                                setReplyEditText((s) => ({
+                                                  ...s,
+                                                  [r.id]: r.content,
+                                                }));
+                                              }}
+                                              className="cursor-pointer text-sm font-medium text-blue-600 hover:underline"
+                                            >
+                                              Edit
+                                            </button>
+                                          )}
+                                          {canDeleteReply && (
+                                            <button
+                                              onClick={() => {
+                                                dispatch(
+                                                  deleteReply({
+                                                    postId: p.id,
+                                                    replyId: r.id,
+                                                  })
+                                                );
+                                              }}
+                                              className="cursor-pointer text-sm font-medium text-red-600 hover:underline"
+                                            >
+                                              Delete
+                                            </button>
+                                          )}
+                                        </>
+                                      )}
                                     </div>
                                   </div>
                                 </div>
@@ -409,56 +453,6 @@ const PostsTab: React.FC<Props> = ({
                                     <p className="mt-1 text-justify text-sm break-words whitespace-pre-wrap text-gray-700">
                                       {r.content}
                                     </p>
-                                    <div className="mt-2 flex gap-3">
-                                      {(() => {
-                                        const isReplyAuthor =
-                                          !!currentUserId &&
-                                          currentUserId === r.authorId;
-                                        const isCreator =
-                                          !!currentUserId &&
-                                          currentUserId === creatorId;
-                                        const canEditReply = isReplyAuthor; // Only author can edit
-                                        const canDeleteReply =
-                                          isReplyAuthor || isCreator; // Author or creator can delete
-                                        return (
-                                          <>
-                                            {canEditReply ? (
-                                              <button
-                                                onClick={() => {
-                                                  setReplyEditing({
-                                                    postId: p.id,
-                                                    replyId: r.id,
-                                                  });
-                                                  setReplyEditText((s) => ({
-                                                    ...s,
-                                                    [r.id]: r.content,
-                                                  }));
-                                                }}
-                                                className="cursor-pointer text-sm font-medium text-blue-600 hover:underline"
-                                              >
-                                                Edit
-                                              </button>
-                                            ) : null}
-
-                                            {canDeleteReply ? (
-                                              <button
-                                                onClick={() => {
-                                                  dispatch(
-                                                    deleteReply({
-                                                      postId: p.id,
-                                                      replyId: r.id,
-                                                    })
-                                                  );
-                                                }}
-                                                className="cursor-pointer text-sm font-medium text-red-600 hover:underline"
-                                              >
-                                                Delete
-                                              </button>
-                                            ) : null}
-                                          </>
-                                        );
-                                      })()}
-                                    </div>
                                   </div>
                                 )}
                               </div>
