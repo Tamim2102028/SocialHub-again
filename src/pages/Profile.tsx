@@ -7,6 +7,7 @@ import {
   FaFolder,
   FaFileAlt,
   FaBookmark,
+  FaInfoCircle,
 } from "react-icons/fa";
 import { getPostsByUserId } from "../data/profile-data/profilePostData";
 import { getUserById, getCurrentUserId } from "../services/userService";
@@ -81,6 +82,14 @@ const Profile: React.FC = () => {
     navigate("/profile/edit");
   };
 
+  const handleViewDetails = () => {
+    if (isOwnProfile) {
+      navigate("/profile/details");
+    } else {
+      navigate(`/profile/${actualUserId}/details`);
+    }
+  };
+
   if (isLoading) {
     return <PageLoader />;
   }
@@ -149,12 +158,34 @@ const Profile: React.FC = () => {
             {/* Edit Button (only for own profile) */}
             {isOwnProfile && (
               <div className="pt-4">
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleEditProfile}
+                    className="flex items-center gap-2 rounded-md bg-blue-600 px-6 py-2 text-white transition-colors hover:bg-blue-700"
+                  >
+                    <FaEdit className="h-4 w-4" />
+                    Edit Profile
+                  </button>
+                  <button
+                    onClick={handleViewDetails}
+                    className="flex items-center gap-2 rounded-md bg-gray-600 px-6 py-2 text-white transition-colors hover:bg-gray-700"
+                  >
+                    <FaInfoCircle className="h-4 w-4" />
+                    Details
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Details Button (for other users' profiles) */}
+            {!isOwnProfile && (
+              <div className="pt-4">
                 <button
-                  onClick={handleEditProfile}
-                  className="flex items-center gap-2 rounded-md bg-blue-600 px-6 py-2 text-white transition-colors hover:bg-blue-700"
+                  onClick={handleViewDetails}
+                  className="flex items-center gap-2 rounded-md bg-gray-600 px-6 py-2 text-white transition-colors hover:bg-gray-700"
                 >
-                  <FaEdit className="h-4 w-4" />
-                  Edit Profile
+                  <FaInfoCircle className="h-4 w-4" />
+                  View Details
                 </button>
               </div>
             )}

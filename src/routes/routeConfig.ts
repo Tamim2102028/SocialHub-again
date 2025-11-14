@@ -237,6 +237,22 @@ export const routes: RouteConfig[] = [
     meta: { description: "View your saved items" },
   },
   {
+    path: "/profile/details",
+    component: lazy(() => import("../pages/ProfileDetails")),
+    requireAuth: true,
+    title: "Profile Details",
+    category: "profile",
+    meta: { description: "View detailed profile information" },
+  },
+  {
+    path: "/profile/:userId/details",
+    component: lazy(() => import("../pages/ProfileDetails")),
+    requireAuth: true,
+    title: "User Profile Details",
+    category: "profile",
+    meta: { description: "View user's detailed profile information" },
+  },
+  {
     path: "/settings",
     component: lazy(() => import("../pages/Settings")),
     requireAuth: true,
