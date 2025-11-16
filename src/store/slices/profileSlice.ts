@@ -10,7 +10,7 @@ interface ProfileState {
   phone: string;
   avatar: string;
   bio?: string;
-  role: ("student" | "teacher" | "system")[];
+  userType: ("student" | "teacher" | "system")[];
   educationLevel: "UNIVERSITY" | "COLLEGE";
   university?: {
     name: string;
@@ -53,7 +53,7 @@ const getCurrentUserData = (): ProfileState => {
       phone: userData.phone,
       avatar: userData.avatar,
       bio: userData.bio,
-      role: userData.role,
+      userType: userData.userType,
       educationLevel: userData.educationLevel,
       university: userData.university
         ? {
@@ -89,7 +89,7 @@ const getCurrentUserData = (): ProfileState => {
       phone: "",
       avatar: "",
       bio: "",
-      role: ["student"],
+      userType: ["student"],
       educationLevel: "UNIVERSITY" as const,
       university: {
         name: "",
@@ -134,7 +134,7 @@ const profileSlice = createSlice({
         phone: "",
         avatar: "",
         bio: "",
-        role: ["student"],
+        userType: ["student"],
         educationLevel: "UNIVERSITY" as const,
         university: {
           name: "",

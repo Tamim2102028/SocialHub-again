@@ -233,11 +233,11 @@ const ProfileDetails: React.FC = () => {
             <div className="flex items-start gap-3 rounded-lg bg-gray-50 p-4">
               <FaUser className="mt-1 h-5 w-5 flex-shrink-0 text-blue-600" />
               <div>
-                <p className="text-sm font-medium text-gray-600">Role</p>
+                <p className="text-sm font-medium text-gray-600">User Type</p>
                 <p className="text-gray-900 capitalize">
-                  {Array.isArray(userData.role)
-                    ? userData.role.join(", ")
-                    : userData.role}
+                  {Array.isArray(userData.userType)
+                    ? userData.userType.join(", ")
+                    : userData.userType}
                 </p>
               </div>
             </div>

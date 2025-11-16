@@ -9,7 +9,7 @@ export interface SearchPerson {
   username: string;
   avatar: string;
   university?: string;
-  role?: "student" | "teacher";
+  userType?: "student" | "teacher";
   mutualFriends?: number;
   relationStatus?: "friend" | "pending" | "none" | "received";
 }
@@ -48,7 +48,7 @@ const initialState: SearchState = {
       username: "tanvira",
       avatar: "https://randomuser.me/api/portraits/men/5.jpg",
       university: "Dhaka College",
-      role: "student",
+      userType: "student",
       mutualFriends: 3,
       relationStatus: "none",
     },
@@ -58,7 +58,7 @@ const initialState: SearchState = {
       username: "sabbirh",
       avatar: "https://randomuser.me/api/portraits/men/11.jpg",
       university: "DU - CSE",
-      role: "student",
+      userType: "student",
       mutualFriends: 5,
       relationStatus: "received",
     },
@@ -68,7 +68,7 @@ const initialState: SearchState = {
       username: "mahmudulh",
       avatar: "https://randomuser.me/api/portraits/men/13.jpg",
       university: "Dhaka College",
-      role: "student",
+      userType: "student",
       mutualFriends: 2,
       relationStatus: "friend",
     },
@@ -78,7 +78,7 @@ const initialState: SearchState = {
       username: "fahimh",
       avatar: "https://randomuser.me/api/portraits/men/23.jpg",
       university: "Dhaka College",
-      role: "student",
+      userType: "student",
       mutualFriends: 8,
       relationStatus: "pending",
     },
@@ -88,7 +88,7 @@ const initialState: SearchState = {
       username: "malihas",
       avatar: "https://randomuser.me/api/portraits/women/26.jpg",
       university: "Holy Cross College",
-      role: "student",
+      userType: "student",
       mutualFriends: 4,
       relationStatus: "none",
     },
@@ -98,7 +98,7 @@ const initialState: SearchState = {
       username: "shirina",
       avatar: "https://randomuser.me/api/portraits/women/24.jpg",
       university: "Rajuk College",
-      role: "teacher",
+      userType: "teacher",
       mutualFriends: 6,
       relationStatus: "none",
     },
@@ -108,7 +108,7 @@ const initialState: SearchState = {
       username: "ronya",
       avatar: "https://randomuser.me/api/portraits/men/25.jpg",
       university: "RUET - ME",
-      role: "teacher",
+      userType: "teacher",
       mutualFriends: 7,
       relationStatus: "received",
     },
@@ -118,7 +118,7 @@ const initialState: SearchState = {
       username: "sabbirk",
       avatar: "https://randomuser.me/api/portraits/women/29.jpg",
       university: "CUET - ME",
-      role: "student",
+      userType: "student",
       mutualFriends: 3,
       relationStatus: "friend",
     },
@@ -128,7 +128,7 @@ const initialState: SearchState = {
       username: "imran10",
       avatar: "https://randomuser.me/api/portraits/men/30.jpg",
       university: "Notre Dame College",
-      role: "student",
+      userType: "student",
       mutualFriends: 5,
       relationStatus: "none",
     },
@@ -274,10 +274,8 @@ export const selectFilteredHashtags = (state: RootState) => {
   // Filter posts that have tags matching the search query
   return posts.filter((post) => {
     if (!post.tags || post.tags.length === 0) return false;
-    
-    return post.tags.some((tag) =>
-      tag.toLowerCase().includes(lowerQuery)
-    );
+
+    return post.tags.some((tag) => tag.toLowerCase().includes(lowerQuery));
   });
 };
 

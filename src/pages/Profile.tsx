@@ -134,7 +134,7 @@ const Profile: React.FC = () => {
                   <>
                     {userData.university?.name} -{" "}
                     {userData.university?.department}
-                    {userData.role.includes("student") &&
+                    {userData.userType.includes("student") &&
                       userData.university?.section && (
                         <span className="text-gray-600">
                           {" "}
