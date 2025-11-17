@@ -130,7 +130,7 @@ const rawUsersData: UserData[] = [
   },
   {
     id: "3",
-    name: "Sabbir Hosain (3/15)",
+    name: "Sabbir Hossain (3/15)",
     username: "sabbirh",
     email: "sabbir11@example.com",
     password: "pass11",
